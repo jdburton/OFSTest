@@ -366,6 +366,8 @@ class OFSTestRemoteNode(OFSTestNode.OFSTestNode):
     def uploadNodeKeyFromLocal(self, local_node):
         
         # This function uploads a key 
+        self.runSingleCommandAsRoot(command="which rsync || DEBIAN_FRONTEND=noninteractive apt-get install -y rsync || yum -y install rsync")
+
         #print "uploading key %s from local to %s" % (local_node.getRemoteKeyFile(self.ext_ip_address), self.ext_ip_address)
         # copy the file from the local node to the current node
         self.sshLocalKeyFile=local_node.getRemoteKeyFile(self.ext_ip_address)
@@ -435,7 +437,7 @@ class OFSTestRemoteNode(OFSTestNode.OFSTestNode):
             self.runSingleCommandBacktick(command="ls -l /home/%s/.ssh" % self.current_user)
             self.runSingleCommandAsBatch(command="sudo /bin/cp -r /home/%s/.ssh /root/ " % self.current_user)
             #rsync isn't installed by default on some images. 
-            self.runSingleCommandAsBatch(command="which rsync || sudo apt-get -y install rsync || sudo yum -y install rsync")
+            
         
         #============================================================================
         #
