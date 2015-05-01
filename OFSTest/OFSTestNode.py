@@ -1189,7 +1189,7 @@ class OFSTestNode(object):
                 rc = self.runSingleCommandAsRoot(command, output)
             
             # ubuntu installs java to a different location than RHEL and SuSE 
-            self.jdk6_location = self.runSingleCommandBacktick(command="echo $(dirname $(dirname $(readlink -f $(which javac))))")
+            self.jdk6_location = self.runSingleCommandBacktick(command="echo \\$(dirname \\$(dirname \\$(readlink -f \\$(which javac))))")
             
         elif "suse" in self.distro.lower():
             
