@@ -374,6 +374,8 @@ class OFSTestRemoteNode(OFSTestNode.OFSTestNode):
         rc = local_node.copyToRemoteNode(self.sshLocalKeyFile,self,'~/.ssh/',False)
         keybasename = os.path.basename(self.sshLocalKeyFile)
         
+        self.runSingleCommandAsRoot(command="which rsync || DEBIAN_FRONTEND=noninteractive apt-get install -y rsync || yum -y install rsync")
+        
         if rc != 0:
             logging.exception( "Upload of key %s from local to %s failed!" % (local_node.getRemoteKeyFile(self.ext_ip_address), self.ext_ip_address))
             return rc
