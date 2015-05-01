@@ -434,6 +434,8 @@ class OFSTestRemoteNode(OFSTestNode.OFSTestNode):
             self.changeDirectory("~")
             self.runSingleCommandBacktick(command="ls -l /home/%s/.ssh" % self.current_user)
             self.runSingleCommandAsBatch(command="sudo /bin/cp -r /home/%s/.ssh /root/ " % self.current_user)
+            #rsync isn't installed by default on some images. 
+            self.runSingleCommandAsBatch(command="which rsync || sudo apt-get -y install rsync || sudo yum -y install rsync")
         
         #============================================================================
         #

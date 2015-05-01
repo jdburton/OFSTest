@@ -1174,12 +1174,13 @@ class OFSTestNode(object):
 
                 
 
-                # install Sun Java6 for hadoop via webupd8
+                # install Sun Java6 for hadoop via webupd8. Fallback to OpenJDK.
                 "add-apt-repository ppa:webupd8team/java < /dev/null",
                 "apt-get update ",
                 "bash -c 'echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections'",
                 "bash -c 'echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections'",
-                "DEBIAN_FRONTEND=noninteractive apt-get install -y -q oracle-java7-installer "
+                "DEBIAN_FRONTEND=noninteractive apt-get install -y -q oracle-java7-installer || apt-get install -y openjdk-7-jdk"
+                
             ]
             
             
@@ -1187,11 +1188,8 @@ class OFSTestNode(object):
             for command in install_commands:
                 rc = self.runSingleCommandAsRoot(command, output)
             
-
-            
             # ubuntu installs java to a different location than RHEL and SuSE 
-            #self.jdk6_location = "/usr/lib/jvm/java-7-openjdk-amd64"
-            self.jdk6_location = "/usr/lib/jvm/java-7-oracle"
+            self.jdk6_location = self.runSingleCommandBacktick(command="echo $(dirname $(dirname $(readlink -f $(which javac))))")
             
         elif "suse" in self.distro.lower():
             
