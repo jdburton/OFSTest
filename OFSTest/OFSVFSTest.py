@@ -408,8 +408,14 @@ def iozone(testing_node,output=[]):
         rc = testing_node.runSingleCommand("make linux",output)
         if rc != 0:
             return rc
+        
+    tmp = []
+    testing_node.checkMount(mount_point=testing_node.ofs_mount_point,output=tmp)
     
-    rc = testing_node.runSingleCommand("./iozone -a -y 4096 -q $((1024*16)) -n 4096 -g $((1024*16*4)) -f %s/test_iozone_file" % testing_node.ofs_mount_point,output)
+    if "pvfs2fuse" in tmp[1]:
+        rc = testing_node.runSingleCommandAsRoot("./iozone -a -y 4096 -q $((1024*16)) -n 4096 -g $((1024*16*4)) -f %s/test_iozone_file" % testing_node.ofs_mount_point,output)
+    else:
+        rc = testing_node.runSingleCommand("./iozone -a -y 4096 -q $((1024*16)) -n 4096 -g $((1024*16*4)) -f %s/test_iozone_file" % testing_node.ofs_mount_point,output)
         
     return rc
 
