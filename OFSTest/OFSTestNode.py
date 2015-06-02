@@ -2332,6 +2332,30 @@ class OFSTestNode(object):
         destination_node.ofs_conf_file =self.ofs_conf_file
         destination_node.ofs_fs_name = destination_node.runSingleCommandBacktick("grep Name %s | awk '{print \\$2}'" % destination_node.ofs_conf_file)
         return rc
+    
+    
+        ##
+    # @fn copyOpenMPIInstallationToNode(self,destination_node):
+    #
+    # This copies an entire OpenMPI installation from the current node to destination_node.
+    # Also sets the ofs_installation_location and ofs_branch on the destination
+    # @param self The object pointer
+    # @param destination_node OFSTestNode to which the installation is copied.
+
+
+
+    def copyOpenMPIInstallationToNode(self,destination_node,*args,**kwargs):
+        
+        rc = self.copyToRemoteNode(self.openmpi_source_location+"/", destination_node, self.openmpi_source_location, True)
+        destination_node.openmpi_source_location = self.openmpi_source_location
+
+        rc = self.copyToRemoteNode(self.openmpi_installation_location+"/", destination_node, self.openmpi_installation_location, True)
+        destination_node.openmpi_installation_location = self.openmpi_installation_location
+        destination_node.created_openmpihosts = self.created_openmpihosts
+        rc = self.copyToRemoteNode(self.created_openmpihosts, destination_node, self.created_openmpihosts, False)
+        
+        return rc
+    
        
     
     ##
