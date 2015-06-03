@@ -682,7 +682,7 @@ class OFSTestNetwork(object):
     #    @param self The object pointer
     #    @param destination_list List of nodes to copy OrangeFS to. OFS should already be at destination_list[0].
         
-    def copyOFSToNodeList(self,destination_list=None):
+    def copyOpenMPIToNodeList(self,destination_list=None):
         if destination_list == None:
             destination_list = self.network_nodes;
         self.copyResourceToNodeList(node_function=OFSTestNode.OFSTestNode.copyOpenMPIInstallationToNode,destination_list=destination_list)
