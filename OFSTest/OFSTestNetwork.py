@@ -675,6 +675,20 @@ class OFSTestNetwork(object):
 
 
     ##    
+    #    @fn copyOpenMPIToNodeList(self,destination_list=None):
+    #
+    #    Copy OpenMPI from build node to rest of cluster.
+    #    
+    #    @param self The object pointer
+    #    @param destination_list List of nodes to copy OrangeFS to. OFS should already be at destination_list[0].
+        
+    def copyOpenMPIToNodeList(self,destination_list=None):
+        if destination_list == None:
+            destination_list = self.network_nodes;
+        self.copyResourceToNodeList(node_function=OFSTestNode.OFSTestNode.copyOpenMPIInstallationToNode,destination_list=destination_list)
+
+
+    ##    
     #  @fn copyResourceToNodeList(self,node_function,destination_list=None):
     #
     # This is a multi-threaded recursive copy routine.
@@ -1544,23 +1558,22 @@ class OFSTestNetwork(object):
       
         # the mpi local directory is where mpi will be built
         if mpi_local_directory == None:
-            mpi_local_directory = "/home/%s/mpi" % build_node.current_user
+            mpi_local_directory = "/opt/mpi"
         
         # export the nfs directory to all nodes.
-        nfs_share = build_node.exportNFSDirectory(directory_name=mpi_local_directory)
+        #nfs_share = build_node.exportNFSDirectory(directory_name=mpi_local_directory)
         
         # wait for NFS servers to come up
-        time.sleep(30)
+        #time.sleep(30)
         
         # mount the local directory as an NFS directory on all nodes.
-        rc = self.mountNFSDirectory(nfs_share=nfs_share,mount_point=self.mpi_nfs_directory,options="bg,intr,noac,nfsvers=3")
+        #rc = self.mountNFSDirectory(nfs_share=nfs_share,mount_point=self.mpi_nfs_directory,options="bg,intr,noac,nfsvers=3")
         
         # build mpi in the build location, but install it to the nfs directory
-        rc = build_node.installOpenMPI(install_location=self.mpi_nfs_directory,build_location=self.mpi_nfs_directory)
+        rc = build_node.installOpenMPI(install_location=self.mpi_nfs_directory,build_location=mpi_local_directory)
     
-        
-        
-        
+
+                
         # how many slots per node do we need?
 
         # Testing requires np=4
@@ -1575,8 +1588,9 @@ class OFSTestNetwork(object):
             slots = slots+1
         
         self.openmpi_version = build_node.openmpi_version
-
+        
         build_node.changeDirectory(self.mpi_nfs_directory)
+
 
         # we created an openmpihost file earlier. Now copy it to the appropriate directory.
         if build_node.created_openmpihosts != None:
@@ -1587,6 +1601,9 @@ class OFSTestNetwork(object):
         else:
             #print 'grep -v localhost /etc/hosts | awk \'{print \\\$2 "\tslots=%r"}\' > %s/openmpihosts' % (slots,self.mpi_nfs_directory)
             build_node.runSingleCommand("grep -v localhost /etc/hosts | awk '{print \$2 \"\\tslots=%r\"}' > %s/openmpihosts" % (slots,self.mpi_nfs_directory))
+            
+        # Copy to all nodes instead of using NFS.
+        rc = self.copyOpenMPIToNodeList(node_list)
 
         # update runtest to use openmpihosts file - should be done in patched openmpi
         #print 'sed -i s,"mpirun -np","mpirun --hostfile %s/openmpihosts -np",g %s/%s/ompi/mca/io/romio/test/runtests' % (self.mpi_nfs_directory,self.mpi_nfs_directory,build_node.openmpi_version)

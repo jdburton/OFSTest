@@ -1189,7 +1189,7 @@ class OFSTestNode(object):
                 rc = self.runSingleCommandAsRoot(command, output)
             
             # ubuntu installs java to a different location than RHEL and SuSE 
-            self.jdk6_location = self.runSingleCommandBacktick(command="echo $(dirname $(dirname $(readlink -f $(which javac))))")
+            self.jdk6_location = self.runSingleCommandBacktick(command="echo \\$(dirname \\$(dirname \\$(readlink -f \\$(which javac))))")
             
         elif "suse" in self.distro.lower():
             
@@ -1262,10 +1262,14 @@ class OFSTestNode(object):
         elif "centos" in self.distro.lower() or "scientific linux" in self.distro.lower() or "red hat" in self.distro.lower() or "fedora" in self.distro.lower():
             print "Installing required software for Red Hat based system %s" % self.distro
             install_commands = [
+                
                 "bash -c 'echo 0 > /selinux/enforce'",
                 
-                "yum -y install gcc gcc-c++ gcc-gfortran openssl fuse flex bison openssl-devel kernel-devel-\\`uname -r\\` kernel-headers-\\`uname -r\\` perl make subversion automake autoconf zip fuse fuse-devel fuse-libs wget patch bzip2 libuuid libuuid-devel uuid uuid-devel openldap openldap-devel openldap-clients gdb nfs-utils nfs-utils-lib nfs-kernel nfs-utils-clients rpcbind libtool libtool-ltdl wget maven java-1.7.0-openjdk java-1.7.0-openjdk-devel",
+                "yum -y install gcc gcc-c++ gcc-gfortran openssl fuse flex bison openssl-devel kernel-devel-\\`uname -r\\` kernel-headers-\\`uname -r\\` perl make subversion automake autoconf zip fuse fuse-devel fuse-libs wget patch bzip2 libuuid libuuid-devel uuid uuid-devel openldap openldap-devel openldap-clients gdb nfs-utils nfs-utils-lib nfs-kernel nfs-utils-clients rpcbind libtool libtool-ltdl wget maven java-1.7.0-openjdk java-1.7.0-openjdk-devel xfsprogs-devel attr libattr-devel libacl-devel bc git libaio libaio-devel",
+                
                 "yum -y install openldap openldap-clients openldap-servers openldap-servers-sql compat-openldap",
+                
+
                 "chown -R ldap:ldap /var/lib/ldap",
                 # install java
                 #"yes y | bash /home/%s/jdk-6u45-linux-x64-rpm.bin" % self.current_user,
@@ -2328,6 +2332,30 @@ class OFSTestNode(object):
         destination_node.ofs_conf_file =self.ofs_conf_file
         destination_node.ofs_fs_name = destination_node.runSingleCommandBacktick("grep Name %s | awk '{print \\$2}'" % destination_node.ofs_conf_file)
         return rc
+    
+    
+        ##
+    # @fn copyOpenMPIInstallationToNode(self,destination_node):
+    #
+    # This copies an entire OpenMPI installation from the current node to destination_node.
+    # Also sets the ofs_installation_location and ofs_branch on the destination
+    # @param self The object pointer
+    # @param destination_node OFSTestNode to which the installation is copied.
+
+
+
+    def copyOpenMPIInstallationToNode(self,destination_node,*args,**kwargs):
+        
+        rc = self.copyToRemoteNode(self.openmpi_source_location+"/", destination_node, self.openmpi_source_location, True)
+        destination_node.openmpi_source_location = self.openmpi_source_location
+
+        rc = self.copyToRemoteNode(self.openmpi_installation_location+"/", destination_node, self.openmpi_installation_location, True)
+        destination_node.openmpi_installation_location = self.openmpi_installation_location
+        destination_node.created_openmpihosts = self.created_openmpihosts
+        rc = self.copyToRemoteNode(self.created_openmpihosts, destination_node, self.created_openmpihosts, False)
+        
+        return rc
+    
        
     
     ##

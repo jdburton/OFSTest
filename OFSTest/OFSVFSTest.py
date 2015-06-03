@@ -408,8 +408,14 @@ def iozone(testing_node,output=[]):
         rc = testing_node.runSingleCommand("make linux",output)
         if rc != 0:
             return rc
+        
+    tmp = []
+    testing_node.checkMount(mount_point=testing_node.ofs_mount_point,output=tmp)
     
-    rc = testing_node.runSingleCommand("./iozone -a -y 4096 -q $((1024*16)) -n 4096 -g $((1024*16*4)) -f %s/test_iozone_file" % testing_node.ofs_mount_point,output)
+    if "pvfs2fuse" in tmp[1]:
+        rc = testing_node.runSingleCommandAsRoot("./iozone -a -y 4096 -q $((1024*16)) -n 4096 -g $((1024*16*4)) -f %s/test_iozone_file" % testing_node.ofs_mount_point,output)
+    else:
+        rc = testing_node.runSingleCommand("./iozone -a -y 4096 -q $((1024*16)) -n 4096 -g $((1024*16*4)) -f %s/test_iozone_file" % testing_node.ofs_mount_point,output)
         
     return rc
 
@@ -697,6 +703,19 @@ def linux_untar(testing_node,output=[]):
     
     return rc
 
+def xfstests(testing_node,output=[]):
+    rc = testing_node.runSingleCommand("git clone git://oss.sgi.com/xfs/cmds/xfstests")
+    
+    rc = testing_node.changeDirectory("/home/%s/xfstests" % testing_node.current_user)
+    rc = testing_node.runSingleCommand("wget http://devorange.clemson.edu/pvfs/xfstests-pvfs2.diff")
+    rc = testing_node.runSingleCommand("patch -p1 < xfstests-pvfs2.diff")
+    rc = testing_node.runSingleCommand("make")
+    rc = testing_node.runSingleCommand("wget http://devorange.clemson.edu/pvfs/xfstests-exclude.list")
+    rc = testing_node.runSingleCommandAsRoot("TEST_DIR=%s TEST_DEV=tcp://%s:%d/%s ./check -pvfs2 -E xfstests-exclude.list" % (testing_node.ofs_mount_point,testing_node.hostname,testing_node.ofs_tcp_port,testing_node.ofs_fs_name))
+    return rc
+                                         
+                                            
+
 tests = [ 
 #ltp,
 append,
@@ -716,5 +735,6 @@ iozone,
 bonnie,
 dbench,
 ltp,
+#xfstests,
 linux_untar
  ]
