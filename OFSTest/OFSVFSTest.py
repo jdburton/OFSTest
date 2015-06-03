@@ -735,6 +735,6 @@ iozone,
 bonnie,
 dbench,
 ltp,
-xfstests,
+#xfstests,
 linux_untar
  ]
