@@ -1592,22 +1592,22 @@ class OFSTestNode(object):
         # Also install IOR.
             #/opt/mpi/openmpi-1.6.5/ompi/mca/io/romio/romio/test
             
-        testing_node.changeDirectory(build_location)
+        self.changeDirectory(build_location)
         rc = 0
-        rc = testing_node.runSingleCommand("wget --quiet http://devorange.clemson.edu/pvfs/IOR-2.10.3.tgz")
+        rc = self.runSingleCommand("wget --quiet http://devorange.clemson.edu/pvfs/IOR-2.10.3.tgz")
         if rc != 0:
             print "Warning: Could not download IOR"
             return 0
         
-        rc = testing_node.runSingleCommand("tar -zxf IOR-2.10.3.tgz")
+        rc = self.runSingleCommand("tar -zxf IOR-2.10.3.tgz")
         if rc != 0:
             print "Warning: Could not untar IOR"
             return 0
         
-        testing_node.changeDirectory(build_location + "/IOR")
-        rc = testing_node.runSingleCommand("sed -i s,^'LDFLAGS.Linux =','LDFLAGS.Linux = -L%s/lib',g src/C/Makefile.config" % testing_node.openmpi_installation_location)
+        self.changeDirectory(build_location + "/IOR")
+        rc = self.runSingleCommand("sed -i s,^'LDFLAGS.Linux =','LDFLAGS.Linux = -L%s/lib',g src/C/Makefile.config" % self.openmpi_installation_location)
         
-        rc = testing_node.runSingleCommand("make mpiio")
+        rc = self.runSingleCommand("make mpiio")
         if rc != 0:
             print "Warning: Could not make IOR"
             return 0
