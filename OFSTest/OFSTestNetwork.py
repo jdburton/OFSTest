@@ -1570,6 +1570,7 @@ class OFSTestNetwork(object):
         #rc = self.mountNFSDirectory(nfs_share=nfs_share,mount_point=self.mpi_nfs_directory,options="bg,intr,noac,nfsvers=3")
         
         # build mpi in the build location, but install it to the nfs directory
+        # Also download and build IOR benchmark.
         rc = build_node.installOpenMPI(install_location=self.mpi_nfs_directory,build_location=mpi_local_directory)
     
 
