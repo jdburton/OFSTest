@@ -1617,8 +1617,8 @@ class OFSTestNetwork(object):
             #done = node.runSingleCommand("grep -v %s /home/%s/.bashrc" % (node.openmpi_installation_location,node.current_user))
             #done = 0
             #if done == 0:
-            node.setEnvironmentVariable("PATH","%s/openmpi/bin:%s/bin:\$PATH" % self.mpi_nfs_directory,node.ofs_installation_location)
-            node.setEnvironmentVariable("LD_LIBRARY_PATH","%s/openmpi/lib:%s/lib:%s/lib" % self.mpi_nfs_directory,node.ofs_installation_location,self.db4_dir)
+            node.setEnvironmentVariable("PATH","%s/openmpi/bin:%s/bin:\$PATH" % (self.mpi_nfs_directory,node.ofs_installation_location))
+            node.setEnvironmentVariable("LD_LIBRARY_PATH","%s/openmpi/lib:%s/lib:%s/lib" % (self.mpi_nfs_directory,node.ofs_installation_location,self.db4_dir))
             node.setEnvironmentVariable("PVFS2TAB_FILE","%s/etc/orangefstab" % node.ofs_installation_location)
             node.saveEnvironment();
         
