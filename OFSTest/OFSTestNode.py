@@ -223,6 +223,7 @@ class OFSTestNode(object):
         self.openmpi_source_location = ""
         self.openmpi_version = ""
         self.created_openmpihosts = None  
+        self.ior_installation_location = ""
         
         ## @var mpi_nfs_directory
         # Where is the common mpi nfs directory?
@@ -1611,6 +1612,8 @@ class OFSTestNode(object):
         if rc != 0:
             print "Warning: Could not make IOR"
             return 0
+        
+        self.ior_installation_location = build_location+"/IOR"
     
         
         
@@ -2373,16 +2376,31 @@ class OFSTestNode(object):
     def copyOpenMPIInstallationToNode(self,destination_node,*args,**kwargs):
         
         rc = destination_node.runSingleCommand("mkdir -p " + self.openmpi_source_location)
-        rc = self.copyToRemoteNode(self.openmpi_source_location+"/", destination_node, self.openmpi_source_location, True)
-        destination_node.openmpi_source_location = self.openmpi_source_location
+        if rc != 0:
+            rc = self.copyToRemoteNode(self.openmpi_source_location+"/", destination_node, self.openmpi_source_location, True)
+            destination_node.openmpi_source_location = self.openmpi_source_location
         
-        rc = destination_node.runSingleCommand("mkdir -p " + self.openmpi_installation_location)
-        rc = self.copyToRemoteNode(self.openmpi_installation_location+"/", destination_node, self.openmpi_installation_location, True)
-        destination_node.openmpi_installation_location = self.openmpi_installation_location
-        destination_node.created_openmpihosts = self.created_openmpihosts
-        rc = destination_node.runSingleCommand("mkdir -p \\`dirname %s\\`" + self.openmpi_installation_location)
-        rc = self.copyToRemoteNode(self.created_openmpihosts, destination_node, self.created_openmpihosts, False)
+        if rc != 0:
+            rc = destination_node.runSingleCommand("mkdir -p " + self.openmpi_installation_location)
+        if rc != 0:
+            rc = self.copyToRemoteNode(self.openmpi_installation_location+"/", destination_node, self.openmpi_installation_location, True)
+            destination_node.openmpi_installation_location = self.openmpi_installation_location
+
+        if rc != 0:
+            rc = destination_node.runSingleCommand("mkdir -p " + self.ior_installation_location)
+            
+        if rc != 0:
+            rc = self.copyToRemoteNode(self.ior_installation_location+"/", destination_node, self.ior_installation_location, True)
+            destination_node.ior_installation_location = self.ior_installation_location
+
+        if rc != 0:
+            rc = destination_node.runSingleCommand("mkdir -p \\`dirname %s\\`" + self.openmpi_installation_location)
+            
+        if rc != 0:
+            rc = self.copyToRemoteNode(self.created_openmpihosts, destination_node, self.created_openmpihosts, False)
+            destination_node.created_openmpihosts = self.created_openmpihosts
         
+                
         return rc
     
        
