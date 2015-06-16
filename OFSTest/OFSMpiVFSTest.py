@@ -108,7 +108,7 @@ def IOR(testing_node,output=[]):
     rc = testing_node.changeDirectory("/opt/mpi/IOR/src/C")
     np = testing_node.runSingleCommandBacktick("wc -l < " % testing_node.created_openmpihosts)
     
-    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 /opt/mpi/IOR/src/C/IOR -a MPIIO -i 4 -N %s -b 2g -t 2m -s 1 -o pvfs2:%s/mpiiofile" % (np,testing_node.openmpi_installation_location,testing_node.created_openmpihosts,np,testing_node.ofs_mount_point),output)
+    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 /opt/mpi/IOR/src/C/IOR -a MPIIO -i 4 -N %s -b 2g -t 2m -s 1 -o pvfs2:%s/mpiiofile" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,np,testing_node.ofs_mount_point),output)
     
     #TODO: Compare actual results with expected.
     
