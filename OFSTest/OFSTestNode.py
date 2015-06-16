@@ -2372,12 +2372,15 @@ class OFSTestNode(object):
 
     def copyOpenMPIInstallationToNode(self,destination_node,*args,**kwargs):
         
+        rc = destination_node.runSingleCommand("mkdir -p " + self.openmpi_source_location)
         rc = self.copyToRemoteNode(self.openmpi_source_location+"/", destination_node, self.openmpi_source_location, True)
         destination_node.openmpi_source_location = self.openmpi_source_location
-
+        
+        rc = destination_node.runSingleCommand("mkdir -p " + self.openmpi_installation_location)
         rc = self.copyToRemoteNode(self.openmpi_installation_location+"/", destination_node, self.openmpi_installation_location, True)
         destination_node.openmpi_installation_location = self.openmpi_installation_location
         destination_node.created_openmpihosts = self.created_openmpihosts
+        rc = destination_node.runSingleCommand("mkdir -p \\`dirname %s\\`" + self.openmpi_installation_location)
         rc = self.copyToRemoteNode(self.created_openmpihosts, destination_node, self.created_openmpihosts, False)
         
         return rc
