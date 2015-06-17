@@ -1608,7 +1608,7 @@ class OFSTestNode(object):
         self.changeDirectory(build_location + "/IOR")
         rc = self.runSingleCommand("sed -i s,^'LDFLAGS.Linux =','LDFLAGS.Linux = -L%s/lib',g src/C/Makefile.config" % self.openmpi_installation_location)
         
-        rc = self.runSingleCommand("make mpiio")
+        rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; make mpiio" % self.openmpi_installation_location)
         if rc != 0:
             print "Warning: Could not make IOR"
             return 0
