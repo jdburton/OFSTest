@@ -2382,26 +2382,26 @@ class OFSTestNode(object):
 
         
         rc = destination_node.runSingleCommand("mkdir -p " + destination_node.openmpi_source_location)
-        if rc != 0:
+        if rc == 0:
             rc = self.copyToRemoteNode(self.openmpi_source_location+"/", destination_node, self.openmpi_source_location, True)
             
         
-        if rc != 0:
+        if rc == 0:
             rc = destination_node.runSingleCommand("mkdir -p " + destination_node.openmpi_installation_location)
-        if rc != 0:
+        if rc == 0:
             rc = self.copyToRemoteNode(self.openmpi_installation_location+"/", destination_node, self.openmpi_installation_location, True)
             
 
-        if rc != 0:
+        if rc == 0:
             rc = destination_node.runSingleCommand("mkdir -p " + destination_node.ior_installation_location)
             
-        if rc != 0:
+        if rc == 0:
             rc = self.copyToRemoteNode(self.ior_installation_location+"/", destination_node, self.ior_installation_location, True)
         
-        if rc != 0:
+        if rc == 0:
             rc = destination_node.runSingleCommand("mkdir -p \\`dirname %s\\`" % destination_node.openmpi_installation_location)
             
-        if rc != 0:
+        if rc == 0:
             rc = self.copyToRemoteNode(self.created_openmpihosts, destination_node, self.created_openmpihosts, False)
         
                 
