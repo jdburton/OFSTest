@@ -162,7 +162,7 @@ def append2(testing_node,output=[]):
         test_string = "%s line%d\n" % (test_string,i)
     
     # use a batchfile to create the files. This avoids redirect confusion
-    testing_node.addBatchCommand("mkdir -p %s" % pvfs2_testdir)
+    testing_node.addBatchCommand("/bin/mkdir -p %s" % pvfs2_testdir)
     testing_node.addBatchCommand('echo "%s" > %s' % (test_string,local_reference))
     testing_node.addBatchCommand('echo "%s" > %s' % (test_string,append_test))
     testing_node.addBatchCommand('echo "%s" >> %s' % (test_string,local_reference))

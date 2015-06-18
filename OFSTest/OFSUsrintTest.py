@@ -129,7 +129,7 @@ def append2(testing_node,output=[]):
     # use bash -c to create the files. This avoids redirect confusion
     preload = "LD_PRELOAD=%s/lib/libofs.so:%s/lib/libpvfs2.so " % (testing_node.ofs_installation_location,testing_node.ofs_installation_location)
     
-    testing_node.runSingleCommand("%s mkdir -p %s" % (preload,pvfs2_testdir))
+    testing_node.runSingleCommand("%s /bin/mkdir -p %s" % (preload,pvfs2_testdir))
 
     #print 'bash -c \'echo "%s" > %s\''% (test_string,local_reference)
     testing_node.runSingleCommand('bash -c \'echo "%s" > %s\'' % (test_string,local_reference),output)
