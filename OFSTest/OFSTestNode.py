@@ -224,6 +224,7 @@ class OFSTestNode(object):
         self.openmpi_version = ""
         self.created_openmpihosts = None  
         self.ior_installation_location = ""
+        self.mdtest_installation_location = ""
         
         ## @var mpi_nfs_directory
         # Where is the common mpi nfs directory?
@@ -1590,6 +1591,29 @@ class OFSTestNode(object):
         self.romio_runtests_pvfs2 = self.openmpi_source_location+"/ompi/mca/io/romio/romio/test/runtests.pvfs2"
         self.runSingleCommand("chmod a+x "+self.romio_runtests_pvfs2)
         
+        
+        rc = self.runSingleCommand("mkdir -p %s/mdtest" % build_locaton)
+        rc = self.changeDirectory(build_location+"/mdtest") 
+        
+        # install mdtest
+        rc = self.runSingleCommand("wget --quiet http://devorange.clemson.edu/pvfs/mdtest-1.9.3.tgz")
+
+        if rc != 0:
+            print "Warning: Could not download mdtest"
+        
+        
+        rc = self.runSingleCommand("tar -zxf mdtest-1.9.3.tgz")
+        if rc != 0:
+            print "Warning: Could not untar mdtest"
+            
+              
+        rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; export MPI_CC='mpicc -Wall'; make mpiio" % self.openmpi_installation_location)
+        if rc != 0:
+            print "Warning: Could not make IOR"
+            
+        self.mdtest_installation_location = build_location+"/mdtest"
+        
+        
         # Also install IOR.
             #/opt/mpi/openmpi-1.6.5/ompi/mca/io/romio/romio/test
             
@@ -1598,22 +1622,22 @@ class OFSTestNode(object):
         rc = self.runSingleCommand("wget --quiet http://devorange.clemson.edu/pvfs/IOR-2.10.3.tgz")
         if rc != 0:
             print "Warning: Could not download IOR"
-            return 0
+            
         
         rc = self.runSingleCommand("tar -zxf IOR-2.10.3.tgz")
         if rc != 0:
             print "Warning: Could not untar IOR"
-            return 0
-        
+            
         self.changeDirectory(build_location + "/IOR")
         rc = self.runSingleCommand("sed -i s,^'LDFLAGS.Linux =','LDFLAGS.Linux = -L%s/lib',g src/C/Makefile.config" % self.openmpi_installation_location)
         
         rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; make mpiio" % self.openmpi_installation_location)
         if rc != 0:
             print "Warning: Could not make IOR"
-            return 0
-        
+            
         self.ior_installation_location = build_location+"/IOR"
+        
+        
     
         
         
@@ -2378,6 +2402,7 @@ class OFSTestNode(object):
         destination_node.openmpi_source_location = self.openmpi_source_location
         destination_node.openmpi_installation_location = self.openmpi_installation_location
         destination_node.ior_installation_location = self.ior_installation_location
+        destination_node.mdtest_installation_location = self.mdtest_installation_location
         destination_node.created_openmpihosts = self.created_openmpihosts
 
         
@@ -2390,6 +2415,12 @@ class OFSTestNode(object):
             rc = destination_node.runSingleCommand("mkdir -p " + destination_node.openmpi_installation_location)
         if rc == 0:
             rc = self.copyToRemoteNode(self.openmpi_installation_location+"/", destination_node, self.openmpi_installation_location, True)
+        
+        if rc == 0:
+            rc = destination_node.runSingleCommand("mkdir -p \\`dirname %s\\`" % destination_node.openmpi_installation_location)
+            
+        if rc == 0:
+            rc = self.copyToRemoteNode(self.created_openmpihosts, destination_node, self.created_openmpihosts, False)
             
 
         if rc == 0:
@@ -2399,10 +2430,13 @@ class OFSTestNode(object):
             rc = self.copyToRemoteNode(self.ior_installation_location+"/", destination_node, self.ior_installation_location, True)
         
         if rc == 0:
-            rc = destination_node.runSingleCommand("mkdir -p \\`dirname %s\\`" % destination_node.openmpi_installation_location)
+            rc = destination_node.runSingleCommand("mkdir -p " + destination_node.mdtest_installation_location)
             
         if rc == 0:
-            rc = self.copyToRemoteNode(self.created_openmpihosts, destination_node, self.created_openmpihosts, False)
+            rc = self.copyToRemoteNode(self.mdtest_installation_location+"/", destination_node, self.mdtest_installation_location, True)
+        
+        
+        
         
                 
         return rc
