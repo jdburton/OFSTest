@@ -664,6 +664,6 @@ usrint_cp,
 shelltest,
 ltp,
 bonnie,
-dbench,
-simultaneous_ls
+#dbench,
+#simultaneous_ls
  ]
