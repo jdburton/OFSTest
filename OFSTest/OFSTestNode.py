@@ -1592,7 +1592,7 @@ class OFSTestNode(object):
         self.runSingleCommand("chmod a+x "+self.romio_runtests_pvfs2)
         
         
-        rc = self.runSingleCommand("mkdir -p %s/mdtest" % build_locaton)
+        rc = self.runSingleCommand("mkdir -p %s/mdtest" % build_location)
         rc = self.changeDirectory(build_location+"/mdtest") 
         
         # install mdtest
