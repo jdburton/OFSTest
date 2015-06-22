@@ -1607,9 +1607,9 @@ class OFSTestNode(object):
             print "Warning: Could not untar mdtest"
             
               
-        rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; export MPI_CC='mpicc -Wall'; make mpiio" % self.openmpi_installation_location)
+        rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; export MPI_CC='mpicc -Wall'; make" % self.openmpi_installation_location)
         if rc != 0:
-            print "Warning: Could not make IOR"
+            print "Warning: Could not make mdtest"
             
         self.mdtest_installation_location = build_location+"/mdtest"
         
