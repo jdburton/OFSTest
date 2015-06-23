@@ -225,6 +225,9 @@ class OFSTestNode(object):
         self.created_openmpihosts = None  
         self.ior_installation_location = ""
         self.mdtest_installation_location = ""
+        self.simul_installation_location = ""
+        self.miranda_io_installation_location = ""
+        
         
         ## @var mpi_nfs_directory
         # Where is the common mpi nfs directory?
@@ -1613,6 +1616,51 @@ class OFSTestNode(object):
             
         self.mdtest_installation_location = build_location+"/mdtest"
         
+
+        rc = self.changeDirectory(build_location) 
+        
+        # install mdtest
+        rc = self.runSingleCommand("wget --quiet http://devorange.clemson.edu/pvfs/simul-1.1.4.tgz")
+
+        if rc != 0:
+            print "Warning: Could not download simul"
+        
+        
+        rc = self.runSingleCommand("tar -zxf simul-1.1.4.tgz")
+        if rc != 0:
+            print "Warning: Could not untar simul"
+        
+        rc = self.changeDirectory(build_location+"simul-1.1.4")     
+              
+        rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; export MPI_CC='mpicc -Wall'; make" % self.openmpi_installation_location)
+        if rc != 0:
+            print "Warning: Could not make simul"
+            
+        self.simul_installation_location = build_location+"/simul-1.1.4"
+
+
+        rc = self.changeDirectory(build_location) 
+        
+        # install mdtest
+        rc = self.runSingleCommand("wget --quiet http://devorange.clemson.edu/pvfs/miranda_io-1.0.1.tgz")
+
+        if rc != 0:
+            print "Warning: Could not download miranda_io"
+        
+        
+        rc = self.runSingleCommand("tar -zxf miranda_io-1.0.1.tgz")
+        if rc != 0:
+            print "Warning: Could not untar miranda_io"
+        
+        rc = self.changeDirectory(build_location+"miranda_io-1.0.1")     
+              
+        rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; mpif90 miranda_io.f90 -o miranda_io" % self.openmpi_installation_location)
+        if rc != 0:
+            print "Warning: Could not make miranda_io"
+            
+        self.miranda_io_installation_location = build_location+"/miranda_io-1.0.1"
+
+
         
         # Also install IOR.
             #/opt/mpi/openmpi-1.6.5/ompi/mca/io/romio/romio/test
@@ -2403,6 +2451,8 @@ class OFSTestNode(object):
         destination_node.openmpi_installation_location = self.openmpi_installation_location
         destination_node.ior_installation_location = self.ior_installation_location
         destination_node.mdtest_installation_location = self.mdtest_installation_location
+        destination_node.simul_installation_location = self.simul_installation_location
+        destination_node.miranda_io_installation_location = self.miranda_io_installation_location
         destination_node.created_openmpihosts = self.created_openmpihosts
 
         
@@ -2434,6 +2484,19 @@ class OFSTestNode(object):
             
         if rc == 0:
             rc = self.copyToRemoteNode(self.mdtest_installation_location+"/", destination_node, self.mdtest_installation_location, True)
+        
+        if rc == 0:
+            rc = destination_node.runSingleCommand("mkdir -p " + destination_node.simul_installation_location)
+            
+        if rc == 0:
+            rc = self.copyToRemoteNode(self.simul_installation_location+"/", destination_node, self.simul_installation_location, True)
+        
+        
+        if rc == 0:
+            rc = destination_node.runSingleCommand("mkdir -p " + destination_node.miranda_io_installation_location)
+            
+        if rc == 0:
+            rc = self.copyToRemoteNode(self.miranda_io_installation_location+"/", destination_node, self.miranda_io_installation_location, True)
         
         
         

@@ -140,8 +140,63 @@ def mdtest(testing_node,output=[]):
     return rc
 
 
+##
+#
+# @fn simul(testing_node,output=[]):
+#
+# @brief This is the simul testsuite from LLNL. 
+#
+# @param testing_node OFSTestNode on which tests are run.
+# @param output Array that holds output from commands. Passed by reference. 
+#   
+# @return 0 Test ran successfully
+# @return Not 0 Test failed
+#
+#
 
-tests = [ romio_testsuite, IOR, mdtest ]
+def simul(testing_node,output=[]):
+
+    rc = testing_node.changeDirectory(testing_node.mdtest_installation_location)
+    np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
+    
+    #skip tests 18,38,39. OrangeFS does not support hard links.
+    rc = testing_node.runSingleCommand("mkdir -p %s/simul" % testing_node.ofs_mount_point)
+    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/simul -e 18,38,39 -v -d %s/simul" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.simul_installation_location,testing_node.ofs_mount_point),output)
+    
+    #TODO: Compare actual results with expected.
+    
+    return rc
+
+
+##
+#
+# @fn miranda_io(testing_node,output=[]):
+#
+# @brief This is the miranda_io testsuite from LLNL. 
+#
+# @param testing_node OFSTestNode on which tests are run.
+# @param output Array that holds output from commands. Passed by reference. 
+#   
+# @return 0 Test ran successfully
+# @return Not 0 Test failed
+#
+#
+
+def miranda_io(testing_node,output=[]):
+
+    
+    np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
+    
+    rc = testing_node.changeDirectory(testing_node.ofs_mount_point)
+    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/miranda_io" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.miranda_io_installation_location),output)
+    
+    #TODO: Compare actual results with expected.
+    
+    return rc
+
+
+
+tests = [ romio_testsuite, mdtest, simul, miranda_io, IOR  ]
 
 
 
