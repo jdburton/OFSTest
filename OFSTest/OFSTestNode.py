@@ -1308,13 +1308,13 @@ class OFSTestNode(object):
                 ]
             
             #install updated autoconf so that OpenMPI will build correctly.
-            if "linux 6" in self.distro.lower():
+            if "6." in self.distro:
                 rc = self.runSingleCommand("wget --quiet ftp://ftp.pbone.net/mirror/ftp5.gwdg.de/pub/opensuse/repositories/home:/monkeyiq:/centos6updates/CentOS_CentOS-6/noarch/autoconf-2.69-12.2.noarch.rpm",output)
                   
                 if rc != 0:
                     logging.exception(output)
-                
-                install_commands.append("yum install -y ./autoconf-2.69-12.2.noarch.rpm" % self.current_user)
+                else:
+                    install_commands.append("yum install -y /home/%s/autoconf-2.69-12.2.noarch.rpm" % self.current_user)
                  
 
         
