@@ -1620,7 +1620,7 @@ class OFSTestNode(object):
         rc = self.changeDirectory(build_location) 
         
         # install mdtest
-        rc = self.runSingleCommand("wget --quiet http://devorange.clemson.edu/pvfs/simul-1.1.4.tgz")
+        rc = self.runSingleCommand("wget --quiet http://devorange.clemson.edu/pvfs/simul-1.1.4.tar.gz")
 
         if rc != 0:
             print "Warning: Could not download simul"
@@ -1642,7 +1642,7 @@ class OFSTestNode(object):
         rc = self.changeDirectory(build_location) 
         
         # install mdtest
-        rc = self.runSingleCommand("wget --quiet http://devorange.clemson.edu/pvfs/miranda_io-1.0.1.tgz")
+        rc = self.runSingleCommand("wget --quiet http://devorange.clemson.edu/pvfs/miranda_io-1.0.1.tar.gz")
 
         if rc != 0:
             print "Warning: Could not download miranda_io"
