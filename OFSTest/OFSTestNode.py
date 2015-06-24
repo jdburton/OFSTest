@@ -1304,15 +1304,15 @@ class OFSTestNode(object):
                 
                 ]
             
-            #install Sun Java 7
-#             rc = self.runSingleCommand("wget --quiet http://devorange.clemson.edu/pvfs/jdk-7u71-linux-x64.rpm",output)
-#              
-#             if rc != 0:
-#                 logging.exception(output)
-#                 return rc
-#             #install_commands.append("yes y | bash /home/%s/jdk-6u45-linux-x64-rpm.bin" % self.current_user)
-#             install_commands.append("yum install -y /home/%s/jdk-7u71-linux-x64.rpm" % self.current_user)
-#             
+            #install updated autoconf so that OpenMPI will build correctly.
+            if "linux 6" in self.distro.lower():
+                rc = self.runSingleCommand("wget --quiet ftp://ftp.pbone.net/mirror/ftp5.gwdg.de/pub/opensuse/repositories/home:/monkeyiq:/centos6updates/CentOS_CentOS-6/noarch/autoconf-2.69-12.2.noarch.rpm",output)
+                  
+                if rc != 0:
+                    logging.exception(output)
+                
+                install_commands.append("yum install -y ./autoconf-2.69-12.2.noarch.rpm" % self.current_user)
+                 
 
         
             for command in install_commands:
@@ -1330,7 +1330,7 @@ class OFSTestNode(object):
         
         self.installMaven()
         
-        if "centos linux 7" in self.distro.lower():
+        if "linux 7" in self.distro.lower():
             self.runSingleCommandAsRoot("nohup /sbin/reboot &")
             print "Rebooting node again"
             time.sleep(120)

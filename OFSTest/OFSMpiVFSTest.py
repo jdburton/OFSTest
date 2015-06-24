@@ -221,7 +221,7 @@ def miranda_io(testing_node,output=[]):
 
 
 
-tests = [ romio_testsuite, mdtest, simul, miranda_io, IOR  ]
+tests = [ romio_testsuite, mdtest, miranda_io, IOR, simul  ]
 
 
 
