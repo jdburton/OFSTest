@@ -1626,7 +1626,7 @@ class OFSTestNode(object):
             print "Warning: Could not download simul"
         
         
-        rc = self.runSingleCommand("tar -zxf simul-1.1.4.tgz")
+        rc = self.runSingleCommand("tar -zxf simul-1.1.4.tar.gz")
         if rc != 0:
             print "Warning: Could not untar simul"
         
@@ -1648,7 +1648,7 @@ class OFSTestNode(object):
             print "Warning: Could not download miranda_io"
         
         
-        rc = self.runSingleCommand("tar -zxf miranda_io-1.0.1.tgz")
+        rc = self.runSingleCommand("tar -zxf miranda_io-1.0.1.tar.gz")
         if rc != 0:
             print "Warning: Could not untar miranda_io"
         
