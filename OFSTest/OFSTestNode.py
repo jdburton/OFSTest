@@ -1620,23 +1620,23 @@ class OFSTestNode(object):
         rc = self.changeDirectory(build_location) 
         
         # install mdtest
-        rc = self.runSingleCommand("wget --quiet http://devorange.clemson.edu/pvfs/simul-1.1.4.tar.gz")
+        rc = self.runSingleCommand("wget --quiet http://devorange.clemson.edu/pvfs/simul-1.14.tar.gz")
 
         if rc != 0:
             print "Warning: Could not download simul"
         
         
-        rc = self.runSingleCommand("tar -zxf simul-1.1.4.tar.gz")
+        rc = self.runSingleCommand("tar -zxf simul-1.14.tar.gz")
         if rc != 0:
             print "Warning: Could not untar simul"
         
-        rc = self.changeDirectory(build_location+"simul-1.1.4")     
+        rc = self.changeDirectory(build_location+"/simul-1.14")     
               
         rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; export MPI_CC='mpicc -Wall'; make" % self.openmpi_installation_location)
         if rc != 0:
             print "Warning: Could not make simul"
             
-        self.simul_installation_location = build_location+"/simul-1.1.4"
+        self.simul_installation_location = build_location+"/simul-1.14"
 
 
         rc = self.changeDirectory(build_location) 
@@ -1652,7 +1652,7 @@ class OFSTestNode(object):
         if rc != 0:
             print "Warning: Could not untar miranda_io"
         
-        rc = self.changeDirectory(build_location+"miranda_io-1.0.1")     
+        rc = self.changeDirectory(build_location+"/miranda_io-1.0.1")     
               
         rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; mpif90 miranda_io.f90 -o miranda_io" % self.openmpi_installation_location)
         if rc != 0:
