@@ -227,6 +227,9 @@ class OFSTestNode(object):
         self.mdtest_installation_location = ""
         self.simul_installation_location = ""
         self.miranda_io_installation_location = ""
+        self.heidelberg_installation_location = ""
+        self.stadler_installation_location = ""
+        self.mpiiotest_installation_location = ""
         
         
         ## @var mpi_nfs_directory
@@ -1654,14 +1657,48 @@ class OFSTestNode(object):
         
         rc = self.changeDirectory(build_location+"/miranda_io-1.0.1")     
               
-        rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; mpif90 miranda_io.f90 -o miranda_io" % self.openmpi_installation_location)
+        rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; mpifort miranda_io.f90 -o miranda_io" % self.openmpi_installation_location)
         if rc != 0:
             print "Warning: Could not make miranda_io"
             
         self.miranda_io_installation_location = build_location+"/miranda_io-1.0.1"
 
-
+        rc = self.runSingleCommand("mkdir -p %s/heidelberg-IO" % build_location)
+        rc = self.changeDirectory(build_location+"/heidelberg-IO") 
+        rc = self.runSingleCommand("cp %s/test/automated/mpiio-tests.d/heidelberg-IO.c ./" % self.ofs_source_location)
+        if rc != 0:
+            print "Warning: Could not copy heidelberg-IO"
+        rc = rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; mpicc -o heidelberg-IO heidelberg-IO.c" % self.openmpi_installation_location)
+        if rc != 0:
+            print "Warning: Could not make heidelberg"
         
+        self.heidelberg_installation_location = build_location+"/heidelberg-IO"
+
+
+        rc = self.runSingleCommand("mkdir -p %s/mpi-io-test" % build_location)
+        rc = self.changeDirectory(build_location+"/mpi-io-test") 
+        rc = self.runSingleCommand("cp %s/client/mpi-io/mpi-io-test.c ./" % self.ofs_source_location)
+        if rc != 0:
+            print "Warning: Could not copy mpi-io-test"
+        rc = rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; mpicc -o mpi-io-test mpi-io-test.c" % self.openmpi_installation_location)
+        if rc != 0:
+            print "Warning: Could not make mpiiotest"
+        
+        self.mpiiotest_installation_location = build_location+"/mpi-io-test"
+        
+        
+        
+        rc = self.runSingleCommand("mkdir -p %s/stadler-file-view-test" % build_location)
+        rc = self.changeDirectory(build_location+"/stadler-file-view-test") 
+        rc = self.runSingleCommand("cp %s/test/automated/mpiio-tests.d/stadler-file-view-test.cpp ./" % self.ofs_source_location)
+        if rc != 0:
+            print "Warning: Could not copy stadler-file-view-test"
+        rc = rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; mpic++ -o stadler-file-view-test stadler-file-view-test.cpp" % self.openmpi_installation_location)
+        if rc != 0:
+            print "Warning: Could not make stadler"
+        
+        self.stadler_installation_location = build_location+"/stadler-file-view-test"
+                        
         # Also install IOR.
             #/opt/mpi/openmpi-1.6.5/ompi/mca/io/romio/romio/test
             
@@ -1684,6 +1721,7 @@ class OFSTestNode(object):
             print "Warning: Could not make IOR"
             
         self.ior_installation_location = build_location+"/IOR"
+        
         
         
     
