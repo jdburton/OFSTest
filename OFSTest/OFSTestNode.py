@@ -1677,7 +1677,7 @@ class OFSTestNode(object):
 
         rc = self.runSingleCommand("mkdir -p %s/mpi-io-test" % build_location)
         rc = self.changeDirectory(build_location+"/mpi-io-test") 
-        rc = self.runSingleCommand("cp %s/client/mpi-io/mpi-io-test.c ./" % self.ofs_source_location)
+        rc = self.runSingleCommand("cp %s/test/client/mpi-io/mpi-io-test.c ./" % self.ofs_source_location)
         if rc != 0:
             print "Warning: Could not copy mpi-io-test"
         rc = rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; mpicc -o mpi-io-test mpi-io-test.c" % self.openmpi_installation_location)
@@ -2535,6 +2535,30 @@ class OFSTestNode(object):
             
         if rc == 0:
             rc = self.copyToRemoteNode(self.miranda_io_installation_location+"/", destination_node, self.miranda_io_installation_location, True)
+        
+        if rc == 0:
+            rc = destination_node.runSingleCommand("mkdir -p " + destination_node.heidelberg_installation_location)
+            
+        if rc == 0:
+            rc = self.copyToRemoteNode(self.heidelberg_io_installation_location+"/", destination_node, self.heidelberg_installation_location, True)
+        
+        if rc == 0:
+            rc = destination_node.runSingleCommand("mkdir -p " + destination_node.mpiiotest_installation_location)
+            
+        if rc == 0:
+            rc = self.copyToRemoteNode(self.mpiiotest_installation_location+"/", destination_node, self.mpiiotest_installation_location, True)
+        
+        
+        if rc == 0:
+            rc = destination_node.runSingleCommand("mkdir -p " + destination_node.stadler_installation_location)
+            
+        if rc == 0:
+            rc = self.copyToRemoteNode(self.stadler_installation_location+"/", destination_node, self.stadler_installation_location, True)
+        
+        
+        
+        
+        
         
         
         
