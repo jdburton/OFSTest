@@ -2491,6 +2491,9 @@ class OFSTestNode(object):
         destination_node.mdtest_installation_location = self.mdtest_installation_location
         destination_node.simul_installation_location = self.simul_installation_location
         destination_node.miranda_io_installation_location = self.miranda_io_installation_location
+        destination_node.heidelberg_installation_location = self.heidelberg_installation_location
+        destination_node.mpiiotest_installation_location = self.mpiiotest_installation_location
+        destination_node.stadler_installation_location = self.stadler_installation_location
         destination_node.created_openmpihosts = self.created_openmpihosts
 
         
@@ -2540,7 +2543,7 @@ class OFSTestNode(object):
             rc = destination_node.runSingleCommand("mkdir -p " + destination_node.heidelberg_installation_location)
             
         if rc == 0:
-            rc = self.copyToRemoteNode(self.heidelberg_io_installation_location+"/", destination_node, self.heidelberg_installation_location, True)
+            rc = self.copyToRemoteNode(self.heidelberg_installation_location+"/", destination_node, self.heidelberg_installation_location, True)
         
         if rc == 0:
             rc = destination_node.runSingleCommand("mkdir -p " + destination_node.mpiiotest_installation_location)

@@ -133,31 +133,6 @@ def mdtest(testing_node,output=[]):
     rc = testing_node.changeDirectory(testing_node.mdtest_installation_location)
     np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
     
-    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/src/C/IOR -a MPIIO -i 4 -N %s -b 2g -t 2m -s 1 -o pvfs2:%s/mpiiofile" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ior_installation_location,np,testing_node.ofs_mount_point),output)
-    
-    #TODO: Compare actual results with expected.
-    
-    return rc
-
-##
-#
-# @fn mdtest(testing_node,output=[]):
-#
-# @brief This is the mdtest testsuite from LLNL. 
-#
-# @param testing_node OFSTestNode on which tests are run.
-# @param output Array that holds output from commands. Passed by reference. 
-#   
-# @return 0 Test ran successfully
-# @return Not 0 Test failed
-#
-#
-
-def mdtest(testing_node,output=[]):
-
-    rc = testing_node.changeDirectory(testing_node.mdtest_installation_location)
-    np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
-    
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/mdtest  -n 50 -w 4194304 -i 5 -v -d %s/mdtest" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.mdtest_installation_location,testing_node.ofs_mount_point),output)
     
     #TODO: Compare actual results with expected.
@@ -189,6 +164,8 @@ def simul(testing_node,output=[]):
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/simul -e 18,38,39 -v -d %s/simul" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.simul_installation_location,testing_node.ofs_mount_point),output)
     
     #TODO: Compare actual results with expected.
+    # Wait for all changes to be written.
+    time.sleep(60)
     
     return rc
 
@@ -221,7 +198,7 @@ def miranda_io(testing_node,output=[]):
 
 
 
-tests = [ romio_testsuite, mdtest, miranda_io, IOR, simul  ]
+tests = [ romio_testsuite, IOR, mdtest, miranda_io, simul  ]
 
 
 
