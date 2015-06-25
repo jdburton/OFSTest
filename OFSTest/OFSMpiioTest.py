@@ -21,7 +21,7 @@
 #
 #
 
-
+import time
 header = "OFS MPI-IO Test"
 prefix = "mpiio"
 mount_fs = False
@@ -85,7 +85,7 @@ def romio_testsuite(testing_node,output=[]):
     rc = testing_node.runSingleCommand("%s -machinefile=%s -fname=pvfs2:%s/romioruntests" % (testing_node.romio_runtests_pvfs2,testing_node.created_openmpihosts,testing_node.ofs_mount_point),output)
     
     #TODO: Compare actual results with expected.
-    
+    time.sleep(60)
     return rc
 
 ##
@@ -108,7 +108,7 @@ def IOR(testing_node,output=[]):
     np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
     
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/src/C/IOR -a MPIIO -i 4 -N %s -b 2g -t 2m -s 1 -o pvfs2:%s/mpiiofile" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ior_installation_location,np,testing_node.ofs_mount_point),output)
-    
+    time.sleep(60)
     
     return rc
 
@@ -135,7 +135,7 @@ def heidelberg_IO(testing_node,output=[]):
     
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/heidelberg-IO pvfs2:%s/heidelberg-io-test level0 level1 level2 level3" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.heidelberg_installation_location,testing_node.ofs_mount_point),output)
     
-    
+    time.sleep(60)
     #TODO: Compare actual results with expected.
     
     return rc
@@ -163,7 +163,7 @@ def mpi_io_test(testing_node,output=[]):
     
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/mpi-io-test pvfs2:%s/mpi-io-test -b $((1024*1024*32)) -y -c" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.mpiiotest_installation_location,testing_node.ofs_mount_point),output)
     
-    
+    time.sleep(60)
     #TODO: Compare actual results with expected.
     
     return rc
@@ -192,7 +192,7 @@ def stadler(testing_node,output=[]):
     
     
     #TODO: Compare actual results with expected.
-    
+    time.sleep(60)
     return rc
 
 

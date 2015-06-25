@@ -677,15 +677,11 @@ def simultaneous_ls(testing_node,output=[]):
 
 def dd(testing_node,output=[]):
 
-    
-    rc = testing_node.runSingleCommand("dd if=/dev/urandom of=/tmp/gigfile bs=2M count=512", output)
-    if rc != 0:
-        return rc
-    
-    rc = testing_node.runSingleCommand("dd if=/tmp/gigfile of=%s/gigfile bs=16M " % testing_node.ofs_mount_point, output)
+    rc = testing_node.runSingleCommand("dd if=/dev/zero of=%s/gigfile bs=16M count=64" % testing_node.ofs_mount_point, output)
     print output[1]
     print output[2]
     
+    testing_node.runSingleCommand("rm %s/gigfile" % testing_node.ofs_mount_point)
     return rc
 
 def linux_untar(testing_node,output=[]):
@@ -735,6 +731,6 @@ iozone,
 bonnie,
 dbench,
 ltp,
-#xfstests,
+xfstests,
 linux_untar
  ]

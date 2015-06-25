@@ -21,7 +21,7 @@
 #
 #
 
-
+import time
 header = "OFS MPI-VFS Test"
 prefix = "mpivfs"
 mount_fs = True
@@ -86,7 +86,7 @@ def romio_testsuite(testing_node,output=[]):
     rc = testing_node.runSingleCommand("%s -machinefile=%s -fname=%s/romioruntests" % (testing_node.romio_runtests_pvfs2,testing_node.created_openmpihosts,testing_node.ofs_mount_point),output)
     
     #TODO: Compare actual results with expected.
-    
+    time.sleep(60)
     return rc
 
 ##
@@ -111,7 +111,7 @@ def IOR(testing_node,output=[]):
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/src/C/IOR -a POSIX -i 4 -N %s -b 2g -t 2m -s 1 -o %s/mpivfsfile" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ior_installation_location,np,testing_node.ofs_mount_point),output)
     
     #TODO: Compare actual results with expected.
-    
+    time.sleep(60)
     return rc
 
 ##
@@ -136,7 +136,7 @@ def mdtest(testing_node,output=[]):
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/mdtest  -n 50 -w 4194304 -i 5 -v -d %s/mdtest" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.mdtest_installation_location,testing_node.ofs_mount_point),output)
     
     #TODO: Compare actual results with expected.
-    
+    time.sleep(60)
     return rc
 
 
@@ -193,7 +193,7 @@ def miranda_io(testing_node,output=[]):
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/miranda_io" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.miranda_io_installation_location),output)
     
     #TODO: Compare actual results with expected.
-    
+    time.sleep(60)
     return rc
 
 
