@@ -224,6 +224,13 @@ class OFSTestNode(object):
         self.openmpi_version = ""
         self.created_openmpihosts = None  
         self.ior_installation_location = ""
+        self.mdtest_installation_location = ""
+        self.simul_installation_location = ""
+        self.miranda_io_installation_location = ""
+        self.heidelberg_installation_location = ""
+        self.stadler_installation_location = ""
+        self.mpiiotest_installation_location = ""
+        
         
         ## @var mpi_nfs_directory
         # Where is the common mpi nfs directory?
@@ -1300,15 +1307,15 @@ class OFSTestNode(object):
                 
                 ]
             
-            #install Sun Java 7
-#             rc = self.runSingleCommand("wget --quiet http://devorange.clemson.edu/pvfs/jdk-7u71-linux-x64.rpm",output)
-#              
-#             if rc != 0:
-#                 logging.exception(output)
-#                 return rc
-#             #install_commands.append("yes y | bash /home/%s/jdk-6u45-linux-x64-rpm.bin" % self.current_user)
-#             install_commands.append("yum install -y /home/%s/jdk-7u71-linux-x64.rpm" % self.current_user)
-#             
+            #install updated autoconf so that OpenMPI will build correctly.
+            if "6." in self.distro:
+                rc = self.runSingleCommand("wget --quiet ftp://ftp.pbone.net/mirror/ftp5.gwdg.de/pub/opensuse/repositories/home:/monkeyiq:/centos6updates/CentOS_CentOS-6/noarch/autoconf-2.69-12.2.noarch.rpm",output)
+                  
+                if rc != 0:
+                    logging.exception(output)
+                else:
+                    install_commands.append("yum install -y /home/%s/autoconf-2.69-12.2.noarch.rpm" % self.current_user)
+                 
 
         
             for command in install_commands:
@@ -1326,7 +1333,7 @@ class OFSTestNode(object):
         
         self.installMaven()
         
-        if "centos linux 7" in self.distro.lower():
+        if "linux 7" in self.distro.lower():
             self.runSingleCommandAsRoot("nohup /sbin/reboot &")
             print "Rebooting node again"
             time.sleep(120)
@@ -1590,6 +1597,108 @@ class OFSTestNode(object):
         self.romio_runtests_pvfs2 = self.openmpi_source_location+"/ompi/mca/io/romio/romio/test/runtests.pvfs2"
         self.runSingleCommand("chmod a+x "+self.romio_runtests_pvfs2)
         
+        
+        rc = self.runSingleCommand("mkdir -p %s/mdtest" % build_location)
+        rc = self.changeDirectory(build_location+"/mdtest") 
+        
+        # install mdtest
+        rc = self.runSingleCommand("wget --quiet http://devorange.clemson.edu/pvfs/mdtest-1.9.3.tgz")
+
+        if rc != 0:
+            print "Warning: Could not download mdtest"
+        
+        
+        rc = self.runSingleCommand("tar -zxf mdtest-1.9.3.tgz")
+        if rc != 0:
+            print "Warning: Could not untar mdtest"
+            
+              
+        rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; export MPI_CC='mpicc -Wall'; make" % self.openmpi_installation_location)
+        if rc != 0:
+            print "Warning: Could not make mdtest"
+            
+        self.mdtest_installation_location = build_location+"/mdtest"
+        
+
+        rc = self.changeDirectory(build_location) 
+        
+        # install mdtest
+        rc = self.runSingleCommand("wget --quiet http://devorange.clemson.edu/pvfs/simul-1.14.tar.gz")
+
+        if rc != 0:
+            print "Warning: Could not download simul"
+        
+        
+        rc = self.runSingleCommand("tar -zxf simul-1.14.tar.gz")
+        if rc != 0:
+            print "Warning: Could not untar simul"
+        
+        rc = self.changeDirectory(build_location+"/simul-1.14")     
+              
+        rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; export MPI_CC='mpicc -Wall'; make" % self.openmpi_installation_location)
+        if rc != 0:
+            print "Warning: Could not make simul"
+            
+        self.simul_installation_location = build_location+"/simul-1.14"
+
+
+        rc = self.changeDirectory(build_location) 
+        
+        # install mdtest
+        rc = self.runSingleCommand("wget --quiet http://devorange.clemson.edu/pvfs/miranda_io-1.0.1.tar.gz")
+
+        if rc != 0:
+            print "Warning: Could not download miranda_io"
+        
+        
+        rc = self.runSingleCommand("tar -zxf miranda_io-1.0.1.tar.gz")
+        if rc != 0:
+            print "Warning: Could not untar miranda_io"
+        
+        rc = self.changeDirectory(build_location+"/miranda_io-1.0.1")     
+              
+        rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; mpifort miranda_io.f90 -o miranda_io" % self.openmpi_installation_location)
+        if rc != 0:
+            print "Warning: Could not make miranda_io"
+            
+        self.miranda_io_installation_location = build_location+"/miranda_io-1.0.1"
+
+        rc = self.runSingleCommand("mkdir -p %s/heidelberg-IO" % build_location)
+        rc = self.changeDirectory(build_location+"/heidelberg-IO") 
+        rc = self.runSingleCommand("cp %s/test/automated/mpiio-tests.d/heidelberg-IO.c ./" % self.ofs_source_location)
+        if rc != 0:
+            print "Warning: Could not copy heidelberg-IO"
+        rc = rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; mpicc -o heidelberg-IO heidelberg-IO.c" % self.openmpi_installation_location)
+        if rc != 0:
+            print "Warning: Could not make heidelberg"
+        
+        self.heidelberg_installation_location = build_location+"/heidelberg-IO"
+
+
+        rc = self.runSingleCommand("mkdir -p %s/mpi-io-test" % build_location)
+        rc = self.changeDirectory(build_location+"/mpi-io-test") 
+        rc = self.runSingleCommand("cp %s/test/client/mpi-io/mpi-io-test.c ./" % self.ofs_source_location)
+        if rc != 0:
+            print "Warning: Could not copy mpi-io-test"
+        rc = rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; mpicc -o mpi-io-test mpi-io-test.c" % self.openmpi_installation_location)
+        if rc != 0:
+            print "Warning: Could not make mpiiotest"
+        
+        self.mpiiotest_installation_location = build_location+"/mpi-io-test"
+        
+        
+        
+        rc = self.runSingleCommand("mkdir -p %s/stadler-file-view-test" % build_location)
+        rc = self.changeDirectory(build_location+"/stadler-file-view-test") 
+        rc = self.runSingleCommand("cp %s/test/automated/mpiio-tests.d/stadler-file-view-test.cpp ./" % self.ofs_source_location)
+        if rc != 0:
+            print "Warning: Could not copy stadler-file-view-test"
+        rc = rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; mpic++ -o stadler-file-view-test stadler-file-view-test.cpp" % self.openmpi_installation_location)
+        if rc != 0:
+            print "Warning: Could not make stadler"
+        
+        self.stadler_installation_location = build_location+"/stadler-file-view-test"
+                        
         # Also install IOR.
             #/opt/mpi/openmpi-1.6.5/ompi/mca/io/romio/romio/test
             
@@ -1598,22 +1707,23 @@ class OFSTestNode(object):
         rc = self.runSingleCommand("wget --quiet http://devorange.clemson.edu/pvfs/IOR-2.10.3.tgz")
         if rc != 0:
             print "Warning: Could not download IOR"
-            return 0
+            
         
         rc = self.runSingleCommand("tar -zxf IOR-2.10.3.tgz")
         if rc != 0:
             print "Warning: Could not untar IOR"
-            return 0
-        
+            
         self.changeDirectory(build_location + "/IOR")
         rc = self.runSingleCommand("sed -i s,^'LDFLAGS.Linux =','LDFLAGS.Linux = -L%s/lib',g src/C/Makefile.config" % self.openmpi_installation_location)
         
         rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; make mpiio" % self.openmpi_installation_location)
         if rc != 0:
             print "Warning: Could not make IOR"
-            return 0
-        
+            
         self.ior_installation_location = build_location+"/IOR"
+        
+        
+        
     
         
         
@@ -2378,6 +2488,12 @@ class OFSTestNode(object):
         destination_node.openmpi_source_location = self.openmpi_source_location
         destination_node.openmpi_installation_location = self.openmpi_installation_location
         destination_node.ior_installation_location = self.ior_installation_location
+        destination_node.mdtest_installation_location = self.mdtest_installation_location
+        destination_node.simul_installation_location = self.simul_installation_location
+        destination_node.miranda_io_installation_location = self.miranda_io_installation_location
+        destination_node.heidelberg_installation_location = self.heidelberg_installation_location
+        destination_node.mpiiotest_installation_location = self.mpiiotest_installation_location
+        destination_node.stadler_installation_location = self.stadler_installation_location
         destination_node.created_openmpihosts = self.created_openmpihosts
 
         
@@ -2390,6 +2506,12 @@ class OFSTestNode(object):
             rc = destination_node.runSingleCommand("mkdir -p " + destination_node.openmpi_installation_location)
         if rc == 0:
             rc = self.copyToRemoteNode(self.openmpi_installation_location+"/", destination_node, self.openmpi_installation_location, True)
+        
+        if rc == 0:
+            rc = destination_node.runSingleCommand("mkdir -p \\`dirname %s\\`" % destination_node.openmpi_installation_location)
+            
+        if rc == 0:
+            rc = self.copyToRemoteNode(self.created_openmpihosts, destination_node, self.created_openmpihosts, False)
             
 
         if rc == 0:
@@ -2399,10 +2521,50 @@ class OFSTestNode(object):
             rc = self.copyToRemoteNode(self.ior_installation_location+"/", destination_node, self.ior_installation_location, True)
         
         if rc == 0:
-            rc = destination_node.runSingleCommand("mkdir -p \\`dirname %s\\`" % destination_node.openmpi_installation_location)
+            rc = destination_node.runSingleCommand("mkdir -p " + destination_node.mdtest_installation_location)
             
         if rc == 0:
-            rc = self.copyToRemoteNode(self.created_openmpihosts, destination_node, self.created_openmpihosts, False)
+            rc = self.copyToRemoteNode(self.mdtest_installation_location+"/", destination_node, self.mdtest_installation_location, True)
+        
+        if rc == 0:
+            rc = destination_node.runSingleCommand("mkdir -p " + destination_node.simul_installation_location)
+            
+        if rc == 0:
+            rc = self.copyToRemoteNode(self.simul_installation_location+"/", destination_node, self.simul_installation_location, True)
+        
+        
+        if rc == 0:
+            rc = destination_node.runSingleCommand("mkdir -p " + destination_node.miranda_io_installation_location)
+            
+        if rc == 0:
+            rc = self.copyToRemoteNode(self.miranda_io_installation_location+"/", destination_node, self.miranda_io_installation_location, True)
+        
+        if rc == 0:
+            rc = destination_node.runSingleCommand("mkdir -p " + destination_node.heidelberg_installation_location)
+            
+        if rc == 0:
+            rc = self.copyToRemoteNode(self.heidelberg_installation_location+"/", destination_node, self.heidelberg_installation_location, True)
+        
+        if rc == 0:
+            rc = destination_node.runSingleCommand("mkdir -p " + destination_node.mpiiotest_installation_location)
+            
+        if rc == 0:
+            rc = self.copyToRemoteNode(self.mpiiotest_installation_location+"/", destination_node, self.mpiiotest_installation_location, True)
+        
+        
+        if rc == 0:
+            rc = destination_node.runSingleCommand("mkdir -p " + destination_node.stadler_installation_location)
+            
+        if rc == 0:
+            rc = self.copyToRemoteNode(self.stadler_installation_location+"/", destination_node, self.stadler_installation_location, True)
+        
+        
+        
+        
+        
+        
+        
+        
         
                 
         return rc

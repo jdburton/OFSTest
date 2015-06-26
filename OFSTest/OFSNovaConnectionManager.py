@@ -22,7 +22,7 @@ import uuid
 import OFSCloudConnectionManager
 import OFSTestRemoteNode
 import neutronclient.neutron.client as neutronclient
-import novaclient.v1_1 as novaclient
+import novaclient.v2 as novaclient
 
 
 ## 

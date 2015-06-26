@@ -21,7 +21,7 @@
 #
 #
 
-
+import time
 header = "OFS MPI-IO Test"
 prefix = "mpiio"
 mount_fs = False
@@ -31,8 +31,7 @@ debug = True
 
 def functions(testing_network):
     pass
-def heidleberg_IO(testing_network):
-    pass
+
 def ior_mpiio(testing_network):
     pass
 def ior_mpiio_3(testing_network):
@@ -86,7 +85,7 @@ def romio_testsuite(testing_node,output=[]):
     rc = testing_node.runSingleCommand("%s -machinefile=%s -fname=pvfs2:%s/romioruntests" % (testing_node.romio_runtests_pvfs2,testing_node.created_openmpihosts,testing_node.ofs_mount_point),output)
     
     #TODO: Compare actual results with expected.
-    
+    time.sleep(60)
     return rc
 
 ##
@@ -109,12 +108,97 @@ def IOR(testing_node,output=[]):
     np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
     
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/src/C/IOR -a MPIIO -i 4 -N %s -b 2g -t 2m -s 1 -o pvfs2:%s/mpiiofile" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ior_installation_location,np,testing_node.ofs_mount_point),output)
-    
+    time.sleep(60)
     
     return rc
 
 
-tests = [ romio_testsuite, IOR]
+##
+#
+# @fn heidelberg_IO(testing_node,output=[]):
+#
+# @brief This is the heidelberg_IO test.
+# @param testing_node OFSTestNode on which tests are run.
+# @param output Array that holds output from commands. Passed by reference. 
+#   
+# @return 0 Test ran successfully
+# @return Not 0 Test failed
+#
+#
+
+def heidelberg_IO(testing_node,output=[]):
+
+    #/opt/mpi/openmpi-1.6.5/ompi/mca/io/romio/romio/test
+    
+    rc = testing_node.changeDirectory("%s" % testing_node.heidelberg_installation_location)
+    np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
+    
+    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/heidelberg-IO pvfs2:%s/heidelberg-io-test level0 level1 level2 level3" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.heidelberg_installation_location,testing_node.ofs_mount_point),output)
+    
+    time.sleep(60)
+    #TODO: Compare actual results with expected.
+    
+    return rc
+
+
+##
+#
+# @fn mpi_io_test(testing_node,output=[]):
+#
+# @brief This is the mpi_io_test.
+# @param testing_node OFSTestNode on which tests are run.
+# @param output Array that holds output from commands. Passed by reference. 
+#   
+# @return 0 Test ran successfully
+# @return Not 0 Test failed
+#
+#
+
+def mpi_io_test(testing_node,output=[]):
+
+    #/opt/mpi/openmpi-1.6.5/ompi/mca/io/romio/romio/test
+    
+    rc = testing_node.changeDirectory("%s" % testing_node.mpiiotest_installation_location)
+    np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
+    
+    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/mpi-io-test pvfs2:%s/mpi-io-test -b $((1024*1024*32)) -y -c" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.mpiiotest_installation_location,testing_node.ofs_mount_point),output)
+    
+    time.sleep(60)
+    #TODO: Compare actual results with expected.
+    
+    return rc
+
+##
+#
+# @fn stadler(testing_node,output=[]):
+#
+# @brief This is the stadler test.
+# @param testing_node OFSTestNode on which tests are run.
+# @param output Array that holds output from commands. Passed by reference. 
+#   
+# @return 0 Test ran successfully
+# @return Not 0 Test failed
+#
+#
+
+def stadler(testing_node,output=[]):
+
+    #/opt/mpi/openmpi-1.6.5/ompi/mca/io/romio/romio/test
+    
+    rc = testing_node.changeDirectory("%s" % testing_node.stadler_installation_location)
+    np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
+    
+    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/stadler-file-view-test pvfs2:%s/stadler-file-view-test " % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.stadler_installation_location,testing_node.ofs_mount_point),output)
+    
+    
+    #TODO: Compare actual results with expected.
+    time.sleep(60)
+    return rc
+
+
+
+
+tests = [ romio_testsuite, IOR, heidelberg_IO, mpi_io_test ] 
 
 
 
