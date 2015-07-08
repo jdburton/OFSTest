@@ -219,12 +219,8 @@ class OFSTestMain(object):
 
     
     def checkNetwork(self):
-        
-        print "TODO: Implement OFSTestMain.checkNetwork()"
-        print "Right now, I will just print out the dictionary of the network and every node:"
-        
-        return self.ofs_network.printNetwork()
-        
+    
+        return self.ofs_network.checkNetwork()
         
     ##
     # @fn setupNewCloudCluster(self):      
