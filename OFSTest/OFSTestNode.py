@@ -1273,8 +1273,8 @@ class OFSTestNode(object):
                 
                 "bash -c 'echo 0 > /selinux/enforce'",
                 
-                "yum -y install gcc gcc-c++ gcc-gfortran openssl fuse flex bison openssl-devel kernel-devel-\\`uname -r\\` kernel-headers-\\`uname -r\\` perl make subversion automake autoconf zip fuse fuse-devel fuse-libs wget patch bzip2 libuuid libuuid-devel uuid uuid-devel openldap openldap-devel openldap-clients gdb nfs-utils nfs-utils-lib nfs-kernel nfs-utils-clients rpcbind libtool libtool-ltdl wget maven java-1.7.0-openjdk java-1.7.0-openjdk-devel xfsprogs-devel attr libattr-devel libacl-devel bc git libaio libaio-devel",
-                
+                "yum -y install gcc gcc-c++ gcc-gfortran openssl fuse flex bison openssl-devel kernel-devel-\\`uname -r\\` kernel-headers-\\`uname -r\\` perl make subversion automake autoconf zip fuse fuse-devel fuse-libs wget patch bzip2 libuuid libuuid-devel uuid uuid-devel openldap openldap-devel openldap-clients gdb libtool libtool-ltdl wget maven java-1.7.0-openjdk java-1.7.0-openjdk-devel xfsprogs-devel attr libattr-devel libacl-devel bc git libaio libaio-devel",
+                "yum -y install nfs-utils nfs-utils-lib nfs-kernel nfs-utils-clients rpcbind",
                 "yum -y install openldap openldap-clients openldap-servers openldap-servers-sql compat-openldap",
                 
 
