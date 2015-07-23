@@ -1717,4 +1717,21 @@ class OFSTestNetwork(object):
         
         return 0
         
+    def checkNetwork(self):
         
+        print "==========================================================================="
+        print "Testing network connectivity"
+        
+        failed = 0
+        for srcnode in self.network_nodes:
+            for destnode in self.network_nodes:
+                rc = srcnode.runSingleCommand("ping -c 1 %s" % destnode.hostname)
+                if rc != 0:
+                    print "Could not ping %s from %s." % (destnode.hostname,srcnode.hostname)
+                    failed = failed + 1
+        
+        print "==========================================================================="
+                    
+       
+        
+        return failed
