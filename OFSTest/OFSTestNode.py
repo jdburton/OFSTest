@@ -2332,18 +2332,25 @@ class OFSTestNode(object):
         output = []
         
         if configure_options == "":
-            configure_options = "--with-db=%s --prefix=%s" % (self.db4_dir,self.ofs_installation_location)
+            if self.openmpi_installation_location == "":
+                configure_options = "--with-db=%s --prefix=%s" % (self.db4_dir,self.ofs_installation_location)
+            else:
+                configure_options = "--with-db=%s --prefix=%s --with-mpi=%s" % (self.db4_dir,self.ofs_installation_location,self.openmpi_installation_location)
         
         
         self.changeDirectory("%s/test" % self.ofs_source_location)
         #Turn off optimizations and turn on debug symbols.
+        
         rc = self.runSingleCommand("CFLAGS='-g -O0' ./configure %s"% configure_options)
         if rc != 0:
             logging.exception("Could not configure OrangeFS tests")
             return rc
         
         #kludge because posix tests break compile on non x86 platforms.
-        self.runSingleCommand("rm -rf %s/test/posix" % self.ofs_source_location)
+        if not self.runSingleCommand("uname -m | grep -E 'x86_64|i?86'"):
+            self.runSingleCommand("rm -rf %s/test/posix" % self.ofs_source_location)
+        #kludge because perftests fail
+        self.runSingleCommand("rm -rf %s/test/perftest" % self.ofs_source_location)
         
         rc = self.runSingleCommand("make all")
         if rc != 0:

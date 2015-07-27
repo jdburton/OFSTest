@@ -397,23 +397,23 @@ class OFSTestMain(object):
             print "Could not install OrangeFS. Aborting."
             return rc
         
-        if self.config.install_tests == True:
-            print ""
-            print "==================================================================="
-            print "Installing OrangeFS Tests"
-            rc = self.ofs_network.installOFSTests()
-            if rc != 0:
-                print "Could not install OrangeFS tests. Aborting."
-                return rc
-
-      
-            print ""
-            print "==================================================================="
-            print "Installing Third-Party Benchmarks"
-            rc = self.ofs_network.installBenchmarks()
-            if rc != 0:
-                print "Could not install third-party benchmarks. Aborting."
-                return rc
+#         if self.config.install_tests == True:
+#             print ""
+#             print "==================================================================="
+#             print "Installing OrangeFS Tests"
+#             rc = self.ofs_network.installOFSTests()
+#             if rc != 0:
+#                 print "Could not install OrangeFS tests. Aborting."
+#                 return rc
+# 
+#       
+#             print ""
+#             print "==================================================================="
+#             print "Installing Third-Party Benchmarks"
+#             rc = self.ofs_network.installBenchmarks()
+#             if rc != 0:
+#                 print "Could not install third-party benchmarks. Aborting."
+#                 return rc
 
 
 
@@ -444,6 +444,57 @@ class OFSTestMain(object):
             print "Could not configure OrangeFS servers. Aborting."
             return rc
 
+
+
+        if self.config.install_MPI == True or self.config.run_mpi_tests == True:
+            print ""
+            print "==================================================================="
+            print "Install OpenMPI"
+            self.ofs_network.installOpenMPI()
+
+
+            '''
+            # TODO: Add mpich support.
+            print ""
+            print "==================================================================="
+            print "Install mpich2"
+            self.ofs_network.installMpich2()
+            print ""
+            print "==================================================================="
+            '''
+            
+            '''
+            # No longer using Torque for testing, but may need later.
+            print ""
+            print "==================================================================="
+            print "Installing Torque" 
+            self.ofs_network.installTorque()
+
+            print ""
+            print "==================================================================="
+            print "Check Torque"
+            # Check to see if Torque is installed correctly
+            self.ofs_network.checkTorque()
+            '''
+        
+
+        if self.config.install_tests == True:
+            print ""
+            print "==================================================================="
+            print "Installing OrangeFS Tests"
+            rc = self.ofs_network.installOFSTests()
+            if rc != 0:
+                print "Could not install OrangeFS tests. Aborting."
+                return rc
+
+            print ""
+            print "==================================================================="
+            print "Installing Third-Party Benchmarks"
+            rc = self.ofs_network.installBenchmarks()
+            if rc != 0:
+                print "Could not install third-party benchmarks. Aborting."
+                return rc
+
         print ""
         print "==================================================================="
         print "Copy installation to all nodes"
@@ -472,43 +523,14 @@ class OFSTestMain(object):
             print "==================================================================="
             print "Start OFS Client"
             rc = self.ofs_network.startOFSClientAllNodes(security=self.config.ofs_security_mode,disable_acache=self.config.ofs_disable_acache)
-   
 
 
-        if self.config.install_MPI == True or self.config.run_mpi_tests == True:
-            print ""
-            print "==================================================================="
-            print "Install OpenMPI"
-            self.ofs_network.installOpenMPI()
-
-            '''
-            # TODO: Add mpich support.
-            print ""
-            print "==================================================================="
-            print "Install mpich2"
-            self.ofs_network.installMpich2()
-            print ""
-            print "==================================================================="
-            '''
-            
-            '''
-            # No longer using Torque for testing, but may need later.
-            print ""
-            print "==================================================================="
-            print "Installing Torque" 
-            self.ofs_network.installTorque()
-
-            print ""
-            print "==================================================================="
-            print "Check Torque"
-            # Check to see if Torque is installed correctly
-            self.ofs_network.checkTorque()
-            '''
         if self.config.install_hadoop == True or self.config.run_hadoop_tests == True:
             print ""
             print "==================================================================="
             print "Setup Hadoop"
             self.ofs_network.setupHadoop()
+        
         
         return self.checkNetwork()
 
