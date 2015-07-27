@@ -2349,8 +2349,8 @@ class OFSTestNode(object):
         #kludge because posix tests break compile on non x86 platforms.
         if not self.runSingleCommand("uname -m | grep -E 'x86_64|i?86'"):
             self.runSingleCommand("rm -rf %s/test/posix" % self.ofs_source_location)
-        #kludge because perftests fail
-        self.runSingleCommand("rm -rf %s/test/perftest" % self.ofs_source_location)
+        #kludge because perfbase fails
+        self.runSingleCommand("rm -rf %s/test/perfbase" % self.ofs_source_location)
         
         rc = self.runSingleCommand("make all")
         if rc != 0:
