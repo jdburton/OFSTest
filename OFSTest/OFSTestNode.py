@@ -1676,16 +1676,17 @@ class OFSTestNode(object):
         self.heidelberg_installation_location = build_location+"/heidelberg-IO"
 
 
-        rc = self.runSingleCommand("mkdir -p %s/mpi-io-test" % build_location)
-        rc = self.changeDirectory(build_location+"/mpi-io-test") 
-        rc = self.runSingleCommand("cp %s/test/client/mpi-io/mpi-io-test.c ./" % self.ofs_source_location)
-        if rc != 0:
-            print "Warning: Could not copy mpi-io-test"
-        rc = rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; mpicc -o mpi-io-test mpi-io-test.c" % self.openmpi_installation_location)
-        if rc != 0:
-            print "Warning: Could not make mpiiotest"
-        
-        self.mpiiotest_installation_location = build_location+"/mpi-io-test"
+#    Will be automatically built with other OrangeFS tests.
+#         rc = self.runSingleCommand("mkdir -p %s/mpi-io-test" % build_location)
+#         rc = self.changeDirectory(build_location+"/mpi-io-test") 
+#         rc = self.runSingleCommand("cp %s/test/client/mpi-io/mpi-io-test.c ./" % self.ofs_source_location)
+#         if rc != 0:
+#             print "Warning: Could not copy mpi-io-test"
+#         rc = rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; mpicc -o mpi-io-test mpi-io-test.c" % self.openmpi_installation_location)
+#         if rc != 0:
+#             print "Warning: Could not make mpiiotest"
+#         
+#         self.mpiiotest_installation_location = build_location+"/mpi-io-test"
         
         
         

@@ -211,6 +211,8 @@ def bonnie(testing_node,output=[]):
         
     testing_node.changeDirectory(testing_node.ofs_mount_point)
     rc = testing_node.runSingleCommand(testing_node.ofs_extra_tests_location+"/bonnie++-1.03e/bonnie++  -n 4:1:1:1  -r 16 -s 1024 ",output)
+    print output[1]
+    print output[2]
     
 
     return rc
@@ -271,6 +273,8 @@ def dbench(testing_node,output=[]):
     
     
     rc = testing_node.runSingleCommand(testing_node.ofs_extra_tests_location+"/dbench-3.03/dbench -c client.txt 100 -t 300 ",output)
+    print output[1]
+    print output[2]
     
 
     return rc
@@ -303,6 +307,9 @@ def fdtree(testing_node,output=[]):
     # Run fdtree from the mount_point
     testing_node.changeDirectory(testing_node.ofs_mount_point)
     rc = testing_node.runSingleCommand(testing_node.ofs_extra_tests_location+"/fdtree-1.0.1/fdtree.bash -l 4 -d 5",output)
+    print output[1]
+    print output[2]
+
     
     return rc
 
@@ -334,6 +341,9 @@ def fstest(testing_node,output=[]):
             return rc
     
     rc = testing_node.runSingleCommand("%s/fstest -p %s/fstest" % (testing_node.ofs_source_location,testing_node.ofs_mount_point),output)
+    print output[1]
+    print output[2]
+
         
     return rc
 
@@ -364,6 +374,9 @@ def fsx(testing_node,output=[]):
             return rc
     
     rc = testing_node.runSingleCommand("%s/fsx -N 1000 -W -R %s/fsx_testfile" % (testing_node.ofs_source_location,testing_node.ofs_mount_point),output)
+    print output[1]
+    print output[2]
+
     return rc
 
 ##
@@ -416,6 +429,10 @@ def iozone(testing_node,output=[]):
         rc = testing_node.runSingleCommandAsRoot("./iozone -a -y 4096 -q $((1024*16)) -n 4096 -g $((1024*16*4)) -f %s/test_iozone_file" % testing_node.ofs_mount_point,output)
     else:
         rc = testing_node.runSingleCommand("./iozone -a -y 4096 -q $((1024*16)) -n 4096 -g $((1024*16*4)) -f %s/test_iozone_file" % testing_node.ofs_mount_point,output)
+
+
+    print output[1]
+    print output[2]
         
     return rc
 
@@ -708,6 +725,9 @@ def xfstests(testing_node,output=[]):
     rc = testing_node.runSingleCommand("make")
     rc = testing_node.runSingleCommand("wget http://devorange.clemson.edu/pvfs/xfstests-exclude.list")
     rc = testing_node.runSingleCommandAsRoot("TEST_DIR=%s TEST_DEV=tcp://%s:%d/%s ./check -pvfs2 -E xfstests-exclude.list" % (testing_node.ofs_mount_point,testing_node.hostname,testing_node.ofs_tcp_port,testing_node.ofs_fs_name))
+    print output[1]
+    print output[2]
+
     return rc
                                          
                                             
@@ -723,7 +743,7 @@ tail,
 vfs_cp,
 simultaneous_ls,
 
-dd,
+#dd,
 fdtree,
 fstest,
 fsx,

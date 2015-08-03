@@ -189,7 +189,8 @@ def bonnie(testing_node,output=[]):
 
     rc = testing_node.runSingleCommand("export %s; cd %s; %s/bonnie++-1.03e/bonnie++  -n 1:0:0:1  -r 8 -s 16 2>&1" % (preload,testing_node.ofs_mount_point,testing_node.ofs_extra_tests_location),output)
     
-
+    print output[1]
+    print output[2]
     return rc
 
 ##
@@ -245,7 +246,9 @@ def dbench(testing_node,output=[]):
     
     #testing_node.changeDirectory(testing_node.ofs_mount_point)
     rc = testing_node.runSingleCommand("%s bash -c 'cd %s; %s/dbench-3.03/dbench -c client.txt 10 -t 300'" %(preload,testing_node.ofs_mount_point,testing_node.ofs_extra_tests_location),output)
-       
+    
+    print output[1]
+    print output[2]   
     return rc
 
 ##
@@ -279,6 +282,8 @@ def fdtree(testing_node,output=[]):
     testing_node.changeDirectory("~")
     rc = testing_node.runSingleCommand("%s cd %s; %s bash -c '%s/fdtree-1.0.1/fdtree.bash -l 4 -d 5'" % (preload,testing_node.ofs_mount_point,preload,testing_node.ofs_extra_tests_location),output)
     
+    print output[1]
+    print output[2]
     return rc
 
 ##
@@ -309,7 +314,8 @@ def fstest(testing_node,output=[]):
             return rc
         
     rc = testing_node.runSingleCommand("%s %s/fstest -p %s/fstest" %(preload,testing_node.ofs_source_location,testing_node.ofs_mount_point),output)
-        
+    print output[1]
+    print output[2]    
     return rc
 
 ##
@@ -335,7 +341,8 @@ def fsx(testing_node,output=[]):
             return rc
     
     rc = testing_node.runSingleCommand("%s %s/fsx -N 1000 -W -R %s/fsx_testfile" %(preload,testing_node.ofs_source_location,testing_node.ofs_mount_point),output)
-    
+    print output[1]
+    print output[2]
     return rc
 
 ##
@@ -381,7 +388,9 @@ def iozone(testing_node,output=[]):
             return rc
             
     rc = testing_node.runSingleCommand("LD_PRELOAD=%s/lib/libofs.so:%s/lib/libpvfs2.so ./iozone -a -y 4096 -q $((1024*16)) -n 4096 -g $((1024*16*2)) -f %s/test_iozone_file" %(testing_node.ofs_installation_location,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
-        
+    
+    print output[1]
+    print output[2]    
     return rc
 
 ##

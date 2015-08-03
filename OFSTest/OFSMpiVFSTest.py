@@ -112,6 +112,9 @@ def IOR(testing_node,output=[]):
     
     #TODO: Compare actual results with expected.
     time.sleep(60)
+    print output[1]
+    print output[2]
+
     return rc
 
 ##
@@ -137,6 +140,9 @@ def mdtest(testing_node,output=[]):
     
     #TODO: Compare actual results with expected.
     time.sleep(60)
+    print output[1]
+    print output[2]
+
     return rc
 
 
@@ -166,6 +172,9 @@ def simul(testing_node,output=[]):
     #TODO: Compare actual results with expected.
     # Wait for all changes to be written.
     time.sleep(60)
+    print output[1]
+    print output[2]
+
     
     return rc
 
@@ -194,11 +203,102 @@ def miranda_io(testing_node,output=[]):
     
     #TODO: Compare actual results with expected.
     time.sleep(60)
+    print output[1]
+    print output[2]
+
+    return rc
+
+
+##
+#
+# @fn multi_md_test(testing_node,output=[]):
+#
+# @brief This is the OrangeFS multi_md_test 
+#
+# @param testing_node OFSTestNode on which tests are run.
+# @param output Array that holds output from commands. Passed by reference. 
+#   
+# @return 0 Test ran successfully
+# @return Not 0 Test failed
+#
+#
+
+def multi_md_test(testing_node,output=[]):
+
+    
+    np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
+    
+    rc = testing_node.changeDirectory(testing_node.ofs_mount_point)
+    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/test/multi-md-test -d %s -n 1000 -s 1024 -a 0 -p 10 -c 1,1,%s" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ofs_installation_location,testing_node.ofs_mount_point,np),output)
+    
+    #TODO: Compare actual results with expected.
+    time.sleep(60)
+    print output[1]
+    print output[2]
+
+    return rc
+
+
+##
+#
+# @fn multi_md_test(testing_node,output=[]):
+#
+# @brief This is the OrangeFS multi_md_test 
+#
+# @param testing_node OFSTestNode on which tests are run.
+# @param output Array that holds output from commands. Passed by reference. 
+#   
+# @return 0 Test ran successfully
+# @return Not 0 Test failed
+#
+#
+
+def multi_md_test_size_sweep(testing_node,output=[]):
+
+    
+    np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
+    
+    rc = testing_node.changeDirectory(testing_node.ofs_mount_point)
+    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/test/multi-md-test-size-sweep -d %s -n 1000 -a 0 -s 1,1,%s" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ofs_installation_location,testing_node.ofs_mount_point,np),output)
+    
+    #TODO: Compare actual results with expected.
+    time.sleep(60)
+    print output[1]
+    print output[2]
+
+    return rc
+
+##
+#
+# @fn multi_md_test(testing_node,output=[]):
+#
+# @brief This is the OrangeFS multi_md_test 
+#
+# @param testing_node OFSTestNode on which tests are run.
+# @param output Array that holds output from commands. Passed by reference. 
+#   
+# @return 0 Test ran successfully
+# @return Not 0 Test failed
+#
+#
+
+def mpi_active_delete(testing_node,output=[]):
+
+    
+    np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
+    
+    rc = testing_node.changeDirectory(testing_node.ofs_mount_point)
+    testing_node.runSingleCommand("mkdir -p %s/active-delete" % testing_node.ofs_mount_point)
+    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/test/mpi-active-delete -i 20 -d %s/active-delete" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
+    
+    #TODO: Compare actual results with expected.
+    time.sleep(60)
+
     return rc
 
 
 
-tests = [ romio_testsuite, IOR, mdtest, miranda_io, simul  ]
+tests = [ romio_testsuite, mpi_active_delete, IOR, mdtest, miranda_io, simul,multi_md_test, multi-md-test-size-sweep ]
 
 
 
