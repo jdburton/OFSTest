@@ -232,7 +232,7 @@ def mpi_md_test(testing_node,output=[]):
     rc = testing_node.changeDirectory("%s" % testing_node.ofs_mount_point)
     np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
     
-    rc = testing_node.runSingleCommand("for test in O R D; do %s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/test/mpi-md-test -${test} -n 1000 -d pvfs2:%s/mpi-md-test; done" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
+    rc = testing_node.runSingleCommand("for test in O R D; do %s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/test/mpi-md-test -\\${test} -n 100 -d pvfs2:%s/mpi-md-test; done" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
 
     print output[1]
     print output[2]
@@ -262,7 +262,7 @@ def mpi_unbalanced_test(testing_node,output=[]):
     rc = testing_node.changeDirectory("%s" % testing_node.ofs_mount_point)
     np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
     
-    rc = testing_node.runSingleCommand("time %s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/test/mpi-unbalanced-test -d pvfs2:%s > /dev/null; done" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
+    rc = testing_node.runSingleCommand("time %s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/test/mpi-unbalanced-test -d pvfs2:%s > /dev/null" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
     
     time.sleep(60)
     #TODO: Compare actual results with expected.
