@@ -811,9 +811,9 @@ class OFSTestMain(object):
             # usrint tests are located in OFSMpiioTests
             import OFSMpiioTest
 
-            # Unmount OrangeFS and stop the OrangeFS client.
+            # Remount OrangeFS
             self.ofs_network.unmountOFSFilesystemAllNodes()
-            self.ofs_network.stopOFSClientAllNodes()
+            self.ofs_network.mountOFSFilesystemAllNodes(mount_fuse=False)
 
             self.writeOutputHeader(filename,"MPI-IO Tests")
 

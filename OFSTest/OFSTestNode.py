@@ -2554,13 +2554,7 @@ class OFSTestNode(object):
         if rc == 0:
             rc = self.copyToRemoteNode(self.heidelberg_installation_location+"/", destination_node, self.heidelberg_installation_location, True)
         
-        if rc == 0:
-            rc = destination_node.runSingleCommand("mkdir -p " + destination_node.mpiiotest_installation_location)
-            
-        if rc == 0:
-            rc = self.copyToRemoteNode(self.mpiiotest_installation_location+"/", destination_node, self.mpiiotest_installation_location, True)
-        
-        
+
         if rc == 0:
             rc = destination_node.runSingleCommand("mkdir -p " + destination_node.stadler_installation_location)
             
