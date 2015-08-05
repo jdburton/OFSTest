@@ -229,7 +229,7 @@ def multi_md_test(testing_node,output=[]):
     np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
     
     rc = testing_node.changeDirectory(testing_node.ofs_mount_point)
-    testing_node.runSingleCommand("mkdir -p %s/multi_md_test",testing_node.ofs_mount_point)
+    testing_node.runSingleCommand("mkdir -p %s/multi_md_test" % testing_node.ofs_mount_point)
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/test/multi-md-test -d %s/multi_md_test -n 1000 -s 1024 -a 0 -p 10 -c 1,1,%s" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ofs_installation_location,testing_node.ofs_mount_point,np),output)
     
     #TODO: Compare actual results with expected.
@@ -260,7 +260,7 @@ def multi_md_test_size_sweep(testing_node,output=[]):
     np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
     
     rc = testing_node.changeDirectory(testing_node.ofs_mount_point)
-    testing_node.runSingleCommand("mkdir -p %s/multi_md_size_sweep",testing_node.ofs_mount_point)
+    testing_node.runSingleCommand("mkdir -p %s/multi_md_size_sweep" % testing_node.ofs_mount_point)
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/test/multi-md-test-size-sweep -d %s/multi_md_size_sweep -n 1000 -a 0 -s 1,1,%s" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ofs_installation_location,testing_node.ofs_mount_point,np),output)
     
     #TODO: Compare actual results with expected.
