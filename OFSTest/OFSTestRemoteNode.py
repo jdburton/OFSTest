@@ -195,6 +195,12 @@ class OFSTestRemoteNode(OFSTestNode.OFSTestNode):
         
 
     def saveEnvironment(self):
+        done = node.runSingleCommand("grep 'source /etc/profile.d/orangefs.sh' /home/%s/.bashrc" % node.current_user)
+        
+        if done != 0:
+            self.runSingleCommand("echo 'source /etc/profile.d/orangefs.sh' >> /home/%s/.bashrc" % node.current_user)
+            self.runSingleCommand("chmod u+x /home/%s/.bashrc" % node.current_user )
+        
         self.runSingleCommandAsRoot("rm -f /etc/profile.d/orangefs.sh /etc/profile.d/orangefs.csh")
         for variable in self.current_environment:
             self.runSingleCommandAsRoot("bash -c 'echo export %s=%s >> /etc/profile.d/orangefs.sh'" % (variable,self.current_environment[variable]))
@@ -249,7 +255,7 @@ class OFSTestRemoteNode(OFSTestNode.OFSTestNode):
             ssh_key_parm = '-i %s' % self.sshLocalKeyFile
 
         
-        command_chunks = ["/usr/bin/ssh %s %s@%s -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o BatchMode=yes \" source /etc/profile; " %  (ssh_key_parm,remote_user,self.ext_ip_address)]
+        command_chunks = ["/usr/bin/ssh %s %s@%s -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o BatchMode=yes \"" %  (ssh_key_parm,remote_user,self.ext_ip_address)]
 
         # change to proper directory
         command_chunks.append("cd %s; " % self.current_directory)
