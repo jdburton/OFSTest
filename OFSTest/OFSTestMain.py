@@ -670,26 +670,7 @@ class OFSTestMain(object):
                         return rc
 
 
-                # run the mpi tests, if required.
-                if self.config.run_mpi_tests == True:
 
-                    self.writeOutputHeader(filename,"MPI VFS Tests (%s)" % mount_type)
-                    
-                    import OFSMpiVFSTest
-                    
-                    for callable in OFSMpiVFSTest.tests:
-                        try:
-                            rc = head_node.runOFSTest("mpivfs-%s" % mount_type,callable)
-                            self.writeOutput(filename,callable,rc)
-                        except:
-                            print "Unexpected error:", sys.exc_info()[0]
-                            traceback.print_exc()
-                            if self.config.stop_on_failure == True:
-                                return -888
-                            pass
-
-                        if rc != 0 and self.config.stop_on_failure == True:
-                            return rc
 
             # if not, print failure.
             else:
@@ -808,6 +789,23 @@ class OFSTestMain(object):
                 
         # run the mpi tests, if required.
         if self.config.run_mpi_tests == True:
+            self.writeOutputHeader(filename,"MPI VFS Tests (%s)" % mount_type)
+            
+            import OFSMpiVFSTest
+            
+            for callable in OFSMpiVFSTest.tests:
+                try:
+                    rc = head_node.runOFSTest("mpivfs-%s" % mount_type,callable)
+                    self.writeOutput(filename,callable,rc)
+                except:
+                    print "Unexpected error:", sys.exc_info()[0]
+                    traceback.print_exc()
+                    if self.config.stop_on_failure == True:
+                        return -888
+                    pass
+
+                if rc != 0 and self.config.stop_on_failure == True:
+                    return rc
             # usrint tests are located in OFSMpiioTests
             import OFSMpiioTest
 
