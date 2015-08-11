@@ -195,11 +195,11 @@ class OFSTestRemoteNode(OFSTestNode.OFSTestNode):
         
 
     def saveEnvironment(self):
-        done = node.runSingleCommand("grep 'source /etc/profile.d/orangefs.sh' /home/%s/.bashrc" % node.current_user)
+        done = self.runSingleCommand("grep 'source /etc/profile.d/orangefs.sh' /home/%s/.bashrc" % self.current_user)
         
         if done != 0:
-            self.runSingleCommand("echo 'source /etc/profile.d/orangefs.sh' >> /home/%s/.bashrc" % node.current_user)
-            self.runSingleCommand("chmod u+x /home/%s/.bashrc" % node.current_user )
+            self.runSingleCommand("echo 'source /etc/profile.d/orangefs.sh' >> /home/%s/.bashrc" % self.current_user)
+            self.runSingleCommand("chmod u+x /home/%s/.bashrc" % self.current_user )
         
         self.runSingleCommandAsRoot("rm -f /etc/profile.d/orangefs.sh /etc/profile.d/orangefs.csh")
         for variable in self.current_environment:
