@@ -368,8 +368,8 @@ class OFSTestNetwork(object):
                 #print "Pinging %s from local node" % n2.hostname
                 rc = node.runSingleCommand("ping -c 1 %s" % n2.hostname)
                 # if not, add to the /etc/hosts file
-                #if rc != 0:
-                logging.info("Could not ping %s at %s from %s. Manually adding to /etc/hosts" % (n2.hostname,n2.ip_address,node.hostname))
+                if rc != 0:
+                    logging.info("Could not ping %s at %s from %s. Manually adding to /etc/hosts" % (n2.hostname,n2.ip_address,node.hostname))
                 node.runSingleCommandAsRoot('bash -c \'echo -e "%s     %s     %s" >> /etc/hosts\'' % (n2.ip_address,n2.hostname,n2.hostname))
                 # also create mpihosts files
                 node.runSingleCommand('echo "%s   slots=2" >> %s' % (n2.hostname,node.created_openmpihosts))
