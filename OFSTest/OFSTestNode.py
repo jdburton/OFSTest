@@ -1522,87 +1522,97 @@ class OFSTestNode(object):
         
         #self.openmpi_version = "openmpi-1.6.5"
         self.openmpi_version = "openmpi-1.8.8"
-        url_base = "http://devorange.clemson.edu/pvfs/"
-        url = url_base+self.openmpi_version+"-omnibond.tar.gz"
-
-        
-#         url_base = "http://www.open-mpi.org/software/ompi/v1.8/downloads/"
-#         url = url_base+self.openmpi_version+".tar.gz"
-
-        patch_name = "openmpi.patch"
-        patch_url = url_base+patch_name
-        
-        self.runSingleCommand("mkdir -p "+build_location)
-        tempdir = self.current_directory
-        self.changeDirectory(build_location)
-        
-        rc = self.runSingleCommand("wget --quiet %s" % url)
-        if rc != 0:
-            logging.exception( "Could not download %s from %s." % (self.openmpi_version,url))
-            self.changeDirectory(tempdir)
-            return rc
-
-        output = []
-        #self.runSingleCommand("tar xzf %s.tar.gz"% self.openmpi_version)
-        self.runSingleCommand("tar xzf %s-omnibond.tar.gz"% self.openmpi_version)
-        
-        self.openmpi_source_location = "%s/%s" % (build_location,self.openmpi_version)
-        self.changeDirectory(self.openmpi_source_location)
-        rc = self.runSingleCommand("wget --quiet %s" % patch_url)
-
-
-        # using pre-patched version. No longer needed.
-        '''
-        print "Patching %s" %self.openmpi_version
-        rc = self.runSingleCommand("patch -p0 < %s" % patch_name,output)
-        
-        
-        if rc != 0:
-            print "Patching %s failed. rc=%d" % (self.openmpi_version,rc)
-            print output
-            self.changeDirectory(tempdir)
-            return rc
-        
-        self.runSingleCommand("sed -i s/ADIOI_PVFS2_IReadContig/NULL/ ompi/mca/io/romio/romio/adio/ad_pvfs2/ad_pvfs2.c")
-        self.runSingleCommand("sed -i s/ADIOI_PVFS2_IWriteContig/NULL/ ompi/mca/io/romio/romio/adio/ad_pvfs2/ad_pvfs2.c")
-        '''
-
-        
-        configure = './configure --prefix %s/openmpi --enable-shared --with-pic --with-io-romio-flags=\'--with-pvfs2=%s --with-file-system=pvfs2+nfs\' 2>&1 | tee openmpiconfig.log' % (install_location,self.ofs_installation_location)
-        
-
-        logging.info( "Configuring %s" % self.openmpi_version)
-        rc = self.runSingleCommand(configure,output)
-        
-        if rc != 0:
-            logging.exception( "Configure of %s failed. rc=%d" % (self.openmpi_version,rc))
-            self.changeDirectory(tempdir)
-            return rc
-        
-        logging.info( "Making %s" % self.openmpi_version)
-        rc = self.runSingleCommand("make 2>&1 | tee openmpimake.log")
-        if rc != 0:
-            logging.exception( "Make of %s failed.")
-            self.changeDirectory(tempdir)
-            return rc
-
-        logging.info( "Making ROMIO tests %s" % self.openmpi_version)
-        self.changeDirectory("%s/ompi/mca/io/romio/romio/test" % self.openmpi_source_location)
-        rc = self.runSingleCommand("make 2>&1 | tee romio_test_make.log")
-        if rc != 0:
-            logging.exception( "Make of %s failed.")
-            self.changeDirectory(tempdir)
-            #Non fatal error. Continue. 
-        
-        self.changeDirectory(self.openmpi_source_location)
-        logging.info("Installing %s" % self.openmpi_version)
-        rc = self.runSingleCommand("make install 2>&1 | tee openmpiinstall.log")
-        if rc != 0:
-            logging.exception("Install of %s failed." % self.openmpi_version)
-            self.changeDirectory(tempdir)
-            return rc
-        
         self.openmpi_installation_location = install_location+"/openmpi"
+        self.openmpi_source_location = "%s/%s" % (build_location,self.openmpi_version)
+        
+        rc = self.runSingleCommand("[ -f %s/bin/mpiexec ]" % self.openmpi_installation_location)
+        if rc == 0: 
+            print "Found %s/bin/mpiexec" % self.openmpi_installation_location
+        else:
+        
+            url_base = "http://devorange.clemson.edu/pvfs/"
+            url = url_base+self.openmpi_version+"-omnibond.tar.gz"
+    
+            
+    #         url_base = "http://www.open-mpi.org/software/ompi/v1.8/downloads/"
+    #         url = url_base+self.openmpi_version+".tar.gz"
+    
+            patch_name = "openmpi.patch"
+            patch_url = url_base+patch_name
+            
+            self.runSingleCommand("mkdir -p "+build_location)
+            tempdir = self.current_directory
+            self.changeDirectory(build_location)
+            
+            rc = self.runSingleCommand("wget --quiet %s" % url)
+            if rc != 0:
+                logging.exception( "Could not download %s from %s." % (self.openmpi_version,url))
+                self.changeDirectory(tempdir)
+                return rc
+    
+            output = []
+            #self.runSingleCommand("tar xzf %s.tar.gz"% self.openmpi_version)
+            self.runSingleCommand("tar xzf %s-omnibond.tar.gz"% self.openmpi_version)
+            
+            
+            self.changeDirectory(self.openmpi_source_location)
+            rc = self.runSingleCommand("wget --quiet %s" % patch_url)
+    
+    
+            # using pre-patched version. No longer needed.
+            '''
+            print "Patching %s" %self.openmpi_version
+            rc = self.runSingleCommand("patch -p0 < %s" % patch_name,output)
+            
+            
+            if rc != 0:
+                print "Patching %s failed. rc=%d" % (self.openmpi_version,rc)
+                print output
+                self.changeDirectory(tempdir)
+                return rc
+            
+            self.runSingleCommand("sed -i s/ADIOI_PVFS2_IReadContig/NULL/ ompi/mca/io/romio/romio/adio/ad_pvfs2/ad_pvfs2.c")
+            self.runSingleCommand("sed -i s/ADIOI_PVFS2_IWriteContig/NULL/ ompi/mca/io/romio/romio/adio/ad_pvfs2/ad_pvfs2.c")
+            '''
+    
+    
+            
+            
+            configure = './configure --prefix %s/openmpi --enable-shared --with-pic --with-io-romio-flags=\'--with-pvfs2=%s --with-file-system=pvfs2+nfs\' 2>&1 | tee openmpiconfig.log' % (install_location,self.ofs_installation_location)
+            
+    
+            logging.info( "Configuring %s" % self.openmpi_version)
+            rc = self.runSingleCommand(configure,output)
+            
+            if rc != 0:
+                logging.exception( "Configure of %s failed. rc=%d" % (self.openmpi_version,rc))
+                self.changeDirectory(tempdir)
+                return rc
+            
+            logging.info( "Making %s" % self.openmpi_version)
+            rc = self.runSingleCommand("make 2>&1 | tee openmpimake.log")
+            if rc != 0:
+                logging.exception( "Make of %s failed.")
+                self.changeDirectory(tempdir)
+                return rc
+    
+            logging.info( "Making ROMIO tests %s" % self.openmpi_version)
+            self.changeDirectory("%s/ompi/mca/io/romio/romio/test" % self.openmpi_source_location)
+            rc = self.runSingleCommand("make 2>&1 | tee romio_test_make.log")
+            if rc != 0:
+                logging.exception( "Make of %s failed.")
+                self.changeDirectory(tempdir)
+                #Non fatal error. Continue. 
+            
+            self.changeDirectory(self.openmpi_source_location)
+            logging.info("Installing %s" % self.openmpi_version)
+            rc = self.runSingleCommand("make install 2>&1 | tee openmpiinstall.log")
+            if rc != 0:
+                logging.exception("Install of %s failed." % self.openmpi_version)
+                self.changeDirectory(tempdir)
+                return rc
+        
+        
         
         self.romio_runtests_pvfs2 = self.openmpi_source_location+"/ompi/mca/io/romio/romio/test/runtests.pvfs2"
         self.runSingleCommand("chmod a+x "+self.romio_runtests_pvfs2)
