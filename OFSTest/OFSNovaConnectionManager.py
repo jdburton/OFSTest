@@ -505,7 +505,7 @@ class OFSNovaConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManag
                 
                 # fedora 18 = cloud-user, fedora 19 = fedora
                 name = 'fedora'
-            elif "centos7" in image_name:
+            elif "centos" in image_name:
                 name = 'centos'
             elif "rhel7" in image_name:
                 name = 'cloud-user'
