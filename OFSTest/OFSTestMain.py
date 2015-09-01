@@ -790,6 +790,9 @@ class OFSTestMain(object):
         # run the mpi tests, if required.
         if self.config.run_mpi_tests == True:
             self.writeOutputHeader(filename,"MPI VFS Tests (%s)" % mount_type)
+            # Remount OrangeFS
+            self.ofs_network.unmountOFSFilesystemAllNodes()
+            self.ofs_network.mountOFSFilesystemAllNodes(mount_fuse=False)
             
             import OFSMpiVFSTest
             
@@ -809,9 +812,7 @@ class OFSTestMain(object):
             # usrint tests are located in OFSMpiioTests
             import OFSMpiioTest
 
-            # Remount OrangeFS
-            self.ofs_network.unmountOFSFilesystemAllNodes()
-            self.ofs_network.mountOFSFilesystemAllNodes(mount_fuse=False)
+
 
             self.writeOutputHeader(filename,"MPI-IO Tests")
 
