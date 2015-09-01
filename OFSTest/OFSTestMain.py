@@ -576,7 +576,7 @@ class OFSTestMain(object):
 
         # Results filename is specified in the config.
         filename = self.config.log_file
-        
+        mount_type = "kmod"
         
         rc = 0
 
