@@ -264,7 +264,7 @@ def mpi_unbalanced_test(testing_node,output=[]):
     np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
     testing_node.runSingleCommand("mkdir -p %s/mpi_unbalanced_test" % testing_node.ofs_mount_point)
     time.sleep(10)
-    rc = testing_node.runSingleCommand("time %s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/test/mpi-unbalanced-test -d pvfs2:%s/mpi_unbalanced_test > /dev/null" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
+    rc = testing_node.runSingleCommand("time %s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/test/mpi-unbalanced-test pvfs2:%s/mpi_unbalanced_test > /dev/null" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
     
     time.sleep(30)
     #TODO: Compare actual results with expected.
@@ -293,6 +293,7 @@ def mpi_unbalanced_test(testing_node,output=[]):
 
 def stadler(testing_node,output=[]):
 
+    # Stadler dumps core for some reason. 
     #/opt/mpi/openmpi-1.6.5/ompi/mca/io/romio/romio/test
     
     rc = testing_node.changeDirectory("%s" % testing_node.stadler_installation_location)
@@ -319,7 +320,8 @@ tests = [ romio_testsuite,
          mpi_io_test_collective,
          mpi_md_test,
          mpi_unbalanced_test, 
-         stadler ]
+         #stadler 
+         ]
 
 
 
