@@ -1595,15 +1595,7 @@ class OFSTestNode(object):
                 logging.exception( "Make of %s failed.")
                 self.changeDirectory(tempdir)
                 return rc
-    
-            logging.info( "Making ROMIO tests %s" % self.openmpi_version)
-            self.changeDirectory("%s/ompi/mca/io/romio/romio/test" % self.openmpi_source_location)
-            rc = self.runSingleCommand("make 2>&1 | tee romio_test_make.log")
-            if rc != 0:
-                logging.exception( "Make of %s failed.")
-                self.changeDirectory(tempdir)
-                #Non fatal error. Continue. 
-            
+                
             self.changeDirectory(self.openmpi_source_location)
             logging.info("Installing %s" % self.openmpi_version)
             rc = self.runSingleCommand("make install 2>&1 | tee openmpiinstall.log")
@@ -1612,8 +1604,13 @@ class OFSTestNode(object):
                 self.changeDirectory(tempdir)
                 return rc
         
-        
-        
+        logging.info( "Making ROMIO tests %s" % self.openmpi_version)
+        self.changeDirectory("%s/ompi/mca/io/romio/romio/test" % self.openmpi_source_location)
+        rc = self.runSingleCommand("make 2>&1 | tee romio_test_make.log")
+        if rc != 0:
+            logging.exception( "Make of %s failed.")
+            self.changeDirectory(tempdir)
+    
         self.romio_runtests_pvfs2 = self.openmpi_source_location+"/ompi/mca/io/romio/romio/test/runtests.pvfs2"
         self.runSingleCommand("chmod a+x "+self.romio_runtests_pvfs2)
         
