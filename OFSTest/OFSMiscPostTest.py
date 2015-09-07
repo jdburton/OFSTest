@@ -73,4 +73,25 @@ def checkSHM(testing_node,output=[]):
         # And if it succeeds, return failure.
         return 1
 
-tests = [ checkSHM ]
+## 
+# @fn dmesg(testing_node,output=[]):
+#
+# Runs dmesg after testing.
+#
+# @param testing_node OFSTestNode on which tests are run.
+# @param output Array that holds output from commands. Passed by reference. 
+#   
+# @return 0 Test ran successfully
+# @return Not 0 Test failed
+#
+#
+
+
+def dmesg(testing_node,output=[]):
+ 
+    rc = testing_node.runSingleCommand("dmesg",output)
+    return rc
+
+
+
+tests = [ checkSHM, dmesg ]
