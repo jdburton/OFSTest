@@ -729,8 +729,14 @@ def xfstests(testing_node,output=[]):
     print output[2]
 
     return rc
-                                         
-                                            
+          
+def list_add_corruption(testing_node,output=[]):
+    
+    rc = testing_node.runSingleCommand("dmesg | grep list_add_corruption")                               
+    if rc == 0:
+        return 1
+    else:
+        return 0                                        
 
 tests = [ 
 #ltp,
@@ -752,5 +758,6 @@ bonnie,
 dbench,
 ltp,
 xfstests,
-linux_untar
+linux_untar,
+list_add_corruption
  ]
