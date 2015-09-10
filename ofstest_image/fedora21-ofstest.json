@@ -1,0 +1,53 @@
+{
+  "variables": {
+    "os_auth_url": "{{env `OS_AUTH_URL`}}",
+    "os_tenant_id": "{{env `OS_TENANT_ID`}}",
+    "os_tenant_name": "{{env `OS_TENANT_NAME`}}",
+    "os_username": "{{env `OS_USERNAME`}}",
+    "os_password": "{{env `OS_PASSWORD`}}",
+    "os_source_image_id": "{{env `OS_SOURCE_IMAGE_ID_STOCK_FEDORA21`}}",
+    "os_source_image_name": "{{env `OS_SOURCE_IMAGE_NAME`}}",
+    "os_region": "{{env `OS_REGION`}}",
+    "os_network_id": "{{env `OS_NETWORK_ID`}}",
+    "os_floating_ip_pool": "{{env `OS_FLOATING_IP_POOL`}}",
+    "user": "{{env `USER`}}"
+},
+  "builders": [{
+    "type": "openstack",
+    "flavor": "m1.medium",
+    "image_name": "cloud-fedora21-ofstest-unified",
+    "source_image": "{{user `os_source_image_id`}}",
+    "username": "{{user `os_username`}}",
+    "password": "{{user `os_password`}}",
+    "use_floating_ip": true,
+    "floating_ip_pool": "public",
+    "security_groups": [ "default" ],
+    "region": "RegionOne",
+    "tenant_id": "{{user `os_tenant_id`}}",
+    "ssh_username": "fedora",
+    "networks" : [ "{{user `os_network_id`}}" ],
+    "ssh_pty" : true,
+    "ssh_timeout": "3m"
+   }],
+  "provisioners": [
+
+  {
+    "type": "shell",
+    "pause_before": "30s",
+    "inline": [
+      "set -x",
+      "sudo sed -i -e 's/^Defaults.*requiretty/# Defaults requiretty/g' /etc/sudoers",
+	  "sudo yum -y install wget salt-master salt-minion salt-syndic",
+	  "sudo chmod -R a+w /opt",
+	  "mkdir -p /opt/mpi"
+
+    ]
+  },
+  {
+    "type": "salt-masterless",
+    "bootstrap_args": "",
+    "local_state_tree": "./salt",
+    "minion_config": "./salt/masterMinionConfig",
+    "skip_bootstrap": true
+  }]
+}
