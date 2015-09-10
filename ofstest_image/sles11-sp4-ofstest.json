@@ -1,0 +1,55 @@
+{
+  "variables": {
+    "os_auth_url": "{{env `OS_AUTH_URL`}}",
+    "os_tenant_id": "{{env `OS_TENANT_ID`}}",
+    "os_tenant_name": "{{env `OS_TENANT_NAME`}}",
+    "os_username": "{{env `OS_USERNAME`}}",
+    "os_password": "{{env `OS_PASSWORD`}}",
+    "os_source_image_id": "{{env `OS_SOURCE_IMAGE_ID_STOCK_SLES11SP4`}}",
+    "os_region": "{{env `OS_REGION`}}",
+    "os_network_id": "{{env `OS_NETWORK_ID`}}",
+    "os_floating_ip_pool": "{{env `OS_FLOATING_IP_POOL`}}",
+    "user": "{{env `USER`}}"
+},
+  "builders": [{
+    "type": "openstack",
+    "flavor": "m1.medium",
+    "image_name": "cloud-sles11-sp4-ofstest-unified",
+    "source_image": "{{user `os_source_image_id`}}",
+    "username": "{{user `os_username`}}",
+    "password": "{{user `os_password`}}",
+    "use_floating_ip": true,
+    "floating_ip_pool": "public",
+    "security_groups": [ "default" ],
+    "region": "RegionOne",
+    "tenant_id": "{{user `os_tenant_id`}}",
+    "ssh_username": "root",
+    "networks" : [ "{{user `os_network_id`}}" ],
+    "ssh_pty" : true,
+    "ssh_timeout": "3m"
+   }],
+  "provisioners": [ 
+  
+  {
+    "type": "shell",
+    "inline": [
+      "set -x",
+      "sudo zypper --non-interactive --gpg-auto-import-keys  addrepo http://download.opensuse.org/repositories/devel:languages:python/SLE_11_SP3/devel:languages:python.repo",
+      "sudo zypper --non-interactive --gpg-auto-import-keys refresh",
+      "sudo zypper --non-interactive install salt salt-minion salt-master salt-syndic salt-ssh",
+      "sudo chmod -R a+w /opt",
+	  "mkdir -p /opt/mpi"
+	  
+
+    ]
+  },
+
+  {
+    "type": "salt-masterless",
+    "bootstrap_args": "",
+    "local_state_tree": "./salt",
+    "minion_config": "./salt/masterMinionConfig",
+    "skip_bootstrap": true
+  }
+  ]
+}
