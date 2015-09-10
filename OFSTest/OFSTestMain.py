@@ -273,10 +273,10 @@ class OFSTestMain(object):
         self.ofs_network.updateCloudNodes()
         
         # Install software required to compile and run OFS and all tests.
-        print ""
-        print "==================================================================="
-        print "Installing Required Software"
-        self.ofs_network.installRequiredSoftware()
+#         print ""
+#         print "==================================================================="
+#         print "Installing Required Software"
+#         self.ofs_network.installRequiredSoftware()
         
 #         # Install software required to compile and run OFS and all tests.
 #         print ""

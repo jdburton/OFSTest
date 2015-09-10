@@ -1138,20 +1138,20 @@ class OFSTestNode(object):
             
             install_commands = [
                 " bash -c 'echo 0 > /selinux/enforce'",
-                "DEBIAN_FRONTEND=noninteractive apt-get update", 
-                #documentation needs to be updated. linux-headers needs to be added for ubuntu!
-                "DEBIAN_FRONTEND=noninteractive apt-get install -y -q openssl gcc g++ gfortran flex bison libssl-dev linux-source perl make linux-headers-\\`uname -r\\` zip subversion automake autoconf  pkg-config rpm patch libuu0 libuu-dev libuuid1 uuid uuid-dev uuid-runtime gdb maven git libtool libacl1-dev xfslibs-dev xfsprogs libdm0-dev", # openjdk-7-jdk openjdk-7-jre openjdk-7-jre-lib", 
-                "DEBIAN_FRONTEND=noninteractive apt-get install -y -q fuse libfuse2 libfuse-dev",
-                "DEBIAN_FRONTEND=noninteractive apt-get install -y -q autofs nfs-kernel-server rpcbind nfs-common nfs-kernel-server", 
-                # needed for Ubuntu 10.04
-                "DEBIAN_FRONTEND=noninteractive apt-get install -y -q linux-image",
-                # will fail on Ubuntu 10.04. Run separately to not break anything
-                "DEBIAN_FRONTEND=noninteractive apt-get install -y -q fuse",
-                "DEBIAN_FRONTEND=noninteractive apt-get install -y -q maven",
-                # install openldap
-                "DEBIAN_FRONTEND=noninteractive apt-get install -y -q slapd ldap-utils libldap-2.4-2 libldap2-dev libldap-java libldap-ocaml-dev",
-                #"DEBIAN_FRONTEND=noninteractive apt-get install -yu avahi-autoipd  avahi-dnsconfd  avahi-utils avahi-daemon    avahi-discover  avahi-ui-utils", 
-                "apt-get clean",
+#                 "DEBIAN_FRONTEND=noninteractive apt-get update", 
+#                 #documentation needs to be updated. linux-headers needs to be added for ubuntu!
+#                 "DEBIAN_FRONTEND=noninteractive apt-get install -y -q openssl gcc g++ gfortran flex bison libssl-dev linux-source perl make linux-headers-\\`uname -r\\` zip subversion automake autoconf  pkg-config rpm patch libuu0 libuu-dev libuuid1 uuid uuid-dev uuid-runtime gdb maven git libtool libacl1-dev xfslibs-dev xfsprogs libdm0-dev", # openjdk-7-jdk openjdk-7-jre openjdk-7-jre-lib", 
+#                 "DEBIAN_FRONTEND=noninteractive apt-get install -y -q fuse libfuse2 libfuse-dev",
+#                 "DEBIAN_FRONTEND=noninteractive apt-get install -y -q autofs nfs-kernel-server rpcbind nfs-common nfs-kernel-server", 
+#                 # needed for Ubuntu 10.04
+#                 "DEBIAN_FRONTEND=noninteractive apt-get install -y -q linux-image",
+#                 # will fail on Ubuntu 10.04. Run separately to not break anything
+#                 "DEBIAN_FRONTEND=noninteractive apt-get install -y -q fuse",
+#                 "DEBIAN_FRONTEND=noninteractive apt-get install -y -q maven",
+#                 # install openldap
+#                 "DEBIAN_FRONTEND=noninteractive apt-get install -y -q slapd ldap-utils libldap-2.4-2 libldap2-dev libldap-java libldap-ocaml-dev",
+#                 #"DEBIAN_FRONTEND=noninteractive apt-get install -yu avahi-autoipd  avahi-dnsconfd  avahi-utils avahi-daemon    avahi-discover  avahi-ui-utils", 
+#                 "apt-get clean",
     
                 #prepare source
                 #SOURCENAME=`find /usr/src -name "linux-source*" -type d -prune -printf %f`
@@ -1182,23 +1182,23 @@ class OFSTestNode(object):
 
                 
 
-                # install Sun Java6 for hadoop via webupd8. Fallback to OpenJDK.
-                "add-apt-repository ppa:webupd8team/java < /dev/null",
-                "apt-get update ",
-                "bash -c 'echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections'",
-                "bash -c 'echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections'",
-                "DEBIAN_FRONTEND=noninteractive apt-get install -y -q oracle-java7-installer || apt-get install -y openjdk-7-jdk"
+#                 # install Sun Java6 for hadoop via webupd8. Fallback to OpenJDK.
+#                 "add-apt-repository ppa:webupd8team/java < /dev/null",
+#                 "apt-get update ",
+#                 "bash -c 'echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections'",
+#                 "bash -c 'echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections'",
+#                 "DEBIAN_FRONTEND=noninteractive apt-get install -y -q oracle-java7-installer || apt-get install -y openjdk-7-jdk"
                 
             ]
             
             
             
-            for command in install_commands:
-                rc = self.runSingleCommandAsRoot(command, output)
-            
-            # ubuntu installs java to a different location than RHEL and SuSE 
-            self.jdk6_location = self.runSingleCommandBacktick(command="echo \\$(dirname \\$(dirname \\$(readlink -f \\$(which javac))))")
-            
+#             for command in install_commands:
+#                 rc = self.runSingleCommandAsRoot(command, output)
+#             
+#             # ubuntu installs java to a different location than RHEL and SuSE 
+#             self.jdk6_location = self.runSingleCommandBacktick(command="echo \\$(dirname \\$(dirname \\$(readlink -f \\$(which javac))))")
+#             
         elif "suse" in self.distro.lower():
             
                         # download Java 6
@@ -1209,18 +1209,18 @@ class OFSTestNode(object):
             install_commands = [
                 "bash -c 'echo 0 > /selinux/enforce'",
                 "/sbin/SuSEfirewall2 off",
-                # prereqs should be installed as part of the image. Thanx SuseStudio!
-                #zypper --non-interactive install gcc gcc-c++ flex bison libopenssl-devel kernel-source kernel-syms kernel-devel perl make subversion automake autoconf zip fuse fuse-devel fuse-libs "nano openssl
-#                 "zypper --non-interactive install patch libuuid1 uuid-devel gdb maven java-1.7.0-openjdk java-1.7.0-openjdk-devel",
-                "zypper --non-interactive install openldap2 openldap2-client openldap-servers libldap2_4-2 openldap2-devel",
+#                 # prereqs should be installed as part of the image. Thanx SuseStudio!
+#                 #zypper --non-interactive install gcc gcc-c++ flex bison libopenssl-devel kernel-source kernel-syms kernel-devel perl make subversion automake autoconf zip fuse fuse-devel fuse-libs "nano openssl
+# #                 "zypper --non-interactive install patch libuuid1 uuid-devel gdb maven java-1.7.0-openjdk java-1.7.0-openjdk-devel",
+#                 "zypper --non-interactive install openldap2 openldap2-client openldap-servers libldap2_4-2 openldap2-devel",
                 "chown -R ldap:ldap /var/lib/ldap",
                 
     
-                
-                "cp /boot/config-\\`uname -r\\` /usr/src/linux-\\`uname -r | sed s/-[\d].*//\\`/.config",
-                "cd /usr/src/linux-\\`uname -r | sed s/-[\d].*//\\`; make oldconfig && make modules_prepare && make prepare",
-                "ln -s /lib/modules/\\`uname -r\\`/build/Module.symvers /lib/modules/\\`uname -r\\`/source",
-                "if [ ! -f /lib/modules/\\`uname -r\\`/build/include/linux/version.h ] then; ln -s include/generated/uapi/version.h /lib/modules/\\`uname -r\\`/build/include/linux/version.h; fi",
+#                 
+#                 "cp /boot/config-\\`uname -r\\` /usr/src/linux-\\`uname -r | sed s/-[\d].*//\\`/.config",
+#                 "cd /usr/src/linux-\\`uname -r | sed s/-[\d].*//\\`; make oldconfig && make modules_prepare && make prepare",
+#                 "ln -s /lib/modules/\\`uname -r\\`/build/Module.symvers /lib/modules/\\`uname -r\\`/source",
+#                 "if [ ! -f /lib/modules/\\`uname -r\\`/build/include/linux/version.h ] then; ln -s include/generated/uapi/version.h /lib/modules/\\`uname -r\\`/build/include/linux/version.h; fi",
             
                 "/sbin/modprobe -v fuse",
                 "chmod a+x /bin/fusermount",
@@ -1247,21 +1247,21 @@ class OFSTestNode(object):
 
             ]
             
-            if "opensuse" in self.distro.lower():
-                rc = self.runSingleCommand("wget --quiet http://devorange.clemson.edu/pvfs/jdk-7u71-linux-x64.rpm",output)
-             
-                if rc != 0:
-                    logging.exception(output)
-                    return rc
-                #install_commands.append("yes y | bash /home/%s/jdk-6u45-linux-x64-rpm.bin" % self.current_user)
-                install_commands.append("rpm -i /home/%s/jdk-7u71-linux-x64.rpm" % self.current_user)
-                self.jdk6_location = "/usr/java/default"
-            else:
-                #SLES uses IBM Java
-                install_commands.append("ln -s /usr/lib64/jvm/java-1.7.?-ibm-1.7.? /usr/lib64/jvm/java")
-                self.jdk6_location = "/usr/lib64/jvm/java"
-                
-            
+#             if "opensuse" in self.distro.lower():
+#                 rc = self.runSingleCommand("wget --quiet http://devorange.clemson.edu/pvfs/jdk-7u71-linux-x64.rpm",output)
+#              
+#                 if rc != 0:
+#                     logging.exception(output)
+#                     return rc
+#                 #install_commands.append("yes y | bash /home/%s/jdk-6u45-linux-x64-rpm.bin" % self.current_user)
+#                 install_commands.append("rpm -i /home/%s/jdk-7u71-linux-x64.rpm" % self.current_user)
+#                 self.jdk6_location = "/usr/java/default"
+#             else:
+#                 #SLES uses IBM Java
+# #                install_commands.append("ln -s /usr/lib64/jvm/java-1.7.?-ibm-1.7.? /usr/lib64/jvm/java")
+#                 self.jdk6_location = "/usr/lib64/jvm/java"
+#                 
+#             
             for command in install_commands:
                 rc = self.runSingleCommandAsRoot(command, output)
     
@@ -1271,12 +1271,12 @@ class OFSTestNode(object):
             print "Installing required software for Red Hat based system %s" % self.distro
             install_commands = [
                 
-                "bash -c 'echo 0 > /selinux/enforce'",
-                
-                "yum -y install gcc gcc-c++ gcc-gfortran openssl fuse flex bison openssl-devel kernel-devel-\\`uname -r\\` kernel-headers-\\`uname -r\\` perl make subversion automake autoconf zip fuse fuse-devel fuse-libs wget patch bzip2 libuuid libuuid-devel uuid uuid-devel openldap openldap-devel openldap-clients gdb libtool libtool-ltdl wget maven xfsprogs-devel attr libattr-devel libacl-devel bc git libaio libaio-devel",
-                "yum -y install java-1.7.0-openjdk java-1.7.0-openjdk-devel",
-                "yum -y install nfs-utils nfs-utils-lib nfs-kernel nfs-utils-clients rpcbind",
-                "yum -y install openldap openldap-clients openldap-servers openldap-servers-sql compat-openldap",
+#                 "bash -c 'echo 0 > /selinux/enforce'",
+#                 
+#                 "yum -y install gcc gcc-c++ gcc-gfortran openssl fuse flex bison openssl-devel kernel-devel-\\`uname -r\\` kernel-headers-\\`uname -r\\` perl make subversion automake autoconf zip fuse fuse-devel fuse-libs wget patch bzip2 libuuid libuuid-devel uuid uuid-devel openldap openldap-devel openldap-clients gdb libtool libtool-ltdl wget maven xfsprogs-devel attr libattr-devel libacl-devel bc git libaio libaio-devel",
+#                 "yum -y install java-1.7.0-openjdk java-1.7.0-openjdk-devel",
+#                 "yum -y install nfs-utils nfs-utils-lib nfs-kernel nfs-utils-clients rpcbind",
+#                 "yum -y install openldap openldap-clients openldap-servers openldap-servers-sql compat-openldap",
                 
 
                 "chown -R ldap:ldap /var/lib/ldap",
@@ -1308,15 +1308,15 @@ class OFSTestNode(object):
                 
                 ]
             
-            #install updated autoconf so that OpenMPI will build correctly.
-            if "6." in self.distro:
-                rc = self.runSingleCommand("wget --quiet ftp://ftp.pbone.net/mirror/ftp5.gwdg.de/pub/opensuse/repositories/home:/monkeyiq:/centos6updates/CentOS_CentOS-6/noarch/autoconf-2.69-12.2.noarch.rpm",output)
-                  
-                if rc != 0:
-                    logging.exception(output)
-                else:
-                    install_commands.append("yum install -y /home/%s/autoconf-2.69-12.2.noarch.rpm" % self.current_user)
-                 
+#             #install updated autoconf so that OpenMPI will build correctly.
+#             if "6." in self.distro:
+#                 rc = self.runSingleCommand("wget --quiet ftp://ftp.pbone.net/mirror/ftp5.gwdg.de/pub/opensuse/repositories/home:/monkeyiq:/centos6updates/CentOS_CentOS-6/noarch/autoconf-2.69-12.2.noarch.rpm",output)
+#                   
+#                 if rc != 0:
+#                     logging.exception(output)
+#                 else:
+#                     install_commands.append("yum install -y /home/%s/autoconf-2.69-12.2.noarch.rpm" % self.current_user)
+#                  
 
         
             for command in install_commands:
@@ -1328,16 +1328,20 @@ class OFSTestNode(object):
 
             
             # RPM installs to default location
-            self.jdk6_location = "/usr/lib/jvm/java"
+#             self.jdk6_location = "/usr/lib/jvm/java"
         else:
             print "Unknown system %s" % self.distro
         
-        self.installMaven()
-        
-        if "linux 7" in self.distro.lower():
-            self.runSingleCommandAsRoot("nohup /sbin/reboot &")
-            print "Rebooting node again"
-            time.sleep(120)
+#         self.installMaven()
+
+        #JAVA_HOME should be set in the image.
+        self.jdk6_location = self.runSingleCommandBacktick("echo $JAVA_HOME")
+
+#         
+#         if "linux 7" in self.distro.lower():
+#             self.runSingleCommandAsRoot("nohup /sbin/reboot &")
+#             print "Rebooting node again"
+#             time.sleep(120)
         
         
         
@@ -1525,9 +1529,9 @@ class OFSTestNode(object):
         self.openmpi_installation_location = install_location+"/openmpi"
         self.openmpi_source_location = "%s/%s" % (build_location,self.openmpi_version)
         
-        rc = self.runSingleCommand("[ -f %s/bin/mpiexec ]" % self.openmpi_installation_location)
+        rc = self.runSingleCommand("[ -f %s/bin/orted ]" % self.openmpi_installation_location)
         if rc == 0: 
-            print "Found %s/bin/mpiexec" % self.openmpi_installation_location
+            print "Found %s/bin/orted" % self.openmpi_installation_location
         else:
         
             url_base = "http://devorange.clemson.edu/pvfs/"
