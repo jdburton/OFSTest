@@ -1528,6 +1528,7 @@ class OFSTestNode(object):
         self.openmpi_version = "openmpi-1.8.8"
         self.openmpi_installation_location = install_location+"/openmpi"
         self.openmpi_source_location = "%s/%s" % (build_location,self.openmpi_version)
+        tempdir = self.current_directory
         
         rc = self.runSingleCommand("[ -f %s/bin/orted ]" % self.openmpi_installation_location)
         if rc == 0: 
@@ -1545,7 +1546,7 @@ class OFSTestNode(object):
             patch_url = url_base+patch_name
             
             self.runSingleCommand("mkdir -p "+build_location)
-            tempdir = self.current_directory
+            
             self.changeDirectory(build_location)
             
             rc = self.runSingleCommand("wget --quiet %s" % url)
