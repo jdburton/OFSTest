@@ -1335,7 +1335,7 @@ class OFSTestNode(object):
 #         self.installMaven()
 
         #JAVA_HOME should be set in the image.
-        self.jdk6_location = self.runSingleCommandBacktick("echo $JAVA_HOME")
+        self.jdk6_location = self.runSingleCommandBacktick("echo \$JAVA_HOME")
 
 #         
 #         if "linux 7" in self.distro.lower():
