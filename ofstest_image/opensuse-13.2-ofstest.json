@@ -15,7 +15,7 @@
   "builders": [{
     "type": "openstack",
     "flavor": "m1.medium",
-    "image_name": "opensuse-13.2-ofstest",
+    "image_name": "opensuse-13.2-ofstest-unified",
     "source_image": "{{user `os_source_image_id`}}",
     "username": "{{user `os_username`}}",
     "password": "{{user `os_password`}}",
