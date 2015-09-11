@@ -258,7 +258,7 @@ class OFSTestNode(object):
         
         ## @var jdk6_location
         # Location of Oracle JDK 6
-        self.jdk6_location = "/usr/lib/jvm/java"
+        #self.jdk6_location = "/usr/lib/jvm/java"
         
         
         
@@ -848,6 +848,8 @@ class OFSTestNode(object):
     
     def updateNode(self):
         logging.debug("Update Node. Distro is " + self.distro)
+        
+
            
         if "ubuntu" in self.distro.lower() or "mint" in self.distro.lower() or "debian" in self.distro.lower():
             self.runSingleCommandAsRoot("DEBIAN_FRONTEND=noninteractive apt-get -y update")
@@ -1334,8 +1336,6 @@ class OFSTestNode(object):
         
 #         self.installMaven()
 
-        #JAVA_HOME should be set in the image.
-        self.jdk6_location = self.runSingleCommandBacktick("echo \$JAVA_HOME")
 
 #         
 #         if "linux 7" in self.distro.lower():
@@ -1391,7 +1391,7 @@ class OFSTestNode(object):
         # Install Hadoop. 
         self.hadoop_location = "/opt/"+self.hadoop_version
         rc = self.runSingleCommand("[ -d %s ]" % self.hadoop_location)
-        self.setEnvironmentVariable("JAVA_HOME",self.jdk6_location)
+        #self.setEnvironmentVariable("JAVA_HOME",self.jdk6_location)
         self.setEnvironmentVariable("HADOOP_PREFIX", self.hadoop_location)
         if self.hadoop_version == "hadoop-1.2.1":
             self.hadoop_examples_location = self.hadoop_location+"/hadoop*examples*.jar"
@@ -2100,6 +2100,9 @@ class OFSTestNode(object):
         self.build_kmod = build_kmod
         
         self.enable_hadoop = enable_hadoop
+
+        #JAVA_HOME should be set in the image.
+        self.jdk6_location = self.runSingleCommandBacktick("echo \$JAVA_HOME")
         
         # Change directory to source location.
         self.changeDirectory(self.ofs_source_location)

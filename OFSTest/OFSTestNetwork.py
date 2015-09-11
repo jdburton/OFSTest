@@ -524,6 +524,8 @@ class OFSTestNetwork(object):
         output = []
         dir_list = ""
         
+        
+        
         msg = "Resource type is "+resource_type+" location is "+resource_location
         print msg
         logging.info(msg)
@@ -560,6 +562,7 @@ class OFSTestNetwork(object):
         
             resource_type = "BUILDNODE"
             resource_location = download_location+dir_list
+        
             
         rc = build_node.copyOFSSource(resource_type=resource_type,resource=resource_location,dest_dir=download_location+dir_list,options=svn_options)
         
@@ -1658,6 +1661,9 @@ class OFSTestNetwork(object):
                 hadoop_conf=node.hadoop_location+"/etc/hadoop"
                 master_node.copyToRemoteNode(source="%s/src/client/hadoop/orangefs-hadoop2/src/main/resources/conf/" % master_node.ofs_source_location,destination_node=node,destination="%s/" % (hadoop_conf),recursive=True)
 #              setup hadoop-env.sh
+                     #JAVA_HOME should be set in the image.
+            node.jdk6_location = node.runSingleCommandBacktick("echo \$JAVA_HOME")
+
 #             node.runSingleCommand("echo 'export JAVA_HOME=%s' >> %s/conf/hadoop-env.sh" % (node.jdk6_location,node.hadoop_location))
 #             node.runSingleCommand("echo 'export LD_LIBRARY_PATH=%s/lib' >> %s/conf/hadoop-env.sh" % (node.ofs_installation_location,node.hadoop_location))
 #             node.runSingleCommand("echo 'export JNI_LIBRARY_PATH=%s/lib' >> %s/conf/hadoop-env.sh" % (node.ofs_installation_location,node.hadoop_location))
