@@ -2137,9 +2137,13 @@ class OFSTestNode(object):
         
         # Will always need prefix and db4 location.
         configure_opts = configure_opts+" --prefix=%s --with-db=%s" % (ofs_prefix,db4_prefix)
+
+        # Is the OrangeFS module already in the kernel?
+        rc = self.runSingleCommandAsRoot("modprobe -v orangefs")
+        if rc == 0:
+            build_kmod = False
         
         # Add various options to the configure
-         
         if build_kmod == True:
             
             if "suse" in self.distro.lower():
@@ -2863,9 +2867,11 @@ class OFSTestNode(object):
         sudo /sbin/insmod ${PVFS2_DEST}/INSTALL-pvfs2-${CVS_TAG}/lib/modules/`uname -r`/kernel/fs/pvfs2/pvfs2.ko &> pvfs2-kernel-module.log
         sudo /sbin/lsmod >> pvfs2-kernel-module.log
         '''
+        output = []
         # first check to see if the kernel module is already installed.
-        rc = self.runSingleCommand('/sbin/lsmod | grep pvfs2')
+        rc = self.runSingleCommand('/sbin/lsmod | grep pvfs2',output)
         if rc == 0:
+            print output[1]
             return 0
         
         # get the kernel version if it has been updated

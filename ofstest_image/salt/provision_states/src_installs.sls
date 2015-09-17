@@ -13,7 +13,7 @@ maui_install:
     - source: salt://src_installs/maui.sh
     - creates: /opt/maui/
 
-openmpi_install:
-  cmd.script:
-    - source: salt://src_installs/openmpi.sh
-    - creates: /opt/openmpi/
+#openmpi_install:
+#  cmd.script:
+#    - source: salt://src_installs/openmpi.sh
+#    - creates: /opt/openmpi/
