@@ -270,8 +270,9 @@ class OFSTestMain(object):
         print ""
         print "==================================================================="
         print "Updating New Nodes (This may take awhile...)"
-        self.ofs_network.updateCloudNodes()
+        self.ofs_network.updateCloudNodes(kernel_git_source=self.config.kernel_git_source, kernel_git_branch=self.config.kernel_git_branch)
         
+
         # Install software required to compile and run OFS and all tests.
         print ""
         print "==================================================================="

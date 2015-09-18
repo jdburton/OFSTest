@@ -14,6 +14,7 @@
 
 import pprint
 import logging
+from test.test_support import temp_cwd
 
 
 class OFSTestConfig(object):
@@ -344,6 +345,9 @@ class OFSTestConfig(object):
         self.dedicated_client = False
         self.servers_per_node = 1
         
+        self.custom_kernel = False
+        self.kernel_git_location = None
+        self.kernel_git_branch = None
         
         
     
@@ -765,5 +769,18 @@ class OFSTestConfig(object):
 
         temp = d.get('servers_per_node')
         if temp != None:
-            self.servers_per_node=1
+            self.servers_per_node=temp
+            
+        temp = d.get('custom_kernel')
+        if temp != None:
+            self.custom_kernel = temp
+        
+        temp = d.get("kernel_git_location")
+        if temp != None:
+            self.kernel_git_location = temp
+        
+        temp = d.get("kernel_git_branch")
+        if temp != None:
+            self.kernel_git_branch = temp
+        
         

@@ -846,16 +846,16 @@ class OFSTestNode(object):
     
     
     
-    def updateNode(self):
+    def updateNode(self,custom_kernel=False,kernel_git_location=None,kernel_git_branch=None):
         logging.debug("Update Node. Distro is " + self.distro)
            
         if "ubuntu" in self.distro.lower() or "mint" in self.distro.lower() or "debian" in self.distro.lower():
             self.runSingleCommandAsRoot("DEBIAN_FRONTEND=noninteractive apt-get -y update")
             self.runSingleCommandAsRoot("DEBIAN_FRONTEND=noninteractive apt-get -y dist-upgrade")
-            self.runSingleCommandAsRoot("nohup /sbin/reboot &")
+            
         elif "suse" in self.distro.lower():
             self.runSingleCommandAsRoot("zypper --non-interactive update")
-            self.runSingleCommandAsRoot("nohup /sbin/reboot &")
+            
         elif "centos" in self.distro.lower() or "scientific linux" in self.distro.lower() or "red hat" in self.distro.lower() or "fedora" in self.distro.lower():
             # disable SELINUX
             self.runSingleCommandAsRoot("bash -c 'echo \\\"SELINUX=Disabled\\\" > /etc/selinux/config'")
@@ -881,10 +881,14 @@ class OFSTestNode(object):
                 
             else:
                 rc = self.runSingleCommandAsRoot("mkdir -p /var/log/journal")
-                
-            rc = self.runSingleCommandAsRoot("nohup /sbin/reboot &")
-            
+                    
         #self.runAllBatchCommands()
+        if custom_kernel == True:
+            rc = self.installCustomKernel(kernel_git_location,kernel_git_branch)
+            if rc != 0:
+                print "Could not install custom kernel. Continuing with default kernel."
+        
+        rc = self.runSingleCommandAsRoot("nohup /sbin/reboot &")
         msg = "Node "+self.hostname+" at "+self.ip_address+" updated."
         print msg
         logging.info(msg)
@@ -892,6 +896,74 @@ class OFSTestNode(object):
         msg = "Node "+self.hostname+" at "+self.ip_address+" Rebooting."
         print msg
         logging.info(msg)
+    
+    ##
+    # @fn installCustomKernel(self,kernel_git_location,kernel_git_branch)
+    #
+    # This compiles and installs a custom linux kernel from the git location and branch.
+    #
+    # @param self The object pointer
+    # @param kernel_git_location The location of the git repository containing the kernel
+    # @param kernel_git_branch The location of the git branch you want to use.
+    
+    
+    def installCustomKernel(self,kernel_git_location,kernel_git_branch):
+        
+        self.changeDirectory("/home/"+self.current_user)
+        print "Cloning kernel repository: git clone %s" %kernel_git_location
+        rc = self.runSingleCommand("git clone %s" % kernel_git_location)
+        if rc != 0:
+            print "Could not clone %s" % kernel_git_location
+            return rc
+        
+        self.changeDirectory("/home/"+self.current_user+"/linux")
+        
+        rc = self.runSingleCommand("git checkout %s" % kernel_git_branch)
+        if rc != 0:
+            print "Could not checkout %s" % kernel_git_branch
+            return rc
+        
+        rc = self.runSingleCommand("make olddefconfig")
+        if rc != 0:
+            print "Could not make olddefconfig"
+            return rc
+        
+        # CRYPTO_AES_NI_INTEL causes kernel panic on boot as of 4.2.0_rc2. Do not compile it.
+        self.runSingleCommand("sed -i s/CONFIG_CRYPTO_AES_NI_INTEL=y/CONFIG_CRYPTO_AES_NI_INTEL=n/ .config")
+        
+        # Enable OrangeFS
+        self.runSingleCommand("echo 'CONFIG_ORANGE_FS=y' >> .config",)
+        
+        rc = self.runSingleCommand("make")
+        if rc != 0:
+            print "Could not make"
+            return rc
+        
+        rc = self.runSingleCommandAsRoot("make modules_install")
+        if rc != 0:
+            print "Could not make modules_install"
+            return rc
+        
+        rc = self.runSingleCommand("make install")
+        if rc != 0:
+            print "Could not make install"
+            return rc
+        
+        print "Setting default kernel to new kernel"
+        
+        # first is for debugging purposes
+        rc = self.runSingleCommandAsRoot("sed s/GRUB_DEFAULT=.*/GRUB_DEFAULT=0/ /etc/default/grub")
+        rc = self.runSingleCommandAsRoot("sed -i s/GRUB_DEFAULT=.*/GRUB_DEFAULT=0/ /etc/default/grub")
+        
+        print "Updating grub2"
+        rc = self.runSingleCommandAsRoot("/sbin/grub2-mkconfig | tee /boot/grub2/grub.cfg")
+        if rc != 0:
+            print "Could nor grub2-mkconfig"
+            return rc
+        
+        return rc
+    #
+    
     
     ##
     # @fn installTorqueServer(self):
@@ -2092,6 +2164,12 @@ class OFSTestNode(object):
         configure_opts="",
         debug=False):
     
+    
+        # Is the OrangeFS module already in the kernel?
+        rc = self.runSingleCommandAsRoot("modprobe -v orangefs")
+        if rc == 0:
+            build_kmod = False
+        
         # Save build_kmod for later.
         self.build_kmod = build_kmod
         
@@ -2138,11 +2216,7 @@ class OFSTestNode(object):
         # Will always need prefix and db4 location.
         configure_opts = configure_opts+" --prefix=%s --with-db=%s" % (ofs_prefix,db4_prefix)
 
-        # Is the OrangeFS module already in the kernel?
-        rc = self.runSingleCommandAsRoot("modprobe -v orangefs")
-        if rc == 0:
-            build_kmod = False
-        
+       
         # Add various options to the configure
         if build_kmod == True:
             
@@ -2874,13 +2948,17 @@ class OFSTestNode(object):
             print output[1]
             return 0
         
+        # Is the OrangeFS module already in the kernel?
+        rc = self.runSingleCommandAsRoot("modprobe -v orangefs")
+        if rc == 0:
+            return 0;
         # get the kernel version if it has been updated
         self.kernel_version = self.runSingleCommandBacktick("uname -r")
         
-        self.runSingleCommandAsRoot("/sbin/insmod %s/lib/modules/%s/kernel/fs/pvfs2/pvfs2.ko 2>&1 | tee pvfs2-kernel-module.log" % (self.ofs_installation_location,self.kernel_version))
+        rc = self.runSingleCommandAsRoot("/sbin/insmod %s/lib/modules/%s/kernel/fs/pvfs2/pvfs2.ko 2>&1 | tee pvfs2-kernel-module.log" % (self.ofs_installation_location,self.kernel_version))
         self.runSingleCommandAsRoot("/sbin/lsmod >> pvfs2-kernel-module.log")
         
-        return 0
+        return rc
         
      
     ##

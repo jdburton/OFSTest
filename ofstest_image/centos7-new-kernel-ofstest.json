@@ -1,0 +1,84 @@
+{
+  "variables": {
+    "os_auth_url": "{{env `OS_AUTH_URL`}}",
+    "os_tenant_id": "{{env `OS_TENANT_ID`}}",
+    "os_tenant_name": "{{env `OS_TENANT_NAME`}}",
+    "os_username": "{{env `OS_USERNAME`}}",
+    "os_password": "{{env `OS_PASSWORD`}}",
+    "os_source_image_id": "{{env `OS_SOURCE_IMAGE_ID_STOCK_CENTOS7`}}",
+    "os_source_image_name": "{{env `OS_SOURCE_IMAGE_NAME`}}",
+    "os_region": "{{env `OS_REGION`}}",
+    "os_network_id": "{{env `OS_NETWORK_ID`}}",
+    "os_floating_ip_pool": "{{env `OS_FLOATING_IP_POOL`}}",
+    "user": "{{env `USER`}}",
+    "kernel_repo": "{{ env `KERNEL_GIT_REPO` }}",
+    "kernel_branch": "{{ env `KERNEL_GIT_BRANCH` }}"
+},
+  "builders": [{
+    "type": "openstack",
+    "flavor": "m1.large",
+    "image_name": "cloud-centos7-ofstest-unified",
+    "source_image": "{{user `os_source_image_id`}}",
+    "username": "{{user `os_username`}}",
+    "password": "{{user `os_password`}}",
+    "use_floating_ip": true,
+    "floating_ip_pool": "public",
+    "security_groups": [ "default" ],
+    "region": "RegionOne",
+    "tenant_id": "{{user `os_tenant_id`}}",
+    "ssh_username": "centos",
+    "networks" : [ "{{user `os_network_id`}}" ],
+    "ssh_pty" : true,
+    "ssh_timeout": "3m"
+   }],
+  "provisioners": [
+
+  {
+    "type": "file",
+    "source": "./etc/epel-release-7-5.noarch.rpm",
+    "destination": "/tmp/epel-release-7-5.noarch.rpm"
+  },
+  {
+    "type": "shell",
+    "pause_before": "30s",
+    "inline": [
+      "set -x",
+      "sudo sed -i -e 's/^Defaults.*requiretty/# Defaults requiretty/g' /etc/sudoers",
+      "sudo rpm -Uvh /tmp/epel-release-7-5.noarch.rpm && sudo rm /tmp/epel-release-7-5.noarch.rpm",
+	  "sudo yum -y install wget salt-master salt-minion salt-syndic",
+	  "sudo chmod -R a+w /opt",
+	  "sudo chmod -R a+w /mnt",
+	  "mkdir -p /opt/mpi"
+
+    ]
+  },
+  {
+    "type": "salt-masterless",
+    "bootstrap_args": "",
+    "local_state_tree": "./salt",
+    "minion_config": "./salt/masterMinionConfig",
+    "skip_bootstrap": true
+  },
+    {
+    "type": "shell",
+    "pause_before": "10s",
+    "inline": [
+      "set -x",
+      "cd /mnt",
+      "git clone {{user `kernel_repo`}}",
+      "cd ./linux",
+      "git checkout {{user `kernel_branch`}}",
+      "make help",
+      "make olddefconfig",
+      "sed -i s/CONFIG_CRYPTO_AES_NI_INTEL=y/CONFIG_CRYPTO_AES_NI_INTEL=n/ .config",
+      "echo 'CONFIG_ORANGE_FS=y' >> .config",
+      "df -h",
+      "make || df -h",
+      "sudo make modules_install",
+      "sudo make install",
+      "sudo sed -i s/GRUB_DEFAULT=.*/GRUB_DEFAULT=0/ /etc/default/grub",
+      "sudo grub2-mkconfig | sudo tee /boot/grub2/grub.cfg"
+      
+    ]
+  }]
+}
