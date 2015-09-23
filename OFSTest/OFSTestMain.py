@@ -519,11 +519,10 @@ class OFSTestMain(object):
         rc = self.ofs_network.startOFSServers()
         #TODO: Need to handle error conditions
         
-        if self.config.start_client_on_all_nodes == True:
-            print ""
-            print "==================================================================="
-            print "Start OFS Client"
-            rc = self.ofs_network.startOFSClientAllNodes(security=self.config.ofs_security_mode,disable_acache=self.config.ofs_disable_acache)
+        print ""
+        print "==================================================================="
+        print "Start OFS Client"
+        rc = self.ofs_network.startOFSClientAllNodes(security=self.config.ofs_security_mode,disable_acache=self.config.ofs_disable_acache)
 
 
         if self.config.install_hadoop == True or self.config.run_hadoop_tests == True:
