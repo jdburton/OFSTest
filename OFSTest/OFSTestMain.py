@@ -236,7 +236,7 @@ class OFSTestMain(object):
         print "===========================================================" 
         print "Connecting to EC2/OpenStack cloud using information from " + self.config.cloud_config
         #print "%s,%s,%s,%s,%s" % (self.config.cloud_config,self.config.cloud_key_name,self.config.ssh_key_filepath,self.config.cloud_type,self.config.nova_password_file)
-        self.ofs_network.addCloudConnection(self.config.cloud_config,self.config.cloud_key_name,self.config.ssh_key_filepath,self.config.cloud_type,self.config.nova_password_file)
+        self.ofs_network.addCloudConnection(self.config.cloud_config,self.config.cloud_key_name,self.config.ssh_key_filepath,self.config.cloud_type,self.config.nova_password_file,self.config.cloud_region)
 
 
         print "===========================================================" 

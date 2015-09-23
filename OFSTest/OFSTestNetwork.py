@@ -191,7 +191,7 @@ class OFSTestNetwork(object):
    
     
     
-    def addCloudConnection(self,cloud_config_file,key_name,key_location,cloud_type="EC2",nova_password_file=None):
+    def addCloudConnection(self,cloud_config_file,key_name,key_location,cloud_type="EC2",nova_password_file=None,region_name=None):
         
         import OFSCloudConnectionManager
         import OFSEC2ConnectionManager
@@ -199,7 +199,7 @@ class OFSTestNetwork(object):
         #This function initializes the cloud connection
         self.cloud_type = cloud_type
         if (cloud_type == 'EC2'):
-            self.cloud_connection_manager = OFSEC2ConnectionManager.OFSEC2ConnectionManager(cloud_config_file)
+            self.cloud_connection_manager = OFSEC2ConnectionManager.OFSEC2ConnectionManager(cloud_config_file,region_name)
         elif (cloud_type == 'nova'):
             self.cloud_connection_manager = OFSNovaConnectionManager.OFSNovaConnectionManager(cloud_config_file,password_file=nova_password_file)
         self.cloud_connection_manager.setCloudKey(key_name,key_location)

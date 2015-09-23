@@ -33,7 +33,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
     #
 
     
-    def __init__(self,cloud_config_file=None,region_name='us-east'):
+    def __init__(self,cloud_config_file=None,region_name='us-east-1'):
         
         super(OFSEC2ConnectionManager,self).__init__()
         ##
@@ -87,9 +87,9 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
         
         self.ec2_region_name = None
     
-        # Default region name is RegionOne
+        # Default region name is us-east-1
         if region_name == None:
-            self.ec2_region_name = "RegionOne"
+            self.ec2_region_name = "us-east-1"
         else:
             self.ec2_region_name = region_name
         

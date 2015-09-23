@@ -86,6 +86,8 @@ class OFSTestConfig(object):
         # Associate external ip address with Cloud nodes?
         self.cloud_associate_ip=False # Web Interface: auto
         
+        self.cloud_region=None
+        
         ## @var node_ip_addresses
         # List of node ip addresses. If a private network is used, this is the
         # Internal network.
@@ -471,6 +473,10 @@ class OFSTestConfig(object):
         temp = d.get('cloud_image')
         if temp != None:
             self.cloud_image = temp
+
+        temp = d.get('cloud_region')
+        if temp != None:
+            self.cloud_region = temp
 
         temp = d.get('cloud_machine')
         if temp != None:
