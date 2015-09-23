@@ -316,6 +316,8 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
         try:
             all_addresses = self.ec2_connection.get_all_addresses()
             logging.debug("All addresses: "+ all_addresses)
+            print all_addresses
+            print all_addresses[0].__dict__
         except:
             pass
         for i in instances:
