@@ -332,14 +332,14 @@ class OFSTestNetwork(object):
     #
 
         
-    def updateCloudNodes(self,node_list=None, custom_kernel=False, kernel_git_source=None, kernel_git_branch=None):
+    def updateCloudNodes(self,node_list=None, custom_kernel=False, kernel_git_location=None, kernel_git_branch=None):
         # This only updates the Cloud controlled nodes
          
         if node_list == None:
             node_list = self.network_nodes
         
         cloud_nodes = [node for node in self.network_nodes if node.is_cloud == True]
-        self.updateNodes(cloud_nodes,custom_kernel,kernel_git_source,kernel_git_branch)   
+        self.updateNodes(cloud_nodes,custom_kernel,kernel_git_location,kernel_git_branch)   
 
 
     ##
@@ -385,12 +385,12 @@ class OFSTestNetwork(object):
     #    @param self The object pointer
     #    @param node_list List of nodes to update
      
-    def updateNodes(self,node_list=None, custom_kernel=False, kernel_git_source=None, kernel_git_branch=None):
+    def updateNodes(self,node_list=None, custom_kernel=False, kernel_git_location=None, kernel_git_branch=None):
         if node_list == None:
             node_list = self.network_nodes
             
         # Run updateNode on the nodes simultaneously. 
-        self.runSimultaneousCommands(node_list=node_list,node_function=OFSTestNode.OFSTestNode.updateNode,args=[custom_kernel,kernel_git_source,kernel_git_branch])
+        self.runSimultaneousCommands(node_list=node_list,node_function=OFSTestNode.OFSTestNode.updateNode,args=[custom_kernel,kernel_git_location,kernel_git_branch])
         # Wait for reboot
         print "Waiting 180 seconds for nodes to reboot"
         time.sleep(180)
