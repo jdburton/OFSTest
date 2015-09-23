@@ -118,11 +118,19 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
         #open ec2 file
         ec2conf_rc = open(os.path.expandvars(filename),'r')
         
+        #Defaults for AWS, N. Virginia
+        self.ec2_is_secure = True
+        self.ec2_endpoint = "ec2.us-east-1.amazonaws.com"
+        self.ec2_port = ""
+        self.ec2_path = "/"
+        
+        
+        
         for line in ec2conf_rc:
-            if "export EC2_ACCESS_KEY" in line:
+            if "export EC2_ACCESS_KEY" in line or "export AWS_ACCESS_KEY" in line:
                 # check for EC2_ACCESS_KEY
                 (export,variable,self.ec2_access_key) = re.split(' |=',line.rstrip())    
-            elif "export EC2_SECRET_KEY" in line:
+            elif "export EC2_SECRET_KEY" in line or "export AWS_SECRET_KEY" in line:
                 # check for EC2_SECRET_KEY
                 (export,variable,self.ec2_secret_key) = re.split(" |=",line.rstrip())    
                 
