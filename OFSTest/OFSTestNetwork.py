@@ -636,7 +636,7 @@ class OFSTestNetwork(object):
             node_list = self.network_nodes
         if build_node == None:
             build_node = node_list[0]
-        return build_node.installBenchmarks("%s/benchmarks-20121017.tar.gz","/home/%s/benchmarks" % (build_node.url_base,build_node.current_user))
+        return build_node.installBenchmarks("%s/benchmarks-20121017.tar.gz" % build_node.url_base,"/home/%s/benchmarks" % build_node.current_user)
 
    
     ##    
