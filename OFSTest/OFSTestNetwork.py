@@ -636,7 +636,7 @@ class OFSTestNetwork(object):
             node_list = self.network_nodes
         if build_node == None:
             build_node = node_list[0]
-        return build_node.installBenchmarks("http://devorange.clemson.edu/pvfs/benchmarks-20121017.tar.gz","/home/%s/benchmarks" % build_node.current_user)
+        return build_node.installBenchmarks("%s/benchmarks-20121017.tar.gz","/home/%s/benchmarks" % (build_node.url_base,build_node.current_user))
 
    
     ##    
@@ -948,6 +948,22 @@ class OFSTestNetwork(object):
                 self.terminateCloudNode(node)
 
    
+    ##    
+    #    @fn setUrlBase(self,url_base="localhost",node_list=None):
+    #
+    #    Stops the OrangeFS servers on the nodes
+    #    @param self The object pointer
+    #    @param node_list List of nodes in network.
+     
+          
+    def stopOFSServers(self,url_base="http://localhost",node_list=None):
+        if node_list == None:
+            node_list = self.network_nodes
+        self.url_base = url_base
+        for node in node_list:
+            node.url_base = url_base
+
+    
     ##    
     #    installTorque(self,node_list=None, head_node=None):
     #

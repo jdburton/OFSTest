@@ -257,6 +257,7 @@ class OFSTestMain(object):
         print "Verifying hostname resolution"
         self.ofs_network.updateEtcHosts()
 
+
         # MPI and Hadoop testing require passwordless SSH access.
         print "===========================================================" 
         print "Enabling Passwordless SSH access"
@@ -264,14 +265,18 @@ class OFSTestMain(object):
         #print "Enabling Passwordless SSH access for root"
         #self.ofs_network.enablePasswordlessSSH(user="root")
 
-
         # Update new cloud nodes and reboot. We don't want to do this with real nodes 
         # because we don't want to step on the admin's toes.
         print ""
         print "==================================================================="
         print "Updating New Nodes (This may take awhile...)"
         self.ofs_network.updateCloudNodes(kernel_git_location=self.config.kernel_git_location, kernel_git_branch=self.config.kernel_git_branch)
-        
+ 
+ 
+        print "===========================================================" 
+        print "Installing required OrangeFS software from "+ self.config.url_base
+        self.ofs_network.setURLBase(self.config.url_base)
+       
 
         # Install software required to compile and run OFS and all tests.
         print ""
@@ -319,7 +324,10 @@ class OFSTestMain(object):
 
             # Add the node to the virtual cluster.
             self.ofs_network.addRemoteNode(ip_address=self.config.node_ip_addresses[i],username=self.config.node_usernames[i],key=self.config.ssh_key_filepath,is_cloud=self.config.using_cloud,ext_ip_address=ext_ip_address)
-
+        
+        print "===========================================================" 
+        print "Installing required OrangeFS software from "+ self.config.url_base
+        self.ofs_network.setURLBase(self.config.url_base)
 
 
     ##

@@ -351,7 +351,7 @@ class OFSTestConfig(object):
         self.kernel_git_location = None
         self.kernel_git_branch = None
         
-        
+        self.url_base = "http://devorange.clemson.edu/pvfs"
     
     ##
     #
@@ -789,4 +789,7 @@ class OFSTestConfig(object):
         if temp != None:
             self.kernel_git_branch = temp
         
+        temp = d.get("url_base")
+        if temp != None:
+            self.url_base = temp
         

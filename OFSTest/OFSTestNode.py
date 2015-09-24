@@ -283,6 +283,8 @@ class OFSTestNode(object):
         ## @var ldap_container
         # LDAP container used for OrangeFS setup.
         self.ldap_container = None
+        
+        self.url_base = "http://localhost"
 
     ##
     # 
@@ -1320,7 +1322,7 @@ class OFSTestNode(object):
             ]
             
             if "opensuse" in self.distro.lower():
-                rc = self.runSingleCommand("wget --quiet http://devorange.clemson.edu/pvfs/jdk-7u71-linux-x64.rpm",output)
+                rc = self.runSingleCommand("wget --quiet %s/jdk-7u71-linux-x64.rpm" % self.url_base,output)
              
                 if rc != 0:
                     logging.exception(output)
@@ -1438,7 +1440,7 @@ class OFSTestNode(object):
         
 
         self.changeDirectory("/home/%s" % self.current_user)
-        self.runSingleCommand("wget --quiet http://devorange.clemson.edu/pvfs/db-4.8.30.tar.gz")
+        self.runSingleCommand("wget --quiet %s/db-4.8.30.tar.gz" % self.url_base)
         self.runSingleCommand("tar zxf db-4.8.30.tar.gz")
         self.changeDirectory("/home/%s/db-4.8.30/build_unix" % self.current_user)
         
@@ -1691,7 +1693,7 @@ class OFSTestNode(object):
         rc = self.changeDirectory(build_location+"/mdtest") 
         
         # install mdtest
-        rc = self.runSingleCommand("wget --quiet http://devorange.clemson.edu/pvfs/mdtest-1.9.3.tgz")
+        rc = self.runSingleCommand("wget --quiet %s/mdtest-1.9.3.tgz" % self.url_base)
 
         if rc != 0:
             print "Warning: Could not download mdtest"
@@ -1712,7 +1714,7 @@ class OFSTestNode(object):
         rc = self.changeDirectory(build_location) 
         
         # install mdtest
-        rc = self.runSingleCommand("wget --quiet http://devorange.clemson.edu/pvfs/simul-1.14.tar.gz")
+        rc = self.runSingleCommand("wget --quiet %s/simul-1.14.tar.gz" % self.url_base)
 
         if rc != 0:
             print "Warning: Could not download simul"
@@ -1734,7 +1736,7 @@ class OFSTestNode(object):
         rc = self.changeDirectory(build_location) 
         
         # install mdtest
-        rc = self.runSingleCommand("wget --quiet http://devorange.clemson.edu/pvfs/miranda_io-1.0.1.tar.gz")
+        rc = self.runSingleCommand("wget --quiet %s/miranda_io-1.0.1.tar.gz" % self.url_base)
 
         if rc != 0:
             print "Warning: Could not download miranda_io"
@@ -1794,7 +1796,7 @@ class OFSTestNode(object):
             
         self.changeDirectory(build_location)
         rc = 0
-        rc = self.runSingleCommand("wget --quiet http://devorange.clemson.edu/pvfs/IOR-2.10.3.tgz")
+        rc = self.runSingleCommand("wget --quiet %s/IOR-2.10.3.tgz" % self.url_base)
         if rc != 0:
             print "Warning: Could not download IOR"
             
@@ -1880,7 +1882,7 @@ class OFSTestNode(object):
  
 
 
-    def installBenchmarks(self,tarurl="http://devorange.clemson.edu/pvfs/benchmarks-20121017.tar.gz",dest_dir="",configure_options="",make_options="",install_options=""):
+    def installBenchmarks(self,tarurl="%s/benchmarks-20121017.tar.gz" % self.url_base,dest_dir="",configure_options="",make_options="",install_options=""):
         if dest_dir == "":
             dest_dir = "/home/%s/" % self.current_user
         msg = "Installing benchmarks from "+tarurl
