@@ -2863,6 +2863,15 @@ class OFSTestNode(object):
             logging.exception( "Could not find any aliases in %s/etc/orangefs.conf" % self.ofs_installation_location)
             return -1
 
+        #Now set up the pvfs2tab_file
+        self.ofs_mount_point = "/tmp/mount/orangefs"
+        self.runSingleCommand("mkdir -p "+ self.ofs_mount_point)
+        self.runSingleCommand("mkdir -p %s/etc" % self.ofs_installation_location)
+        self.runSingleCommand("echo \"tcp://%s:%d/%s %s pvfs2 defaults 0 0\" > %s/etc/orangefstab" % (self.hostname,self.ofs_tcp_port,self.ofs_fs_name,self.ofs_mount_point,self.ofs_installation_location))
+        self.runSingleCommandAsRoot("ln -s %s/etc/orangefstab /etc/pvfs2tab" % self.ofs_installation_location)
+        self.setEnvironmentVariable("PVFS2TAB_FILE",self.ofs_installation_location + "/etc/orangefstab")
+
+
         # for all the aliases in the file
         for alias in self.alias_list:
             logging.info("looking for alias for hostname " + self.hostname)
@@ -2894,13 +2903,6 @@ class OFSTestNode(object):
                 print "Starting OrangeFS servers..."
                 time.sleep(15)
 
-        #Now set up the pvfs2tab_file
-        self.ofs_mount_point = "/tmp/mount/orangefs"
-        self.runSingleCommand("mkdir -p "+ self.ofs_mount_point)
-        self.runSingleCommand("mkdir -p %s/etc" % self.ofs_installation_location)
-        self.runSingleCommand("echo \"tcp://%s:%d/%s %s pvfs2 defaults 0 0\" > %s/etc/orangefstab" % (self.hostname,self.ofs_tcp_port,self.ofs_fs_name,self.ofs_mount_point,self.ofs_installation_location))
-        self.runSingleCommandAsRoot("ln -s %s/etc/orangefstab /etc/pvfs2tab" % self.ofs_installation_location)
-        self.setEnvironmentVariable("PVFS2TAB_FILE",self.ofs_installation_location + "/etc/orangefstab")
        
         # set the debug mask
         self.runSingleCommand("%s/bin/pvfs2-set-debugmask -m %s \"%s\"" % (self.ofs_installation_location,self.ofs_mount_point,debug_mask))
