@@ -1882,7 +1882,9 @@ class OFSTestNode(object):
  
 
 
-    def installBenchmarks(self,tarurl="%s/benchmarks-20121017.tar.gz" % self.url_base,dest_dir="",configure_options="",make_options="",install_options=""):
+    def installBenchmarks(self,tarurl=None,dest_dir="",configure_options="",make_options="",install_options=""):
+        if tarurl == None:
+            tarurl = self.url_base+"/benchmarks-20121017.tar.gz"
         if dest_dir == "":
             dest_dir = "/home/%s/" % self.current_user
         msg = "Installing benchmarks from "+tarurl
