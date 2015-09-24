@@ -956,7 +956,7 @@ class OFSTestNetwork(object):
     #    @param node_list List of nodes in network.
      
           
-    def stopOFSServers(self,url_base="http://localhost",node_list=None):
+    def setUrlBase(self,url_base="http://localhost",node_list=None):
         if node_list == None:
             node_list = self.network_nodes
         self.url_base = url_base
