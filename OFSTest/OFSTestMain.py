@@ -275,7 +275,7 @@ class OFSTestMain(object):
  
         print "===========================================================" 
         print "Installing required OrangeFS software from "+ self.config.url_base
-        self.ofs_network.setURLBase(self.config.url_base)
+        self.ofs_network.setUrlBase(self.config.url_base)
        
 
         # Install software required to compile and run OFS and all tests.
