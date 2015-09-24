@@ -1210,6 +1210,9 @@ class OFSTestNode(object):
             
             print "Installing required software for Debian based system %s" % self.distro
             
+            # Ubuntu does not automatically source /etc/profile
+            self.runSingleCommand("sed -i '1i source /etc/profile' /home/%s/.bashrc" % self.current_user)
+            self.runSingleCommandAsRoot("sed -i '1i source /etc/profile' /root/.bashrc")
             install_commands = [
                 " bash -c 'echo 0 > /selinux/enforce'",
                 "DEBIAN_FRONTEND=noninteractive apt-get update", 
