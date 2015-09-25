@@ -1,0 +1,14 @@
+#!/bin/bash
+#Copyright Omnibond Systems, LLC. All rights reserved.
+#
+#Terms of Service are located at:
+#http://www.cloudycluster.com/termsofservice
+
+export AWS_REGION="us-west-2"
+export AWS_SUBNET="subnet-f7d9569f"
+export AWS_SECURITY_GROUP="sg-6b8e6904"
+export AWS_VPC="vpc-f5d9569d"
+export AWS_SOURCE_AMI_CENTOS_6="ami-81d092b1"
+export AWS_SOURCE_AMI_CENTOS_7="ami-c7d092f7"
+export AWS_SOURCE_AMI_UBUNTU_1404="ami-333f2203"
+export AWS_SOURCE_AMI_SLES_12="ami-c7d092f7"
