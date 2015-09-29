@@ -478,7 +478,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
         # This function creates number nodes on the cloud system. 
         # It returns a list of nodes
         
-        new_instances = self.createNewCloudInstances(number_nodes,image_name,flavor_name,cloud_subnet,image_id)
+        new_instances = self.createNewCloudInstances(number_nodes,image_name,flavor_name,cloud_subnet,instance_suffix,image_id)
         # new instances should have a 60 second delay to make sure everything is running.
 
         ip_addresses = []
