@@ -21,7 +21,7 @@
     "subnet_id": "{{user `aws_subnet`}}",
     "security_group_id": "{{user `aws_security_group`}}",
     "associate_public_ip_address": true,
-    "ssh_username": "centos",
+    "ssh_username": "root",
     "ssh_pty": "true",
     "launch_block_device_mappings": [
       {
@@ -58,13 +58,15 @@
     "type": "shell",
     "inline": [
       "set -x",
-      "sudo chkconfig iptables off",
-      "sudo /etc/init.d/iptables stop",
-      "sudo sed -i -e 's/^Defaults.*requiretty/# Defaults requiretty/g' /etc/sudoers",
-      "sudo yum -y install /tmp/epel-release-6-8.noarch.rpm && sudo rm /tmp/epel-release-6-8.noarch.rpm",
-	  "sudo yum -y install salt-master salt-minion salt-syndic wget perl kernel-devel gcc",
-	  "sudo chmod -R a+w /opt",
-	  "mkdir -p /opt/mpi"
+      "useradd -m -b /home -u 1000 -U centos",
+      "chkconfig iptables off",
+      "/etc/init.d/iptables stop",
+      "sed -i -e 's/^Defaults.*requiretty/# Defaults requiretty/g' /etc/sudoers",
+      "echo 'centos  ALL=(ALL)    NOPASSWD: ALL' >> /etc/sudoers",
+      "yum -y install /tmp/epel-release-6-8.noarch.rpm && sudo rm /tmp/epel-release-6-8.noarch.rpm",
+	  "yum -y install salt-master salt-minion salt-syndic wget perl kernel-devel gcc",
+	  "mkdir -p /opt/mpi",
+	  "chmod -R a+w /opt"
 
     ]
   },

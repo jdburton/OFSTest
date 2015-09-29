@@ -199,9 +199,9 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
     # @return A list of available EC2 Images	
     #
 
-    def getAllCloudImages(self):
+    def getAllCloudImages(self,image_ids=None):
         self.checkCloudConnection()        
-        self.cloud_image_list = self.ec2_connection.get_all_images()
+        self.cloud_image_list = self.ec2_connection.get_all_images(image_ids=image_ids)
         
         return self.cloud_image_list
 
@@ -258,27 +258,44 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
     # @return	A list of new instances.
     #		
         
-    def createNewCloudInstances(self,number_nodes,image_name,flavor_name,subnet_id=None,instance_suffix=""):
+    def createNewCloudInstances(self,number_nodes,image_name=None,flavor_name="t2.micro",subnet_id=None,instance_suffix="",image_id=None ):
         self.checkCloudConnection()  
         
         # This creates a new instance for the system of a given machine type
-        
-        # get the image ID for the operating system
-        if self.cloud_image_list == None:
-            self.getAllCloudImages()
-        
-        # now let's find the os name in the image list
-        image = next((i for i in self.cloud_image_list if i.name == image_name), None)
-        
-        if image == None:
-            logging.exception( "Image %s Not Found!" % image_name)
-            return None
-        
-        
+        if (image_id == None):
+            # get the image ID for the operating system
+            if self.cloud_image_list == None:
+                self.getAllCloudImages()
+            
+            # now let's find the os name in the image list
+            image = next((i for i in self.cloud_image_list if i.name == image_name), None)
+            
+            if image == None:
+                logging.exception( "Image %s Not Found!" % image_name)
+                return None
+            
+            image_id = image.id
+           
+        else:
+            image_ids = [ image_id ]
+            # get the image ID for the operating system
+
+            if self.cloud_image_list == None:
+                self.getAllCloudImages(image_ids)
+                
+            # now let's find the image_id name in the image list
+            image = next((i for i in self.cloud_image_list if i.id == image_id), None)
+
+            if image == None:
+                logging.exception( "Image %s Not Found!" % image_id)
+                return None
+            
+            image_name = image.name
+
 
         reservation = self.ec2_connection.run_instances(image_id=image.id,min_count=number_nodes, max_count=number_nodes, key_name=self.cloud_instance_key, user_data=None, instance_type=flavor_name, subnet_id=subnet_id)
 
-        msg = "Creating %d new %s %s instances." % (number_nodes,flavor_name,image_name)
+        msg = "Creating %d new %s %s instances from AMI %s." % (number_nodes,flavor_name,image_name,image_id)
         print msg
         logging.info(msg)
 
@@ -292,13 +309,13 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
             count = count + 1
             #pprint(reservation.__dict__)
             
-        new_instances = [i for i in reservation.instances]
+        new_instances = [n for n in reservation.instances]
         
         for i in new_instances:
-            msg = "Created new EC2 instance %s " % i.id
+            msg = "Created new EC2 instance %s " % n.id
             print msg
             logging.info(msg)
-            #pprint(i.__dict__)
+            #pprint(n.__dict__)
         
         return new_instances
 
@@ -456,12 +473,12 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
 
 
     
-    def createNewCloudNodes(self,number_nodes,image_name,flavor_name,local_master,associateip=False,domain=None,cloud_subnet=None,instance_suffix=""):
+    def createNewCloudNodes(self,number_nodes,image_name=None,flavor_name="t2.micro",local_master=None,associateip=False,domain=None,cloud_subnet=None,instance_suffix="",image_id=None):
         
         # This function creates number nodes on the cloud system. 
         # It returns a list of nodes
         
-        new_instances = self.createNewCloudInstances(number_nodes,image_name,flavor_name,cloud_subnet)
+        new_instances = self.createNewCloudInstances(number_nodes,image_name,flavor_name,cloud_subnet,image_id)
         # new instances should have a 60 second delay to make sure everything is running.
 
         ip_addresses = []
@@ -491,7 +508,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
                 msg = "Instance %s using current IP %s" % (i.id,i.ip_address)
                 print msg
                 logging.info(msg)
-                #(i.__dict__)
+                pprint(i.__dict__)
                 ip_addresses.append(i.ip_address)
 
         print "===========================================================" 
@@ -499,17 +516,17 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
  
         for idx,instance in enumerate(new_instances):
             # Create the node and get the instance name
-            if "ubuntu" in image_name:
+            if "buntu" in image_name:
                 name = 'ubuntu'
-            elif "debian" in image_name:
+            elif "ebian" in image_name:
                 name = 'debian'
 
-            elif "fedora" in image_name:
+            elif "edora" in image_name:
                 # fedora 18 = cloud-user, fedora 19 = fedora
                 
                 # fedora 18 = cloud-user, fedora 19 = fedora
                 name = 'fedora'
-            elif "centos" in image_name:
+            elif "entos" in image_name or "entOS" in image_name:
                 name = 'centos'
             elif "rhel7" in image_name:
                 name = 'cloud-user'

@@ -214,9 +214,10 @@ class OFSNovaConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManag
     # @return    A list of new instances.
     #        
         
-    def createNewCloudInstances(self,number_nodes,image_name,flavor_name,subnet_id=None,instance_suffix=""):
+    def createNewCloudInstances(self,number_nodes,image_name=None,flavor_name="m1.small",subnet_id=None,instance_suffix="",image_id=None):
         self.checkCloudConnection()  
         
+        #TODO: Lookup by ImageID.
         # This creates a new instance for the system of a given machine type
         
         # get the image ID for the operating system

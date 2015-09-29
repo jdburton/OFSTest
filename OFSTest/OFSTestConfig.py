@@ -65,6 +65,12 @@ class OFSTestConfig(object):
         # Must be consistant across nodes.
         self.cloud_image = "" # Web Interface: user
         
+        
+        ## @var cloud_image_id
+        # Image id (ami) to be launched for cloud instance.
+        # Must be consistant across nodes.
+        self.cloud_image_id = None # Web Interface: user
+        
         ## @var cloud_machine
         # cloud machine type (e.g. m1.medium)
         # Must be consistant across nodes.
@@ -473,6 +479,10 @@ class OFSTestConfig(object):
         temp = d.get('cloud_image')
         if temp != None:
             self.cloud_image = temp
+
+        temp = d.get('cloud_image_id')
+        if temp != None:
+            self.cloud_image_id = temp
 
         temp = d.get('cloud_region')
         if temp != None:
