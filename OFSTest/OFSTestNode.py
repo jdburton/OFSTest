@@ -1510,7 +1510,7 @@ class OFSTestNode(object):
         
         self.mpich_version = "mpich-3.0.4"
         url_base = self.url_base
-        url = url_base+self.mpich_version+".tar.gz"
+        url = url_base+"/"+self.mpich_version+".tar.gz"
 
         #self.openmpi_version = "openmpi-1.8"
         #url_base = "http://www.open-mpi.org/software/ompi/v1.8/downloads/"
@@ -1607,7 +1607,7 @@ class OFSTestNode(object):
             print "Found %s/bin/mpiexec" % self.openmpi_installation_location
         else:
             url_base = self.url_base
-            url = url_base+self.openmpi_version+"-omnibond.tar.gz"
+            url = url_base+"/"+self.openmpi_version+"-omnibond.tar.gz"
     
             
     #         url_base = "http://www.open-mpi.org/software/ompi/v1.8/downloads/"
