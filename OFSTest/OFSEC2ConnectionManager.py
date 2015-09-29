@@ -505,11 +505,13 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
             
             for i in new_instances:
                 i.update()
-                msg = "Instance %s using current IP %s" % (i.id,i.ip_address)
+                msg = "Instance %s using Public IP: %s ; Private IP: %s" % (i.id,i.ip_address,i.private_ip_address)
                 print msg
                 logging.info(msg)
                 pprint(i.__dict__)
                 ip_addresses.append(i.ip_address)
+               
+                
 
         print "===========================================================" 
         print "Adding new nodes to OFS cluster"
@@ -533,7 +535,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
             else:
                 name = 'ec2-user'
             
-            new_node = OFSTestRemoteNode.OFSTestRemoteNode(username=name,ip_address=instance.ip_address,key=self.cloud_instance_key_location,local_node=local_master,is_cloud=True,ext_ip_address=ip_addresses[idx])
+            new_node = OFSTestRemoteNode.OFSTestRemoteNode(username=name,ip_address=instance.private_ip_address,key=self.cloud_instance_key_location,local_node=local_master,is_cloud=True,ext_ip_address=ip_addresses[idx])
 
             new_ofs_test_nodes.append(new_node)
 
