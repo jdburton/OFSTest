@@ -22,7 +22,7 @@ import uuid
 import OFSCloudConnectionManager
 import OFSTestRemoteNode
 import neutronclient.neutron.client as neutronclient
-import novaclient.v2 as novaclient
+import novaclient.client as novaclient
 
 
 ## 
@@ -154,7 +154,7 @@ class OFSNovaConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManag
         
         logging.debug("AUTH_URL=%s NOVA_USERNAME=%s NOVA_PASSWORD=%s NOVA_TENANT_NAME=%s " % (self.nova_auth_url, self.nova_username, self.nova_password, self.nova_tenant_name))
         self.keystoneapi = keystoneclient.v2_0.Client(username=self.nova_username, password=self.nova_password, tenant_name=self.nova_tenant_name, auth_url=self.nova_auth_url)
-        self.novaapi = novaclient.Client(self.nova_username, self.nova_password, self.nova_tenant_name, self.nova_auth_url, no_cache=True)
+        self.novaapi = novaclient.Client("2",self.nova_username, self.nova_password, self.nova_tenant_name, self.nova_auth_url, no_cache=True)
         self.glance_endpoint = self.keystoneapi.service_catalog.get_endpoints("image")["image"][0]["publicURL"]
         self.glance_endpoint = self.glance_endpoint.replace("/v1","")
         self.glanceapi = glanceclient.Client('1',endpoint=self.glance_endpoint,token=self.keystoneapi.auth_token)
