@@ -1,0 +1,61 @@
+{
+  "variables": {
+    "aws_access_key": "{{env `AWS_ACCESS_KEY`}}",
+    "aws_secret_key": "{{env `AWS_SECRET_KEY`}}",
+    "aws_source_ami": "{{env `AWS_SOURCE_AMI_SLES_12`}}",
+    "aws_region": "{{env `AWS_REGION`}}",
+    "aws_vpc": "{{env `AWS_VPC`}}",
+    "aws_subnet": "{{env `AWS_SUBNET`}}",
+    "aws_security_group": "{{env `AWS_SECURITY_GROUP`}}",
+    "user": "{{env `USER`}}"
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "access_key": "{{user `aws_access_key`}}",
+    "secret_key": "{{user `aws_secret_key`}}",
+    "source_ami": "{{user `aws_source_ami`}}",
+    "instance_type": "m3.large",
+    "region": "{{user `aws_region`}}",
+    "ami_name": "{{user `user`}}-packer-sles-12-{{timestamp}}",
+    "vpc_id": "{{user `aws_vpc`}}",
+    "subnet_id": "{{user `aws_subnet`}}",
+    "security_group_id": "{{user `aws_security_group`}}",
+    "associate_public_ip_address": true,
+    "ssh_username": "ec2-user",
+    "ssh_pty": "true",
+    "launch_block_device_mappings": [
+      {
+        "device_name": "/dev/sda1",
+        "delete_on_termination": true,
+        "volume_size": 16
+      }
+    ],
+    "run_tags": { "Name": "Packer sles12 Builder for {{user `user`}}" }
+  }],
+  "provisioners": [
+  
+  {
+    "type": "shell",
+    "inline": [
+      "set -x",
+      "sudo zypper --non-interactive --gpg-auto-import-keys  addrepo http://download.opensuse.org/repositories/devel:languages:python/SLE_12/devel:languages:python.repo",
+      "sudo zypper --non-interactive --gpg-auto-import-keys  refresh",
+      "sudo zypper --non-interactive  install salt salt-minion salt-master salt-syndic salt-ssh",
+      "sudo chmod -R a+w /opt",
+      "sudo chmod -R a+w /srv",
+      "df -h",
+      "mkdir -p /opt/mpi"
+	  
+
+    ]
+  },
+
+  {
+    "type": "salt-masterless",
+    "bootstrap_args": "",
+    "local_state_tree": "./salt",
+    "minion_config": "./salt/masterMinionConfig",
+    "skip_bootstrap": true
+  }
+  ]
+}

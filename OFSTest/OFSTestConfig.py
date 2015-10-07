@@ -14,6 +14,7 @@
 
 import pprint
 import logging
+from test.test_support import temp_cwd
 
 
 class OFSTestConfig(object):
@@ -64,6 +65,12 @@ class OFSTestConfig(object):
         # Must be consistant across nodes.
         self.cloud_image = "" # Web Interface: user
         
+        
+        ## @var cloud_image_id
+        # Image id (ami) to be launched for cloud instance.
+        # Must be consistant across nodes.
+        self.cloud_image_id = None # Web Interface: user
+        
         ## @var cloud_machine
         # cloud machine type (e.g. m1.medium)
         # Must be consistant across nodes.
@@ -84,6 +91,8 @@ class OFSTestConfig(object):
         ## @var cloud_associate_ip
         # Associate external ip address with Cloud nodes?
         self.cloud_associate_ip=False # Web Interface: auto
+        
+        self.cloud_region=None
         
         ## @var node_ip_addresses
         # List of node ip addresses. If a private network is used, this is the
@@ -344,8 +353,11 @@ class OFSTestConfig(object):
         self.dedicated_client = False
         self.servers_per_node = 1
         
+        self.custom_kernel = False
+        self.kernel_git_location = None
+        self.kernel_git_branch = None
         
-        
+        self.url_base = "http://devorange.clemson.edu/pvfs"
     
     ##
     #
@@ -467,6 +479,14 @@ class OFSTestConfig(object):
         temp = d.get('cloud_image')
         if temp != None:
             self.cloud_image = temp
+
+        temp = d.get('cloud_image_id')
+        if temp != None:
+            self.cloud_image_id = temp
+
+        temp = d.get('cloud_region')
+        if temp != None:
+            self.cloud_region = temp
 
         temp = d.get('cloud_machine')
         if temp != None:
@@ -765,5 +785,21 @@ class OFSTestConfig(object):
 
         temp = d.get('servers_per_node')
         if temp != None:
-            self.servers_per_node=1
+            self.servers_per_node=temp
+            
+        temp = d.get('custom_kernel')
+        if temp != None:
+            self.custom_kernel = temp
+        
+        temp = d.get("kernel_git_location")
+        if temp != None:
+            self.kernel_git_location = temp
+        
+        temp = d.get("kernel_git_branch")
+        if temp != None:
+            self.kernel_git_branch = temp
+        
+        temp = d.get("url_base")
+        if temp != None:
+            self.url_base = temp
         

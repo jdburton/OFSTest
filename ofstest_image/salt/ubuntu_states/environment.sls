@@ -5,6 +5,5 @@
 /home/ubuntu/.bashrc:
   file.prepend:
     - text: 
-      - \#!/bin/bash
       - source /etc/profile
  

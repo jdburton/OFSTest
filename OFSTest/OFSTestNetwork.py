@@ -191,7 +191,7 @@ class OFSTestNetwork(object):
    
     
     
-    def addCloudConnection(self,cloud_config_file,key_name,key_location,cloud_type="EC2",nova_password_file=None):
+    def addCloudConnection(self,cloud_config_file,key_name,key_location,cloud_type="EC2",nova_password_file=None,region_name=None):
         
         import OFSCloudConnectionManager
         import OFSEC2ConnectionManager
@@ -199,7 +199,7 @@ class OFSTestNetwork(object):
         #This function initializes the cloud connection
         self.cloud_type = cloud_type
         if (cloud_type == 'EC2'):
-            self.cloud_connection_manager = OFSEC2ConnectionManager.OFSEC2ConnectionManager(cloud_config_file)
+            self.cloud_connection_manager = OFSEC2ConnectionManager.OFSEC2ConnectionManager(cloud_config_file,region_name)
         elif (cloud_type == 'nova'):
             self.cloud_connection_manager = OFSNovaConnectionManager.OFSNovaConnectionManager(cloud_config_file,password_file=nova_password_file)
         self.cloud_connection_manager.setCloudKey(key_name,key_location)
@@ -223,11 +223,11 @@ class OFSTestNetwork(object):
 
 
     
-    def createNewCloudNodes(self,number_nodes,image_name,machine_type,associateip=False,domain=None,cloud_subnet=None,instance_suffix=""):
+    def createNewCloudNodes(self,number_nodes,image_name=None,machine_type="t2.micro",associateip=False,domain=None,cloud_subnet=None,instance_suffix="",image_id=None):
         
         # This function creates number nodes on the cloud system. 
         # It returns a list of nodes
-        new_ofs_test_nodes = self.cloud_connection_manager.createNewCloudNodes(number_nodes,image_name,machine_type,self.local_master,associateip,domain,cloud_subnet,instance_suffix)
+        new_ofs_test_nodes = self.cloud_connection_manager.createNewCloudNodes(number_nodes,image_name,machine_type,self.local_master,associateip,domain,cloud_subnet,instance_suffix,image_id)
         
                 
         # Add the node to the created nodes list.
@@ -322,7 +322,6 @@ class OFSTestNetwork(object):
             
         return rc
 
-
     ##      
     # @fn updateCloudNodes(self,node_list=None):
     #
@@ -333,14 +332,14 @@ class OFSTestNetwork(object):
     #
 
         
-    def updateCloudNodes(self,node_list=None):
+    def updateCloudNodes(self,node_list=None, custom_kernel=False, kernel_git_location=None, kernel_git_branch=None):
         # This only updates the Cloud controlled nodes
          
         if node_list == None:
             node_list = self.network_nodes
         
         cloud_nodes = [node for node in self.network_nodes if node.is_cloud == True]
-        self.updateNodes(cloud_nodes)   
+        self.updateNodes(cloud_nodes,custom_kernel,kernel_git_location,kernel_git_branch)   
 
 
     ##
@@ -386,12 +385,12 @@ class OFSTestNetwork(object):
     #    @param self The object pointer
     #    @param node_list List of nodes to update
      
-    def updateNodes(self,node_list=None):
+    def updateNodes(self,node_list=None, custom_kernel=False, kernel_git_location=None, kernel_git_branch=None):
         if node_list == None:
             node_list = self.network_nodes
             
         # Run updateNode on the nodes simultaneously. 
-        self.runSimultaneousCommands(node_list=node_list,node_function=OFSTestNode.OFSTestNode.updateNode)
+        self.runSimultaneousCommands(node_list=node_list,node_function=OFSTestNode.OFSTestNode.updateNode,args=[custom_kernel,kernel_git_location,kernel_git_branch])
         # Wait for reboot
         print "Waiting 180 seconds for nodes to reboot"
         time.sleep(180)
@@ -637,7 +636,7 @@ class OFSTestNetwork(object):
             node_list = self.network_nodes
         if build_node == None:
             build_node = node_list[0]
-        return build_node.installBenchmarks("http://devorange.clemson.edu/pvfs/benchmarks-20121017.tar.gz","/home/%s/benchmarks" % build_node.current_user)
+        return build_node.installBenchmarks("%s/benchmarks-20121017.tar.gz" % build_node.url_base,"/home/%s/benchmarks" % build_node.current_user)
 
    
     ##    
@@ -949,6 +948,22 @@ class OFSTestNetwork(object):
                 self.terminateCloudNode(node)
 
    
+    ##    
+    #    @fn setUrlBase(self,url_base="localhost",node_list=None):
+    #
+    #    Stops the OrangeFS servers on the nodes
+    #    @param self The object pointer
+    #    @param node_list List of nodes in network.
+     
+          
+    def setUrlBase(self,url_base="http://localhost",node_list=None):
+        if node_list == None:
+            node_list = self.network_nodes
+        self.url_base = url_base
+        for node in node_list:
+            node.url_base = url_base
+
+    
     ##    
     #    installTorque(self,node_list=None, head_node=None):
     #

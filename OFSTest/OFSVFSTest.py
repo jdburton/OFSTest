@@ -703,7 +703,7 @@ def dd(testing_node,output=[]):
 
 def linux_untar(testing_node,output=[]):
     
-    rc = testing_node.runSingleCommand("cd /tmp; wget http://devorange.clemson.edu/pvfs/linux-3.18.9.tar.gz", output)
+    rc = testing_node.runSingleCommand("cd /tmp; wget %s/linux-3.18.9.tar.gz" % testing_node.base_url, output)
     
     rc = testing_node.runSingleCommand("cd /tmp; gunzip linux-3.18.9.tar.gz",output)
     
@@ -720,10 +720,10 @@ def xfstests(testing_node,output=[]):
     rc = testing_node.runSingleCommand("git clone git://oss.sgi.com/xfs/cmds/xfstests")
     
     rc = testing_node.changeDirectory("/home/%s/xfstests" % testing_node.current_user)
-    rc = testing_node.runSingleCommand("wget http://devorange.clemson.edu/pvfs/xfstests-pvfs2.diff")
+    rc = testing_node.runSingleCommand("wget %s/xfstests-pvfs2.diff" % testing_node.url_base)
     rc = testing_node.runSingleCommand("patch -p1 < xfstests-pvfs2.diff")
     rc = testing_node.runSingleCommand("make")
-    rc = testing_node.runSingleCommand("wget http://devorange.clemson.edu/pvfs/xfstests-exclude.list")
+    rc = testing_node.runSingleCommand("wget %s/xfstests-exclude.list" % testing_node.url_base)
     rc = testing_node.runSingleCommandAsRoot("TEST_DIR=%s TEST_DEV=tcp://%s:%d/%s ./check -pvfs2 -E xfstests-exclude.list" % (testing_node.ofs_mount_point,testing_node.hostname,testing_node.ofs_tcp_port,testing_node.ofs_fs_name),output)
     print output[1]
     print output[2]

@@ -55,7 +55,8 @@ openmpi_de:
   cmd.script:
     - source: salt://utils/de.sh
 #    - args: "https://s3.amazonaws.com/cloudycluster/ami_src_depends/openmpi-1.8.4.tar.gz /usr/src/"
-    - args: "http://devorange.clemson.edu/pvfs/openmpi-1.8.8-omnibond.tar.gz /opt/mpi/"
+#    - args: "http://devorange.clemson.edu/pvfs/openmpi-1.8.8-omnibond.tar.gz /opt/mpi/"
+    - args: "http://52.25.196.99/pvfs/openmpi-1.8.8-omnibond.tar.gz /opt/mpi/"
     - creates: /opt/mpi/openmpi-1.8.8/
   file.directory:
     - name: /opt/mpi/openmpi-1.8.8/

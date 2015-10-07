@@ -236,12 +236,12 @@ class OFSTestMain(object):
         print "===========================================================" 
         print "Connecting to EC2/OpenStack cloud using information from " + self.config.cloud_config
         #print "%s,%s,%s,%s,%s" % (self.config.cloud_config,self.config.cloud_key_name,self.config.ssh_key_filepath,self.config.cloud_type,self.config.nova_password_file)
-        self.ofs_network.addCloudConnection(self.config.cloud_config,self.config.cloud_key_name,self.config.ssh_key_filepath,self.config.cloud_type,self.config.nova_password_file)
+        self.ofs_network.addCloudConnection(self.config.cloud_config,self.config.cloud_key_name,self.config.ssh_key_filepath,self.config.cloud_type,self.config.nova_password_file,self.config.cloud_region)
 
 
         print "===========================================================" 
         print "Creating %d new EC2/OpenStack cloud nodes" % self.config.number_new_cloud_nodes
-        self.ofs_network.createNewCloudNodes(self.config.number_new_cloud_nodes,self.config.cloud_image,self.config.cloud_machine,self.config.cloud_associate_ip,self.config.cloud_domain,self.config.cloud_subnet,self.config.instance_suffix)
+        self.ofs_network.createNewCloudNodes(self.config.number_new_cloud_nodes,self.config.cloud_image,self.config.cloud_machine,self.config.cloud_associate_ip,self.config.cloud_domain,self.config.cloud_subnet,self.config.instance_suffix,self.config.cloud_image_id)
     
                 
         # Upload the access key to all the nodes in the cluster.
@@ -257,6 +257,7 @@ class OFSTestMain(object):
         print "Verifying hostname resolution"
         self.ofs_network.updateEtcHosts()
 
+
         # MPI and Hadoop testing require passwordless SSH access.
         print "===========================================================" 
         print "Enabling Passwordless SSH access"
@@ -264,14 +265,19 @@ class OFSTestMain(object):
         #print "Enabling Passwordless SSH access for root"
         #self.ofs_network.enablePasswordlessSSH(user="root")
 
-
         # Update new cloud nodes and reboot. We don't want to do this with real nodes 
         # because we don't want to step on the admin's toes.
         print ""
         print "==================================================================="
         print "Updating New Nodes (This may take awhile...)"
-        self.ofs_network.updateCloudNodes()
-        
+        self.ofs_network.updateCloudNodes(kernel_git_location=self.config.kernel_git_location, kernel_git_branch=self.config.kernel_git_branch)
+ 
+ 
+        print "===========================================================" 
+        print "Installing required OrangeFS software from "+ self.config.url_base
+        self.ofs_network.setUrlBase(self.config.url_base)
+       
+
         # Install software required to compile and run OFS and all tests.
         print ""
         print "==================================================================="
@@ -318,7 +324,10 @@ class OFSTestMain(object):
 
             # Add the node to the virtual cluster.
             self.ofs_network.addRemoteNode(ip_address=self.config.node_ip_addresses[i],username=self.config.node_usernames[i],key=self.config.ssh_key_filepath,is_cloud=self.config.using_cloud,ext_ip_address=ext_ip_address)
-
+        
+        print "===========================================================" 
+        print "Installing required OrangeFS software from "+ self.config.url_base
+        self.ofs_network.setUrlBase(self.config.url_base)
 
 
     ##
@@ -518,11 +527,10 @@ class OFSTestMain(object):
         rc = self.ofs_network.startOFSServers()
         #TODO: Need to handle error conditions
         
-        if self.config.start_client_on_all_nodes == True:
-            print ""
-            print "==================================================================="
-            print "Start OFS Client"
-            rc = self.ofs_network.startOFSClientAllNodes(security=self.config.ofs_security_mode,disable_acache=self.config.ofs_disable_acache)
+        print ""
+        print "==================================================================="
+        print "Start OFS Client"
+        rc = self.ofs_network.startOFSClientAllNodes(security=self.config.ofs_security_mode,disable_acache=self.config.ofs_disable_acache)
 
 
         if self.config.install_hadoop == True or self.config.run_hadoop_tests == True:

@@ -1,0 +1,82 @@
+{
+  "variables": {
+    "aws_access_key": "{{env `AWS_ACCESS_KEY`}}",
+    "aws_secret_key": "{{env `AWS_SECRET_KEY`}}",
+    "aws_source_ami": "{{env `AWS_SOURCE_AMI_CENTOS_6`}}",
+    "aws_region": "{{env `AWS_REGION`}}",
+    "aws_vpc": "{{env `AWS_VPC`}}",
+    "aws_subnet": "{{env `AWS_SUBNET`}}",
+    "aws_security_group": "{{env `AWS_SECURITY_GROUP`}}",
+    "user": "{{env `USER`}}"
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "access_key": "{{user `aws_access_key`}}",
+    "secret_key": "{{user `aws_secret_key`}}",
+    "source_ami": "{{user `aws_source_ami`}}",
+    "instance_type": "t2.micro",
+    "region": "{{user `aws_region`}}",
+    "ami_name": "{{user `user`}}-packer-centos6-{{timestamp}}",
+    "vpc_id": "{{user `aws_vpc`}}",
+    "subnet_id": "{{user `aws_subnet`}}",
+    "security_group_id": "{{user `aws_security_group`}}",
+    "associate_public_ip_address": true,
+    "ssh_username": "root",
+    "ssh_pty": "true",
+    "launch_block_device_mappings": [
+      {
+        "device_name": "/dev/sda1",
+        "delete_on_termination": true,
+        "volume_size": 16
+      }
+    ],
+    "run_tags": { "Name": "Packer Builder for {{user `user`}}" }
+  }],
+  "provisioners": [ 
+     {
+    "type": "file",
+    "pause_before": "120s",
+    "source": "./etc/epel-release-6-8.noarch.rpm",
+    "destination": "/tmp/epel-release-6-8.noarch.rpm"
+  },
+    
+	{
+    "type": "file",
+  
+    "source": "./etc/autoconf-2.69-12.2.noarch.rpm",
+    "destination": "/tmp/autoconf-2.69-12.2.noarch.rpm"
+  },
+	{
+    "type": "file",
+  
+    "source": "./etc/automake-1.13.4-6_Oso.noarch.rpm",
+    "destination": "/tmp/automake-1.13.4-6_Oso.noarch.rpm"
+  },
+    
+  
+  {
+    "type": "shell",
+    "inline": [
+      "set -x",
+      "useradd -m -b /home -u 1000 -U centos",
+      "chkconfig iptables off",
+      "/etc/init.d/iptables stop",
+      "sed -i -e 's/^Defaults.*requiretty/# Defaults requiretty/g' /etc/sudoers",
+      "echo 'centos  ALL=(ALL)    NOPASSWD: ALL' >> /etc/sudoers",
+      "yum -y install /tmp/epel-release-6-8.noarch.rpm && sudo rm /tmp/epel-release-6-8.noarch.rpm",
+	  "yum -y install salt-master salt-minion salt-syndic wget perl kernel-devel gcc",
+	  "mkdir -p /opt/mpi",
+	  "chmod -R a+w /opt"
+
+    ]
+  },
+
+  {
+    "type": "salt-masterless",
+    "bootstrap_args": "",
+    "local_state_tree": "./salt",
+    "minion_config": "./salt/masterMinionConfig",
+    "skip_bootstrap": true
+  }
+  ]
+}
