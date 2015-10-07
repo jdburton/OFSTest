@@ -703,7 +703,7 @@ def dd(testing_node,output=[]):
 
 def linux_untar(testing_node,output=[]):
     
-    rc = testing_node.runSingleCommand("cd /tmp; wget http://devorange.clemson.edu/pvfs/linux-3.18.9.tar.gz", output)
+    rc = testing_node.runSingleCommand("cd /tmp; wget %s/linux-3.18.9.tar.gz" % testing_node.base_url, output)
     
     rc = testing_node.runSingleCommand("cd /tmp; gunzip linux-3.18.9.tar.gz",output)
     

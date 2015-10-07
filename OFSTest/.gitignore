@@ -1,0 +1,17 @@
+/__init__.pyc
+/OFSCloudConnectionManager.pyc
+/OFSEC2ConnectionManager.pyc
+/OFSMiscPostTest.pyc
+/OFSMpiioTest.pyc
+/OFSMpiVFSTest.pyc
+/OFSNovaConnectionManager.pyc
+/OFSSysintTest.pyc
+/OFSTestConfig.pyc
+/OFSTestConfigFile.pyc
+/OFSTestConfigMenu.pyc
+/OFSTestLocalNode.pyc
+/OFSTestMain.pyc
+/OFSTestNetwork.pyc
+/OFSTestNode.pyc
+/OFSTestRemoteNode.pyc
+/OFSVFSTest.pyc
