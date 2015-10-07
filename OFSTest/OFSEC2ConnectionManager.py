@@ -299,8 +299,8 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
         print msg
         logging.info(msg)
 
-        print "Waiting 120 seconds for all instances to start."
-        time.sleep(120)
+        print "Waiting 240 seconds for all instances to start."
+        time.sleep(240)
         
         count = 0
         while len(reservation.instances) < number_nodes and count < 6:
