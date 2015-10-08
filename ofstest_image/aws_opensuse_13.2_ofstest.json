@@ -2,7 +2,7 @@
   "variables": {
     "aws_access_key": "{{env `AWS_ACCESS_KEY`}}",
     "aws_secret_key": "{{env `AWS_SECRET_KEY`}}",
-    "aws_source_ami": "{{env `AWS_SOURCE_AMI_CENTOS_6`}}",
+    "aws_source_ami": "{{env `AWS_SOURCE_AMI_OPENSUSE_13_2`}}",
     "aws_region": "{{env `AWS_REGION`}}",
     "aws_vpc": "{{env `AWS_VPC`}}",
     "aws_subnet": "{{env `AWS_SUBNET`}}",
@@ -14,9 +14,9 @@
     "access_key": "{{user `aws_access_key`}}",
     "secret_key": "{{user `aws_secret_key`}}",
     "source_ami": "{{user `aws_source_ami`}}",
-    "instance_type": "t2.micro",
+    "instance_type": "m3.large",
     "region": "{{user `aws_region`}}",
-    "ami_name": "{{user `user`}}-packer-centos6-{{timestamp}}",
+    "ami_name": "{{user `user`}}-packer-opensuse-13.2-{{timestamp}}",
     "vpc_id": "{{user `aws_vpc`}}",
     "subnet_id": "{{user `aws_subnet`}}",
     "security_group_id": "{{user `aws_security_group`}}",
@@ -30,45 +30,24 @@
         "volume_size": 16
       }
     ],
-    "run_tags": { "Name": "Packer Builder for {{user `user`}}" }
+    "run_tags": { "Name": "Packer opensuse 13.2 Builder for {{user `user`}}" }
   }],
   "provisioners": [ 
-     {
-    "type": "file",
-    "pause_before": "120s",
-    "source": "./etc/epel-release-6-8.noarch.rpm",
-    "destination": "/tmp/epel-release-6-8.noarch.rpm"
-  },
-    
-	{
-    "type": "file",
-  
-    "source": "./etc/autoconf-2.69-12.2.noarch.rpm",
-    "destination": "/tmp/autoconf-2.69-12.2.noarch.rpm"
-  },
-	{
-    "type": "file",
-  
-    "source": "./etc/automake-1.13.4-6_Oso.noarch.rpm",
-    "destination": "/tmp/automake-1.13.4-6_Oso.noarch.rpm"
-  },
-    
   
   {
     "type": "shell",
     "inline": [
+      
       "set -x",
-      "yum install -y cloud-init",
-      "useradd -m -b /home -u 1000 -U centos",
-      "echo 'centos:centos' | chpasswd",
-      "chkconfig iptables off",
-      "/etc/init.d/iptables stop",
-      "sed -i -e 's/^Defaults.*requiretty/# Defaults requiretty/g' /etc/sudoers",
-      "echo 'centos  ALL=(ALL)    NOPASSWD: ALL' >> /etc/sudoers",
-      "yum -y install /tmp/epel-release-6-8.noarch.rpm && sudo rm /tmp/epel-release-6-8.noarch.rpm",
-	  "yum -y install salt-master salt-minion salt-syndic wget perl kernel-devel gcc",
+      "sudo zypper --non-interactive install cloud-init",
+      "sudo useradd -m -b /home -u 1000 -U ec2-user",
+       "sudo zypper --non-interactive --gpg-auto-import-keys  addrepo http://download.opensuse.org/repositories/devel:languages:python/openSUSE_13.2/devel:languages:python.repo",
+      "sudo zypper --non-interactive  --gpg-auto-import-keys refresh",
+      "sudo zypper  --non-interactive dup --from http://download.opensuse.org/repositories/devel:/languages:/python/openSUSE_13.2/",
+      "sudo zypper --non-interactive install salt salt-cloud salt-minion salt-master salt-syndic salt-ssh",      
 	  "mkdir -p /opt/mpi",
-	  "chmod -R a+w /opt"
+	  "sudo chmod -R a+w /opt"
+	  
 
     ]
   },
