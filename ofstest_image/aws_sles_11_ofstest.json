@@ -2,7 +2,7 @@
   "variables": {
     "aws_access_key": "{{env `AWS_ACCESS_KEY`}}",
     "aws_secret_key": "{{env `AWS_SECRET_KEY`}}",
-    "aws_source_ami": "{{env `AWS_SOURCE_AMI_SLES_12`}}",
+    "aws_source_ami": "{{env `AWS_SOURCE_AMI_SLES_11`}}",
     "aws_region": "{{env `AWS_REGION`}}",
     "aws_vpc": "{{env `AWS_VPC`}}",
     "aws_subnet": "{{env `AWS_SUBNET`}}",
@@ -16,7 +16,7 @@
     "source_ami": "{{user `aws_source_ami`}}",
     "instance_type": "m3.large",
     "region": "{{user `aws_region`}}",
-    "ami_name": "{{user `user`}}-packer-sles-12-{{timestamp}}",
+    "ami_name": "{{user `user`}}-packer-sles-11-sp4-{{timestamp}}",
     "vpc_id": "{{user `aws_vpc`}}",
     "subnet_id": "{{user `aws_subnet`}}",
     "security_group_id": "{{user `aws_security_group`}}",
@@ -30,32 +30,30 @@
         "volume_size": 16
       }
     ],
-    "run_tags": { "Name": "Packer sles12 Builder for {{user `user`}}" }
+    "run_tags": { "Name": "Packer sles11 Builder for {{user `user`}}" }
   }],
   "provisioners": [
   
   {
     "type": "shell",
-    "pause_before": "120s",
     "inline": [
       "set -x",
-      "ps -ef | grep zypp",
-      "sudo zypper --non-interactive --gpg-auto-import-keys  addrepo http://download.opensuse.org/repositories/devel:languages:python/SLE_12/devel:languages:python.repo",
+      "sudo zypper --non-interactive up",
+      "sudo zypper --non-interactive --gpg-auto-import-keys  addrepo http://download.opensuse.org/repositories/devel:languages:python/SLE_11_SP3/devel:languages:python.repo",
       "sudo zypper --non-interactive --gpg-auto-import-keys  refresh",
       "sudo zypper --non-interactive  install salt salt-minion salt-master salt-syndic salt-ssh",
       "sudo chmod -R a+w /opt",
       "sudo chmod -R a+w /srv",
-      "#sudo ln -s /etc/HOSTNAME /etc/hostname",
+      "sudo ln -s /etc/HOSTNAME /etc/hostname",
       "sudo sed -i 's/DHCLIENT_SET_HOSTNAME=\"yes\"/DH_CLIENT_SETHOSTNAME=\"no\"/' /etc/sysconfig/network/dhcp",
-      "mkdir -p /opt/mpi"
-	  
+      "mkdir -p /opt/mpi",
+      "df -h"
 
     ]
   },
 
   {
     "type": "salt-masterless",
-    "pause_before": "30s",
     "bootstrap_args": "",
     "local_state_tree": "./salt",
     "minion_config": "./salt/masterMinionConfig",

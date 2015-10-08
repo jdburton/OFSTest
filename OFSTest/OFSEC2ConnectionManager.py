@@ -221,11 +221,11 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
         
         self.checkCloudConnection()
         
-        node_instance = next(( i for i in self.cloud_instance_list if i.ip_address == ip_address),None)
+        node_instance = next(( i for i in self.cloud_instance_list if i.private_ip_address == ip_address),None)
         
         if node_instance == None:
             self.getAllCloudInstances()
-            node_instance = next(( i for i in self.cloud_instance_list if i.ip_address == ip_address),None)
+            node_instance = next(( i for i in self.cloud_instance_list if i.private_ip_address == ip_address),None)
         if node_instance == None:
             logging.exception( "Instance at %s not found." % ip_address)
             return 1
