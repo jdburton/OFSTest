@@ -47,7 +47,7 @@ mkdir_p(output_dir)
 
 
 #Add logging
-logging.basicConfig(filename=output_dir+"/ofsnode-commands.log",level=logging.DEBUG)
+logging.basicConfig(filename=output_dir+"/ofsnode-commands.log",level=logging.INFO)
 
 print "==================================================================="
 print "Welcome to the OrangeFS Setup and Testing System"

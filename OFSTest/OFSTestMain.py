@@ -231,7 +231,6 @@ class OFSTestMain(object):
         
     def setupNewCloudCluster(self):
     
-
         # First, if we're using Cloud/Openstack, open the connection
         print "===========================================================" 
         print "Connecting to EC2/OpenStack cloud using information from " + self.config.cloud_config

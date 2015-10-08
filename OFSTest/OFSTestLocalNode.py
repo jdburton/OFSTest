@@ -122,13 +122,13 @@ class OFSTestLocalNode(OFSTestNode.OFSTestNode):
         
         os.chmod(batchfile,0755)
 
-        logging.debug("----- Start generated batchfile: %s -----------------------" % batchfile)
+        logging.info("----- Start generated batchfile: %s -----------------------" % batchfile)
         script_file = open(batchfile,'r')
         for line in script_file:
-            logging.debug(line)
+            logging.info(line)
         script_file.close()
-        logging.debug("---- End generated batchfile: %s -------------------------" % batchfile)           
-        logging.debug("Command: "+batchfile)    
+        logging.info("---- End generated batchfile: %s -------------------------" % batchfile)           
+        logging.info("Command: "+batchfile)    
                     
         # run the command and capture stdout and stderr
         p = subprocess.Popen(batchfile,shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE,bufsize=-1)
@@ -139,9 +139,9 @@ class OFSTestLocalNode(OFSTestNode.OFSTestNode):
         for i in p.communicate():
             output.append(i)
         
-        logging.debug("RC: %r" % p.returncode)
-        logging.debug("STDOUT: %s" % output[1] )
-        logging.debug("STDERR: %s" % output[2] )
+        logging.info("RC: %r" % p.returncode)
+        logging.info("STDOUT: %s" % output[1] )
+        logging.info("STDERR: %s" % output[2] )
         
         # now clear out the batch commands list
         self.batch_commands = []    
@@ -302,7 +302,7 @@ class OFSTestLocalNode(OFSTestNode.OFSTestNode):
         
 
         alias = self.runSingleCommandBacktick('cat '+config_file_name+' | grep \"Alias \"')
-        logging.debug("Alias is "+ alias)
+        logging.info("Alias is "+ alias)
         
         config_file = open(config_file_name,'r')
         

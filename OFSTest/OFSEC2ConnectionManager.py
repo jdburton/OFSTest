@@ -178,18 +178,19 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
         msg = "Connecting to EC2/OpenStack region=%s endpoint=%s" % (self.ec2_region_name,self.ec2_endpoint)
         print msg
         logging.info(msg)
+
         self.ec2_region = ec2.regioninfo.RegionInfo(name=self.ec2_region_name,endpoint=self.ec2_endpoint)
 
         
 
-        logging.debug("EC2 region is %r" % self.ec2_region)
-        logging.debug("ec2.connection.EC2Connection(aws_access_key_id=%s,aws_secret_access_key=%s,is_secure=self.ec2_is_secure,port=%r,debug=%r,region=%s,path=%r)" % (self.ec2_access_key,self.ec2_secret_key,self.ec2_port,debug,self.ec2_region,self.ec2_path))
+        logging.info("EC2 region is %r" % self.ec2_region)
+        logging.info("ec2.connection.EC2Connection(aws_access_key_id=%s,aws_secret_access_key=%s,is_secure=self.ec2_is_secure,port=%r,debug=%r,region=%s,path=%r)" % (self.ec2_access_key,self.ec2_secret_key,self.ec2_port,debug,self.ec2_region,self.ec2_path))
         
         self.ec2_connection = ec2.connection.EC2Connection(aws_access_key_id=self.ec2_access_key,aws_secret_access_key=self.ec2_secret_key,is_secure=self.ec2_is_secure,port=self.ec2_port
         ,debug=debug,region=self.ec2_region,path=self.ec2_path)
         
 
-        logging.debug("EC2 connection is %r" % self.ec2_connection)
+        logging.info("EC2 connection is %r" % self.ec2_connection)
 
 
     ##
@@ -332,7 +333,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
         external_addresses = []
         try:
             all_addresses = self.ec2_connection.get_all_addresses()
-            logging.debug("All addresses: "+ all_addresses)
+            logging.info("All addresses: "+ all_addresses)
             print all_addresses
             print all_addresses[0].__dict__
         except:
@@ -486,13 +487,13 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
         
         for idx,instance in enumerate(new_instances):
             instance.update()
-            logging.debug("Instance %s at %s has state %s with code %r" % (instance.id,instance.ip_address,instance.state,instance.state_code))
+            logging.info("Instance %s at %s has state %s with code %r" % (instance.id,instance.ip_address,instance.state,instance.state_code))
             
             while instance.state_code == 0:
                 
                 time.sleep(10)
                 instance.update()
-                logging.debug("Instance %s at %s has state %s with code %r" % (instance.id,instance.ip_address,instance.state,instance.state_code))
+                logging.info("Instance %s at %s has state %s with code %r" % (instance.id,instance.ip_address,instance.state,instance.state_code))
             
             
         

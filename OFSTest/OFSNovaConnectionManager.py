@@ -152,7 +152,7 @@ class OFSNovaConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManag
 
     def connect(self,debug=0):
         
-        logging.debug("AUTH_URL=%s NOVA_USERNAME=%s NOVA_PASSWORD=%s NOVA_TENANT_NAME=%s " % (self.nova_auth_url, self.nova_username, self.nova_password, self.nova_tenant_name))
+        logging.info("AUTH_URL=%s NOVA_USERNAME=%s NOVA_PASSWORD=%s NOVA_TENANT_NAME=%s " % (self.nova_auth_url, self.nova_username, self.nova_password, self.nova_tenant_name))
         self.keystoneapi = keystoneclient.v2_0.Client(username=self.nova_username, password=self.nova_password, tenant_name=self.nova_tenant_name, auth_url=self.nova_auth_url)
         self.novaapi = novaclient.Client("2",self.nova_username, self.nova_password, self.nova_tenant_name, self.nova_auth_url, no_cache=True)
         self.glance_endpoint = self.keystoneapi.service_catalog.get_endpoints("image")["image"][0]["publicURL"]
@@ -518,8 +518,8 @@ class OFSNovaConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManag
             new_ofs_test_nodes.append(new_node)
 
         # return the list of newly created nodes.
-        logging.debug("New Node IP Addresses: ")
-        logging.debug(ip_addresses)
+        logging.info("New Node IP Addresses: ")
+        logging.info(ip_addresses)
         return new_ofs_test_nodes
 
 

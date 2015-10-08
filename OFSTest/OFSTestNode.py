@@ -553,8 +553,8 @@ class OFSTestNode(object):
         if (debug):
             print command_line
         
-        logging.debug('---------------------------------------------------')
-        logging.debug("Command: "+command_line)
+        logging.info('---------------------------------------------------')
+        logging.info("Command: "+command_line)
 
         del output[:]
         output.append(command_line)
@@ -567,10 +567,10 @@ class OFSTestNode(object):
         for i in p.communicate():
             output.append(i)
 
-        logging.debug("RC: %r" % p.returncode)
+        logging.info("RC: %r" % p.returncode)
 	try:
-	        logging.debug("STDOUT: %s" % output[1] )
-        	logging.debug("STDERR: %s" % output[2] )
+	        logging.info("STDOUT: %s" % output[1] )
+        	logging.info("STDERR: %s" % output[2] )
 	except:
 		pass
         
@@ -849,7 +849,7 @@ class OFSTestNode(object):
     
     
     def updateNode(self,custom_kernel=False,kernel_git_location=None,kernel_git_branch=None):
-        logging.debug("Update Node. Distro is " + self.distro)
+        logging.info("Update Node. Distro is " + self.distro)
            
         if "ubuntu" in self.distro.lower() or "mint" in self.distro.lower() or "debian" in self.distro.lower():
             self.runSingleCommandAsRoot("DEBIAN_FRONTEND=noninteractive apt-get -y update")
@@ -1932,7 +1932,7 @@ class OFSTestNode(object):
         
         self.ofs_extra_tests_location = dest_dir+"/benchmarks" 
         logging.info("Extra tests location: "+self.ofs_extra_tests_location)
-        logging.debug(self.runSingleCommandBacktick("ls %s" % self.ofs_extra_tests_location))
+        logging.info(self.runSingleCommandBacktick("ls %s" % self.ofs_extra_tests_location))
         return 0
     
     
@@ -2187,7 +2187,7 @@ class OFSTestNode(object):
         output = []
 
         # Installs patches to OrangeFS. Assumes patches are p1.
-        logging.debug( ofs_patch_files)
+        logging.info( ofs_patch_files)
         for patch in ofs_patch_files:
             
             patch_name = os.path.basename(patch)

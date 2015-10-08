@@ -98,7 +98,7 @@ class OFSTestRemoteNode(OFSTestNode.OFSTestNode):
         if config_file_name != None:
 
             alias = self.runSingleCommandBacktick('cat '+config_file_name+' | grep \"Alias \"')
-            logging.debug("Alias is "+ alias)
+            logging.info("Alias is "+ alias)
             
             alias_lines = alias.split('\n')
             
@@ -162,12 +162,12 @@ class OFSTestRemoteNode(OFSTestNode.OFSTestNode):
         script_file.write("exit 0\n")
         script_file.close()
         
-        logging.debug("----- Start generated batchfile: %s -----------------------" % batchfilename)
+        logging.info("----- Start generated batchfile: %s -----------------------" % batchfilename)
         script_file = open(batchfilename,'r')
         for line in script_file:
-            logging.debug(line)
+            logging.info(line)
         script_file.close()
-        logging.debug("---- End generated batchfile: %s -------------------------" % batchfilename)            
+        logging.info("---- End generated batchfile: %s -------------------------" % batchfilename)            
         
         ssh_key_parm = ''
         if self.sshLocalKeyFile is not None:
@@ -176,7 +176,7 @@ class OFSTestRemoteNode(OFSTestNode.OFSTestNode):
 
         command_line = "/usr/bin/ssh %s %s@%s -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no \"bash -s\" < %s" % (ssh_key_parm,self.current_user,self.ext_ip_address,batchfilename)
         
-        logging.debug("Command:" + command_line)
+        logging.info("Command:" + command_line)
         p = subprocess.Popen(command_line,shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE,bufsize=-1)
         
         # clear the output list, then append stdout,stderr to list to get pass-by-reference to work
@@ -185,9 +185,9 @@ class OFSTestRemoteNode(OFSTestNode.OFSTestNode):
         for i in p.communicate():
             output.append(i)
         
-        logging.debug("RC: %r" % p.returncode)
-        logging.debug("STDOUT: %s" % output[1] )
-        logging.debug("STDERR: %s" % output[2] )
+        logging.info("RC: %r" % p.returncode)
+        logging.info("STDOUT: %s" % output[1] )
+        logging.info("STDERR: %s" % output[2] )
         # now clear out the batch commands list
         self.batch_commands = []    
 

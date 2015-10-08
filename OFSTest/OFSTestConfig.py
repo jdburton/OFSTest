@@ -430,7 +430,7 @@ class OFSTestConfig(object):
 
     
     def printDict(self):
-        logging.debug(pprint.pformat(self.__dict__))
+        logging.info(pprint.pformat(self.__dict__))
 
 
     ##
