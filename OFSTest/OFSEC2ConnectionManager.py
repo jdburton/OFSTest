@@ -88,7 +88,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
         self.ec2_region_name = None
     
         # Default region name is us-east-1
-        if region_name == None:
+        if region_name is None:
             self.ec2_region_name = "us-east-1"
         else:
             self.ec2_region_name = region_name
@@ -147,7 +147,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
                 else:
                     self.ec2_is_secure = False
                     
-                # endpint is hostname
+                # endpoint is hostname
                 self.ec2_endpoint = url_v[3]
                 
                 # then comes the port, convert to integer
@@ -224,18 +224,18 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
         
         node_instance = next(( i for i in self.cloud_instance_list if i.private_ip_address == ip_address),None)
         
-        if node_instance == None:
+        if node_instance is None:
             self.getAllCloudInstances()
             node_instance = next(( i for i in self.cloud_instance_list if i.private_ip_address == ip_address),None)
-        if node_instance == None:
+        if node_instance is None:
             logging.exception( "Instance at %s not found." % ip_address)
             return 1
             
-        try: 
-            logging.exception( "Releasing external IP address %s" % node_instance.ext_ip_address)
-            self.ec2_connection.release_address(node_instance.ext_ip_address)
-        except:
-            logging.exception( "Warning: Could not release external IP Address "+ node_instance.ext_ip_address)
+        # try:
+        #     logging.exception( "Releasing external IP address %s" % node_instance.ext_ip_address)
+        #     self.ec2_connection.release_address(node_instance.ext_ip_address)
+        # except:
+        #     logging.exception( "Warning: Could not release external IP Address "+ node_instance.ext_ip_address)
             
         print "Terminating node at %s" % ip_address
         
@@ -263,15 +263,15 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
         self.checkCloudConnection()  
         
         # This creates a new instance for the system of a given machine type
-        if (image_id == None):
+        if image_id is None:
             # get the image ID for the operating system
-            if self.cloud_image_list == None:
+            if self.cloud_image_list is None:
                 self.getAllCloudImages()
             
             # now let's find the os name in the image list
             image = next((i for i in self.cloud_image_list if i.name == image_name), None)
             
-            if image == None:
+            if image is None:
                 logging.exception( "Image %s Not Found!" % image_name)
                 return None
             
@@ -281,13 +281,13 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
             image_ids = [ image_id ]
             # get the image ID for the operating system
 
-            if self.cloud_image_list == None:
+            if self.cloud_image_list is None:
                 self.getAllCloudImages(image_ids)
                 
             # now let's find the image_id name in the image list
             image = next((i for i in self.cloud_image_list if i.id == image_id), None)
 
-            if image == None:
+            if image is None:
                 logging.exception( "Image %s Not Found!" % image_id)
                 return None
             
@@ -307,7 +307,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
         while len(reservation.instances) < number_nodes and count < 6:
             print "Waiting on instances"
             time.sleep(10)
-            count = count + 1
+            count +=  1
             #pprint(reservation.__dict__)
             
         new_instances = [n for n in reservation.instances]
@@ -362,7 +362,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
     #
 
     def checkCloudConnection(self):
-        if self.ec2_connection == None:
+        if self.ec2_connection is None:
             self.connect()
 
     ##
@@ -437,7 +437,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
             #pprint(i.__dict__)
             
             if name_filter in i.public_dns_name and i.key_name.lower() == key_filter.lower():
-                print "Instance name %s, Instance IP: %s, Instance host: %s Key %s" % (i.id,i.ip_address,i.public_dns_name,i.key_name)
+                print "Instance name %s, Instance IP: %s, Instance host: %s Key %s" % (i.id, i.ip_address, i.public_dns_name, i.key_name)
                 if self.instanceIsDaysOld(i,days_old):
                     try:
                         i.terminate()
