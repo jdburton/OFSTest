@@ -2854,7 +2854,7 @@ class OFSTestNode(object):
         
         
         print "Attempting to start OFSServer for host %s" % self.hostname
-        self.setEnvironmentVariable("LD_LIBRARY_PATH",self.db4_lib_dir+":"+self.ofs_installation_location+"/lib:")
+        self.setEnvironmentVariable("LD_LIBRARY_PATH",self.db4_lib_dir+":"+self.ofs_installation_location+"/lib64:"+self.ofs_installation_location+"/lib")
 
 
         # need to get the alias list from orangefs.conf file
@@ -2893,8 +2893,8 @@ class OFSTestNode(object):
                 
                 # Are we running this as root? 
                 prefix = "" 
-                if run_as_root == True:
-                    prefix = "LD_LIBRARY_PATH=%s:%s/lib" % (self.db4_lib_dir,self.ofs_installation_location)
+                if run_as_root:
+                    prefix = "LD_LIBRARY_PATH=%s:%s/lib64:%s/lib" % (self.db4_lib_dir,self.ofs_installation_location,self.ofs_installation_location)
                     
                     
                 server_start = "%s %s/sbin/pvfs2-server -p %s/pvfs2-server-%s.pid %s/etc/orangefs.conf -a %s" % (prefix,self.ofs_installation_location,self.ofs_installation_location,self.hostname,self.ofs_installation_location,alias)
@@ -3017,11 +3017,11 @@ class OFSTestNode(object):
             acache_flag =  "--acache-timeout=0"
         
         print "Starting pvfs2-client: "
-        print "sudo LD_LIBRARY_PATH=%s:%s/lib PVFS2TAB_FILE=%s/etc/orangefstab  %s/sbin/pvfs2-client -p %s/sbin/pvfs2-client-core -L %s/pvfs2-client-%s.log %s %s" % (self.db4_lib_dir,self.ofs_installation_location,self.ofs_installation_location,self.ofs_installation_location,self.ofs_installation_location,self.ofs_installation_location,self.ofs_branch,acache_flag,keypath)
+        print "sudo LD_LIBRARY_PATH=%s:%s/lib64:%s/lib PVFS2TAB_FILE=%s/etc/orangefstab  %s/sbin/pvfs2-client -p %s/sbin/pvfs2-client-core -L %s/pvfs2-client-%s.log %s %s" % (self.db4_lib_dir,self.ofs_installation_location,self.ofs_installation_location,self.ofs_installation_location,self.ofs_installation_location,self.ofs_installation_location,self.ofs_installation_location,self.ofs_branch,acache_flag,keypath)
         print ""
         
         # start the client 
-        self.runSingleCommandAsRoot("LD_LIBRARY_PATH=%s:%s/lib PVFS2TAB_FILE=%s/etc/orangefstab  %s/sbin/pvfs2-client -p %s/sbin/pvfs2-client-core -L %s/pvfs2-client-%s.log %s %s" % (self.db4_lib_dir,self.ofs_installation_location,self.ofs_installation_location,self.ofs_installation_location,self.ofs_installation_location,self.ofs_installation_location,self.ofs_branch,acache_flag,keypath))
+        self.runSingleCommandAsRoot("LD_LIBRARY_PATH=%s:%s/lib64:%s/lib PVFS2TAB_FILE=%s/etc/orangefstab  %s/sbin/pvfs2-client -p %s/sbin/pvfs2-client-core -L %s/pvfs2-client-%s.log %s %s" % (self.db4_lib_dir,self.ofs_installation_location,self.ofs_installation_location,self.ofs_installation_location,self.ofs_installation_location,self.ofs_installation_location,self.ofs_installation_location,self.ofs_branch,acache_flag,keypath))
         # change the protection on the logfile to 644
         self.runSingleCommandAsRoot("chmod 644 %s/pvfs2-client-%s.log" % (self.ofs_installation_location,self.ofs_branch))
         
