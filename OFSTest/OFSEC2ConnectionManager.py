@@ -401,7 +401,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
     # @param days_old Age to check
     # 
     # @return True if instance is at least days_old days old
-    # @return Fals if instance is not days_old
+    # @return False if instance is not days_old
     #
         
     def instanceIsDaysOld(self,instance,days_old=7):
@@ -498,7 +498,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
             
         
         # now that the instances are up, check the external ip
-        if associateip == True:
+        if associateip:
             # if we need to associate an external ip address, do so
             ip_addresses = self.associateIPAddresses(new_instances,domain)
         else:

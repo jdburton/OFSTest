@@ -41,7 +41,7 @@
       "sudo zypper --non-interactive up",
       "sudo zypper --non-interactive --gpg-auto-import-keys  addrepo http://download.opensuse.org/repositories/devel:languages:python/SLE_11_SP3/devel:languages:python.repo",
       "sudo zypper --non-interactive --gpg-auto-import-keys  refresh",
-      "sudo zypper --non-interactive  install salt salt-minion salt-master salt-syndic salt-ssh",
+      "sudo zypper --non-interactive  install python-dmidecode salt salt-minion salt-master salt-syndic salt-ssh",
       "sudo chmod -R a+w /opt",
       "sudo chmod -R a+w /srv",
       "sudo ln -s /etc/HOSTNAME /etc/hostname",

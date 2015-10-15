@@ -278,10 +278,10 @@ class OFSTestMain(object):
        
 
         # Install software required to compile and run OFS and all tests.
-        print ""
-        print "==================================================================="
-        print "Installing Required Software"
-        self.ofs_network.installRequiredSoftware()
+#         print ""
+#         print "==================================================================="
+#         print "Installing Required Software"
+#         self.ofs_network.installRequiredSoftware()
         
 #         # Install software required to compile and run OFS and all tests.
 #         print ""
@@ -768,7 +768,7 @@ class OFSTestMain(object):
             import OFSUsrintTest
 
             # TODO: Check to see if usrint and fuse are compatible.
-            if False == True:
+            if False:
                 self.writeOutputHeader(filename,"Usrint Tests not compatible with fuse=====================================\n")
             else:
                 # Unmount OrangeFS and stop the OrangeFS client.

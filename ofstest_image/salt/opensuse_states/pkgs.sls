@@ -10,6 +10,7 @@ orangefs_depends:
       - attr
       - autoconf
       - automake
+      - binutils
       - bison
       - boost-devel
       - dmapi-devel
@@ -42,7 +43,7 @@ orangefs_depends:
       - libuuid1
       - libuuid-devel
       - libxml2-devel
-      - ip
+      - iproute2
       - make
       - mdadm
       - net-tools
@@ -70,7 +71,6 @@ orangefs_depends:
       - rsync
       - subversion
       - sudo
-      - strip
       - tar
       - traceroute
       - uuidd
