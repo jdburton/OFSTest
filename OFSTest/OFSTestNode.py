@@ -1606,9 +1606,8 @@ class OFSTestNode(object):
         if rc == 0: 
             print "Found %s/bin/orted" % self.openmpi_installation_location
         else:
-
-            url_base = "http://devorange.clemson.edu/pvfs/"
-            url = url_base+self.openmpi_version+"-omnibond.tar.gz"
+            url_base = self.url_base
+            url = url_base+"/"+self.openmpi_version+"-omnibond.tar.gz"
     
             
     #         url_base = "http://www.open-mpi.org/software/ompi/v1.8/downloads/"
@@ -1618,7 +1617,7 @@ class OFSTestNode(object):
             patch_url = url_base+patch_name
             
             self.runSingleCommand("mkdir -p "+build_location)
-
+            tempdir = self.current_directory
             self.changeDirectory(build_location)
             
             rc = self.runSingleCommand("wget --quiet %s" % url)

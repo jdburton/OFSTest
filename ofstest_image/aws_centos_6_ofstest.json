@@ -67,7 +67,9 @@
       "echo 'centos  ALL=(ALL)    NOPASSWD: ALL' >> /etc/sudoers",
       "yum -y install /tmp/epel-release-6-8.noarch.rpm && sudo rm /tmp/epel-release-6-8.noarch.rpm",
 	  "yum -y install salt-master salt-minion salt-syndic wget perl kernel-devel gcc",
-	  "mkdir -p /opt/mpi",
+      "yum -y install dracut-modules-growroot cloud-utils-growpart ",
+      "echo -e \"growpart:\nmode: auto\ndevices: ['/']\nignore_growroot_disabled: false\nresize_rootfs: True\"  >> /etc/cloud/cloud.cfg",
+      "mkdir -p /opt/mpi",
 	  "chmod -R a+w /opt"
 
     ]
