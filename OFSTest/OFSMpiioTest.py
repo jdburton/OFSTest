@@ -224,8 +224,25 @@ def mpi_io_test_collective(testing_node,output=[]):
 # @return Not 0 Test failed
 #
 #
-
 def mpi_md_test(testing_node,output=[]):
+
+    rc = mpi_md_test_create(testing_node,output)
+    if rc:
+        print "mpi_md_test create failed with rc = "+rc
+        return rc
+
+    rc = mpi_md_test_resize(testing_node,output)
+    if rc:
+        print "mpi_md_test resize failed with rc = "+rc
+        return rc
+
+    rc = mpi_md_test_delete(testing_node,output)
+    if rc:
+        print "mpi_md_test delete failed with rc = "+rc
+        return rc
+
+
+def mpi_md_test_create(testing_node,output=[]):
 
     #/opt/mpi/openmpi-1.6.5/ompi/mca/io/romio/romio/test
     
@@ -233,7 +250,7 @@ def mpi_md_test(testing_node,output=[]):
     np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
     testing_node.runSingleCommand("mkdir -p %s/mpi_md_test" % testing_node.ofs_mount_point)
     time.sleep(10)
-    rc = testing_node.runSingleCommand("for test in O R D; do %s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/test/mpi-md-test -\\${test} -n 100 -d pvfs2:%s/mpi_md_test; done" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
+    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/test/mpi-md-test -O -n 100 -d pvfs2:%s/mpi_md_test" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
 
     print output[1]
     print output[2]
@@ -241,6 +258,41 @@ def mpi_md_test(testing_node,output=[]):
     time.sleep(30)
     #TODO: Compare actual results with expected.
     
+    return rc
+
+def mpi_md_test_resize(testing_node,output=[]):
+
+    #/opt/mpi/openmpi-1.6.5/ompi/mca/io/romio/romio/test
+
+    rc = testing_node.changeDirectory("%s" % testing_node.ofs_mount_point)
+    np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
+
+    time.sleep(10)
+    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/test/mpi-md-test -R -n 100 -d pvfs2:%s/mpi_md_test" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
+
+    print output[1]
+    print output[2]
+
+    time.sleep(30)
+    #TODO: Compare actual results with expected.
+
+    return rc
+
+def mpi_md_test_delete(testing_node,output=[]):
+
+    #/opt/mpi/openmpi-1.6.5/ompi/mca/io/romio/romio/test
+
+    rc = testing_node.changeDirectory("%s" % testing_node.ofs_mount_point)
+    np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
+    time.sleep(10)
+    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/test/mpi-md-test -D -n 100 -d pvfs2:%s/mpi_md_test" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
+
+    print output[1]
+    print output[2]
+
+    time.sleep(30)
+    #TODO: Compare actual results with expected.
+
     return rc
 
 ##
