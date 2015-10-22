@@ -1227,7 +1227,7 @@ class OFSTestNode(object):
 #                 #"DEBIAN_FRONTEND=noninteractive apt-get install -yu avahi-autoipd  avahi-dnsconfd  avahi-utils avahi-daemon    avahi-discover  avahi-ui-utils",
 #                 "apt-get clean",
     
-                #prepare source
+                #prepare source -  no longer needed
                 #SOURCENAME=`find /usr/src -name "linux-source*" -type d -prune -printf %f`
                 #cd /usr/src/${SOURCENAME}
                 #sudo tar -xjf ${SOURCENAME}.tar.bz2  &> /dev/null
@@ -1256,7 +1256,7 @@ class OFSTestNode(object):
 
                 
 
-#                 # install Sun Java6 for hadoop via webupd8. Fallback to OpenJDK.
+#                 # install Sun Java6 for hadoop via webupd8. Fallback to OpenJDK. - Now done during image creation
 #                 "add-apt-repository ppa:webupd8team/java < /dev/null",
 #                 "apt-get update ",
 #                 "bash -c 'echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections'",
@@ -1267,10 +1267,10 @@ class OFSTestNode(object):
             
             
             
-#             for command in install_commands:
-#                 rc = self.runSingleCommandAsRoot(command, output)
+            for command in install_commands:
+                rc = self.runSingleCommandAsRoot(command, output)
 #
-#             # ubuntu installs java to a different location than RHEL and SuSE
+#             # ubuntu installs java to a different location than RHEL and SuSE  - JAVA_HOME set during image creation
 #             self.jdk6_location = self.runSingleCommandBacktick(command="echo \\$(dirname \\$(dirname \\$(readlink -f \\$(which javac))))")
 #
         elif "suse" in self.distro.lower():
@@ -1283,18 +1283,17 @@ class OFSTestNode(object):
             install_commands = [
                 "bash -c 'echo 0 > /selinux/enforce'",
                 "/sbin/SuSEfirewall2 off",
-#                 # prereqs should be installed as part of the image. Thanx SuseStudio!
+#                 # prereqs should be installed as part of the image.
 #                 #zypper --non-interactive install gcc gcc-c++ flex bison libopenssl-devel kernel-source kernel-syms kernel-devel perl make subversion automake autoconf zip fuse fuse-devel fuse-libs "nano openssl
 # #                 "zypper --non-interactive install patch libuuid1 uuid-devel gdb maven java-1.7.0-openjdk java-1.7.0-openjdk-devel",
 #                 "zypper --non-interactive install openldap2 openldap2-client openldap-servers libldap2_4-2 openldap2-devel",
                 "chown -R ldap:ldap /var/lib/ldap",
                 
     
-#
-#                 "cp /boot/config-\\`uname -r\\` /usr/src/linux-\\`uname -r | sed s/-[\d].*//\\`/.config",
-#                 "cd /usr/src/linux-\\`uname -r | sed s/-[\d].*//\\`; make oldconfig && make modules_prepare && make prepare",
-#                 "ln -s /lib/modules/\\`uname -r\\`/build/Module.symvers /lib/modules/\\`uname -r\\`/source",
-#                 "if [ ! -f /lib/modules/\\`uname -r\\`/build/include/linux/version.h ] then; ln -s include/generated/uapi/version.h /lib/modules/\\`uname -r\\`/build/include/linux/version.h; fi",
+                "cp /boot/config-\\`uname -r\\` /usr/src/linux-\\`uname -r | sed s/-[\d].*//\\`/.config",
+                "cd /usr/src/linux-\\`uname -r | sed s/-[\d].*//\\`; make oldconfig && make modules_prepare && make prepare",
+                "ln -s /lib/modules/\\`uname -r\\`/build/Module.symvers /lib/modules/\\`uname -r\\`/source",
+                "if [ ! -f /lib/modules/\\`uname -r\\`/build/include/linux/version.h ] then; ln -s include/generated/uapi/version.h /lib/modules/\\`uname -r\\`/build/include/linux/version.h; fi",
             
                 "/sbin/modprobe -v fuse",
                 "chmod a+x /bin/fusermount",
@@ -1320,7 +1319,8 @@ class OFSTestNode(object):
 
 
             ]
-            
+
+                        # Java should be installed during image creation.
 #             if "opensuse" in self.distro.lower():
 #                 rc = self.runSingleCommand("wget --quiet http://devorange.clemson.edu/pvfs/jdk-7u71-linux-x64.rpm",output)
 #
@@ -1345,7 +1345,7 @@ class OFSTestNode(object):
             print "Installing required software for Red Hat based system %s" % self.distro
             install_commands = [
                 
-#                 "bash -c 'echo 0 > /selinux/enforce'",
+                "bash -c 'echo 0 > /selinux/enforce'",
 #
 #                 "yum -y install gcc gcc-c++ gcc-gfortran openssl fuse flex bison openssl-devel kernel-devel-\\`uname -r\\` kernel-headers-\\`uname -r\\` perl make subversion automake autoconf zip fuse fuse-devel fuse-libs wget patch bzip2 libuuid libuuid-devel uuid uuid-devel openldap openldap-devel openldap-clients gdb libtool libtool-ltdl wget maven xfsprogs-devel attr libattr-devel libacl-devel bc git libaio libaio-devel",
 #                 "yum -y install java-1.7.0-openjdk java-1.7.0-openjdk-devel",
@@ -1382,7 +1382,7 @@ class OFSTestNode(object):
                 
                 ]
             
-#             #install updated autoconf so that OpenMPI will build correctly.
+#             #install updated autoconf so that OpenMPI will build correctly. - Should be done during image creation.
 #             if "6." in self.distro:
 #                 rc = self.runSingleCommand("wget --quiet ftp://ftp.pbone.net/mirror/ftp5.gwdg.de/pub/opensuse/repositories/home:/monkeyiq:/centos6updates/CentOS_CentOS-6/noarch/autoconf-2.69-12.2.noarch.rpm",output)
 #
@@ -1401,19 +1401,15 @@ class OFSTestNode(object):
                 
 
             
-            # RPM installs to default location
+            # RPM installs to default location - Should be set during image creation
 #             self.jdk6_location = "/usr/lib/jvm/java"
         else:
             print "Unknown system %s" % self.distro
-        
+
+#       Maven should be installed during image creation.
 #         self.installMaven()
 
 
-#
-#         if "linux 7" in self.distro.lower():
-#             self.runSingleCommandAsRoot("nohup /sbin/reboot &")
-#             print "Rebooting node again"
-#             time.sleep(120)
         
         
         

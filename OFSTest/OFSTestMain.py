@@ -278,10 +278,11 @@ class OFSTestMain(object):
        
 
         # Install software required to compile and run OFS and all tests.
-#         print ""
-#         print "==================================================================="
-#         print "Installing Required Software"
-#         self.ofs_network.installRequiredSoftware()
+        print ""
+        print "==================================================================="
+        print "Installing Required Software"
+        self.ofs_network.installRequiredSoftware()
+
         
 #         # Install software required to compile and run OFS and all tests.
 #         print ""
@@ -427,7 +428,7 @@ class OFSTestMain(object):
 
 
         # Cert based security must be done before copy. Key based must be done after copy. 
-        if self.config.ofs_security_mode != None:
+        if self.config.ofs_security_mode is None:
             if self.config.ofs_security_mode.lower() == "cert":
                 print ""
                 print "==================================================================="
@@ -486,7 +487,7 @@ class OFSTestMain(object):
             '''
         
 
-        if self.config.install_tests == True:
+        if self.config.install_tests:
             print ""
             print "==================================================================="
             print "Installing OrangeFS Tests"
@@ -509,7 +510,7 @@ class OFSTestMain(object):
         # TODO: Should handle this with exceptions.
         rc = self.ofs_network.copyOFSToNodeList()
 
-        if self.config.ofs_security_mode != None:
+        if self.config.ofs_security_mode:
             if self.config.ofs_security_mode.lower() == "key":
                 print ""
                 print "==================================================================="
