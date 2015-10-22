@@ -1615,8 +1615,10 @@ class OFSTestNode(object):
     
             patch_name = "openmpi.patch"
             patch_url = url_base+patch_name
-            
+
+            self.runSingleCommandAsRoot("rm -rf "+build_location)
             self.runSingleCommand("mkdir -p "+build_location)
+            self.runSingleCommand("ls -l "+build_location)
             tempdir = self.current_directory
             self.changeDirectory(build_location)
             
@@ -1632,7 +1634,7 @@ class OFSTestNode(object):
             
             
             self.changeDirectory(self.openmpi_source_location)
-            rc = self.runSingleCommand("wget --quiet %s" % patch_url)
+            #rc = self.runSingleCommand("wget --quiet %s" % patch_url)
     
     
             # using pre-patched version. No longer needed.
