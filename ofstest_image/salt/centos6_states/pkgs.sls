@@ -84,3 +84,4 @@ local_pkgs:
   pkg.installed:
     - sources:
       - automake: /tmp/automake-1.13.4-6_Oso.noarch.rpm
+      - autoconf: /tmp/autoconf-2.69-12.2.noarch.rpm
