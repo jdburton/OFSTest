@@ -1681,7 +1681,7 @@ class OFSTestNode(object):
         
         logging.info( "Making ROMIO tests %s" % self.openmpi_version)
         self.setEnvironmentVariable("PATH","%s/bin:%s/bin:\$PATH" % (self.openmpi_installation_location,self.ofs_installation_location))
-        self.saveEnvironment();
+        self.saveEnvironment()
         self.changeDirectory("%s/ompi/mca/io/romio/romio/test" % self.openmpi_source_location)
         rc = self.runSingleCommand("make 2>&1 | tee romio_test_make.log")
         if rc != 0:
