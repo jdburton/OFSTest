@@ -13,7 +13,17 @@ maui_install:
     - source: salt://src_installs/maui.sh
     - creates: /opt/maui/
 
-#openmpi_install:
-#  cmd.script:
-#    - source: salt://src_installs/openmpi.sh
-#    - creates: /opt/openmpi/
+orangefs_install:
+  cmd.script:
+    - source: salt://src_installs/orangefs.sh
+    - creates: /opt/orangefs/
+
+openmpi_install:
+  cmd.script:
+    - source: salt://src_installs/openmpi.sh
+    - creates: /opt/openmpi/
+
+orangefs_test_install:
+  cmd.script:
+    - source: salt://src_installs/orangefs_test.sh
+    - creates: /opt/orangefs/test

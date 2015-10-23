@@ -4,7 +4,12 @@
 
 /etc/profile.d/path_additions.sh:
   file.append:
-    - text: export PATH=$PATH:/opt/ec2-api-tools-1.7.3.0/bin:/opt/torque/bin:/opt/torque/sbin:/opt/orangefs/bin:/opt/orangefs/sbin:/opt/db4/bin:/opt/openmpi/bin:/opt/maui/bin:/opt/maui/sbin
+    - text: export PATH=$PATH:/opt/ec2-api-tools-1.7.3.0/bin:/opt/torque/bin:/opt/torque/sbin:/opt/orangefs/bin:/opt/orangefs/sbin:/opt/db4/bin:/opt/mpi/openmpi/bin:/opt/maui/bin:/opt/maui/sbin:/opt/maven/bin
+
+/etc/profile.d/ld_library_path_additions.sh:
+  file.append:
+    - text: export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/torque/lib:/opt/orangefs/lib:/opt/db4/lib:/opt/mpi/openmpi/lib:/opt/maui/lib
+
 
 /etc/profile.d/python_eggs.sh:
   file.append:

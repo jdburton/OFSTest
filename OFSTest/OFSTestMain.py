@@ -278,10 +278,11 @@ class OFSTestMain(object):
        
 
         # Install software required to compile and run OFS and all tests.
-        print ""
-        print "==================================================================="
-        print "Installing Required Software"
-        self.ofs_network.installRequiredSoftware()
+        # All this should be done with saltstack. If not, fix salt!
+#        print ""
+#        print "==================================================================="
+#        print "Installing Required Software"
+#        self.ofs_network.installRequiredSoftware()
 
         
 #         # Install software required to compile and run OFS and all tests.
@@ -360,17 +361,17 @@ class OFSTestMain(object):
 
         '''    
 
-        # DB4 and hadoop are required to build OrangeFS. Make sure they are installed in the proper location.
-        print ""
-        print "==================================================================="
-        print "Installing Berkeley DB 4.8"
-        self.ofs_network.installDB4()
-        
-        if self.config.install_hadoop == True or self.config.run_hadoop_tests == True:
-            print ""
-            print "==================================================================="
-            print "Installing Hadoop"
-            self.ofs_network.installHadoop(hadoop_version=self.config.hadoop_version)
+        # # DB4 and hadoop are required to build OrangeFS. Make sure they are installed in the proper location.
+        # print ""
+        # print "==================================================================="
+        # print "Installing Berkeley DB 4.8"
+        # self.ofs_network.installDB4()
+        #
+        # if self.config.install_hadoop == True or self.config.run_hadoop_tests == True:
+        #     print ""
+        #     print "==================================================================="
+        #     print "Installing Hadoop"
+        #     self.ofs_network.installHadoop(hadoop_version=self.config.hadoop_version)
 
 
 

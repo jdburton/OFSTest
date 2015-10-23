@@ -11,5 +11,5 @@ cd /opt/mpi/openmpi-1.8.8
   --with-tm=/opt/torque
 make -j$(nproc)
 make install
-#cd /opt/mpi/openmpi-1.8.8/ompi/mca/io/romio/romio/test/
-#make
+cd /opt/mpi/openmpi-1.8.8/ompi/mca/io/romio/romio/test/
+make

@@ -60,8 +60,4 @@ openmpi_de:
     - creates: /opt/mpi/openmpi-1.8.8/
   file.directory:
     - name: /opt/mpi/openmpi-1.8.8/
-    - user: root
-    - group: root
-    - recurse:
-      - user
-      - group
+
