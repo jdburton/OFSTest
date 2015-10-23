@@ -1549,7 +1549,7 @@ class OFSTestNetwork(object):
   
 
     ##
-    # @fn installOpenMPI(self,mpi_nfs_directory=None,build_node=None,mpi_local_directory=None,node_list=None):
+    # @fn configureOpenMPI(self,mpi_nfs_directory=None,build_node=None,mpi_local_directory=None,node_list=None):
     #
     # This function installs OpenMPI software at the mpi_nfs_directory
     #
@@ -1561,7 +1561,7 @@ class OFSTestNetwork(object):
     
     
 
-    def installOpenMPI(self,mpi_nfs_directory=None,build_node=None,mpi_local_directory=None,node_list=None):
+    def configureOpenMPI(self,mpi_nfs_directory=None,build_node=None,mpi_local_directory=None,node_list=None):
         if node_list == None:
             node_list = self.network_nodes
         if build_node == None:
@@ -1587,7 +1587,7 @@ class OFSTestNetwork(object):
         
         # build mpi in the build location, but install it to the nfs directory
         # Also download and build IOR benchmark.
-        rc = build_node.installOpenMPI(install_location=self.mpi_nfs_directory,build_location=mpi_local_directory)
+        #rc = build_node.installOpenMPI(install_location=self.mpi_nfs_directory,build_location=mpi_local_directory)
     
 
                 
@@ -1610,7 +1610,7 @@ class OFSTestNetwork(object):
 
 
         # we created an openmpihost file earlier. Now copy it to the appropriate directory.
-        if build_node.created_openmpihosts != None:
+        if build_node.created_openmpihosts is None:
             rc = build_node.runSingleCommand("/bin/cp %s %s" % (build_node.created_openmpihosts,self.mpi_nfs_directory))
             if rc == 0:
                 build_node.created_openmpihosts = self.mpi_nfs_directory + "/" + os.path.basename(build_node.created_openmpihosts)
@@ -1619,7 +1619,7 @@ class OFSTestNetwork(object):
             #print 'grep -v localhost /etc/hosts | awk \'{print \\\$2 "\tslots=%r"}\' > %s/openmpihosts' % (slots,self.mpi_nfs_directory)
             build_node.runSingleCommand("grep -v localhost /etc/hosts | awk '{print \$2 \"\\tslots=%r\"}' > %s/openmpihosts" % (slots,self.mpi_nfs_directory))
             
-        # Copy to all nodes instead of using NFS.
+        # Copy to all nodes with rsync
         rc = self.copyOpenMPIToNodeList(node_list)
 
         # update runtest to use openmpihosts file - should be done in patched openmpi
@@ -1633,8 +1633,8 @@ class OFSTestNetwork(object):
             #done = node.runSingleCommand("grep -v %s /home/%s/.bashrc" % (node.openmpi_installation_location,node.current_user))
             #done = 0
             #if done == 0:
-            node.setEnvironmentVariable("PATH","%s/openmpi/bin:%s/bin:\$PATH" % (self.mpi_nfs_directory,node.ofs_installation_location))
-            node.setEnvironmentVariable("LD_LIBRARY_PATH","%s/openmpi/lib:%s/lib64:%s/lib:%s/lib" % (self.mpi_nfs_directory,node.ofs_installation_location,node.ofs_installation_location,node.db4_dir))
+#            node.setEnvironmentVariable("PATH","%s/openmpi/bin:%s/bin:\$PATH" % (self.mpi_nfs_directory,node.ofs_installation_location))
+#            node.setEnvironmentVariable("LD_LIBRARY_PATH","%s/openmpi/lib:%s/lib64:%s/lib:%s/lib" % (self.mpi_nfs_directory,node.ofs_installation_location,node.ofs_installation_location,node.db4_dir))
             node.setEnvironmentVariable("PVFS2TAB_FILE","%s/etc/orangefstab" % node.ofs_installation_location)
             node.saveEnvironment();
         

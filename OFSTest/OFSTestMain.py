@@ -455,14 +455,14 @@ class OFSTestMain(object):
             return rc
 
 
-            '''
+
         if self.config.install_MPI == True or self.config.run_mpi_tests == True:
             print ""
             print "==================================================================="
             print "Install OpenMPI"
-            self.ofs_network.installOpenMPI()
+            self.ofs_network.configureOpenMPI()
 
-
+            '''
 
             # TODO: Add mpich support.
             print ""
