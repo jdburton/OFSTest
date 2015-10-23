@@ -1431,11 +1431,12 @@ class OFSTestNode(object):
     def installDB4(self):
         # db4 is built from scratch for all systems to have a consistant version.
         self.db4_lib_dir = self.db4_dir+"/lib"
-        rc = self.runSingleCommand("[ -f %s/libdb.so ]" % self.db4_lib_dir)
-        if rc == 0: 
+        rc = self.runSingleCommand("[ -f \"%s/libdb.so\" ]" % self.db4_lib_dir)
+        if rc == 0:
             print "Found %s/libdb.so" % self.db4_lib_dir
             return
-        
+        else:
+            print "Did not find %s/libdb.so. Will build. rc=%r" % (self.db4_lib_dir,rc)
 
         self.changeDirectory("/home/%s" % self.current_user)
         self.runSingleCommand("wget --quiet %s/db-4.8.30.tar.gz" % self.url_base)
@@ -1495,10 +1496,10 @@ class OFSTestNode(object):
     def installMPICH(self,install_location=None,build_location=None):
     
 
-        if install_location == None:
+        if install_location is None:
             install_location = "/opt/mpi"
         
-        if build_location == None:
+        if build_location is None:
             build_location = install_location
         
         
