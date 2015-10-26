@@ -72,7 +72,7 @@
       "sudo chmod a+x /bin/fusermount",
       "sudo chmod a+r /etc/fuse.conf",
       "sudo service cups stop",
-      "sudo service sendmail stop",
+      "sudo service sendmail stop"
     ]
   }
 
