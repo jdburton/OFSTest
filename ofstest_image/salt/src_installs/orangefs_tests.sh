@@ -3,7 +3,7 @@
 
 set -x
 
-cd ~/orangefs_src/test
+cd /opt/orangefs_src/test
 # kludge because perfbase won't compile.
 rm -rf perfbase
 
