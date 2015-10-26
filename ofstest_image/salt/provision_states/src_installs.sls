@@ -25,5 +25,5 @@ openmpi_install:
 
 orangefs_test_install:
   cmd.script:
-    - source: salt://src_installs/orangefs_test.sh
+    - source: salt://src_installs/orangefs_tests.sh
     - creates: /opt/orangefs/test
