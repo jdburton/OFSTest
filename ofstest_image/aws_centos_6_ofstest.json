@@ -77,6 +77,7 @@
 
   {
     "type": "salt-masterless",
+    "pause_before": "90s",
     "bootstrap_args": "",
     "local_state_tree": "./salt",
     "minion_config": "./salt/masterMinionConfig",
