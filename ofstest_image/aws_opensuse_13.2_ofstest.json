@@ -2,7 +2,7 @@
   "variables": {
     "aws_access_key": "{{env `AWS_ACCESS_KEY`}}",
     "aws_secret_key": "{{env `AWS_SECRET_KEY`}}",
-    "aws_source_ami": "{{env `AWS_SOURCE_AMI_OPENSUSE_13_2`}}",
+    "aws_source_ami": "{{env `AWS_SOURCE_AMI_OPENSUSE_13_2_PRECONFIG`}}",
     "aws_region": "{{env `AWS_REGION`}}",
     "aws_vpc": "{{env `AWS_VPC`}}",
     "aws_subnet": "{{env `AWS_SUBNET`}}",
@@ -21,7 +21,7 @@
     "subnet_id": "{{user `aws_subnet`}}",
     "security_group_id": "{{user `aws_security_group`}}",
     "associate_public_ip_address": true,
-    "ssh_username": "root",
+    "ssh_username": "ec2-user",
     "ssh_pty": "true",
     "launch_block_device_mappings": [
       {
@@ -33,25 +33,6 @@
     "run_tags": { "Name": "Packer opensuse 13.2 Builder for {{user `user`}}" }
   }],
   "provisioners": [ 
-  
-  {
-    "type": "shell",
-    "inline": [
-      
-      "set -x",
-      "sudo zypper --non-interactive install cloud-init",
-      "sudo useradd -m -b /home -u 1000 -U ec2-user",
-       "sudo zypper --non-interactive --gpg-auto-import-keys  addrepo http://download.opensuse.org/repositories/devel:languages:python/openSUSE_13.2/devel:languages:python.repo",
-      "sudo zypper --non-interactive  --gpg-auto-import-keys refresh",
-      "sudo zypper  --non-interactive dup --from http://download.opensuse.org/repositories/devel:/languages:/python/openSUSE_13.2/",
-      "sudo zypper --non-interactive install salt salt-cloud salt-minion salt-master salt-syndic salt-ssh",
-      "#sudo zypper --non-interactive install binutils xfsprogs java-1_7_0-openjdk-devel nfs-kernel-server dmapi-devel openssh-askpass java-1_7_0-openjdk gdb nfs-doc strip automake libuuid-devel mdadm apache2-devel gcc git zip nfs-client make autoconf fuse-devel openldap2-back-meta apache2 subversion patchutils libacl-devel ip gcc-c++ gcc-fortran flex uuidd boost-devel traceroute java-1_7_0-openjdk-headless kernel-syms nfsidmap apache2-mod_nss fuse libtool xfs python3 libattr-devel perl-Crypt-SaltedHash libopenssl-devel attr openldap2 kernel-source yast2 patch openldap2-devel plymouth libaio-devel bison yast2-firstboot python3-base xfsdump openldap2-client xfsprogs-devel fuse-devel-static libxml2-devel pam-devel",
-	  "mkdir -p /opt/mpi",
-	  "sudo chmod -R a+w /opt"
-	  
-
-    ]
-  },
 
   {
     "type": "salt-masterless",
@@ -59,6 +40,24 @@
     "local_state_tree": "./salt",
     "minion_config": "./salt/masterMinionConfig",
     "skip_bootstrap": true
-  }
+  },
+    {
+      "type": "shell",
+      "pause_before": "10s",
+      "inline": [
+        "sudo bash -c 'echo 0 > /selinux/enforce'",
+        "sudo /sbin/SuSEfirewall2 off",
+        "sudo cp /boot/config-`uname -r` /usr/src/linux-`uname -r | sed s/-[\d].*//`/.config",
+        "cd /usr/src/linux-`uname -r | sed s/-[\d].*//`; sudo make oldconfig && sudo make modules_prepare && sudo make prepare",
+        "sudo ln -s /lib/modules/`uname -r`/build/Module.symvers /lib/modules/`uname -r`/source",
+        "if [ ! -f /lib/modules/`uname -r`/build/include/linux/version.h ] then; sudo ln -s include/generated/uapi/version.h /lib/modules/`uname -r`/build/include/linux/version.h; fi",
+        "sudo /sbin/modprobe -v fuse",
+        "sudo chmod a+x /bin/fusermount",
+        "sudo chmod a+r /etc/fuse.conf",
+        "sudo chmod -R a+w /opt",
+        "sudo chown -R ec2-user:ec2-user /opt"
+      ]
+    }
   ]
+
 }
