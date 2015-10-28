@@ -57,6 +57,7 @@
       "echo -e \"growpart:\nmode: auto\ndevices: ['/']\nignore_growroot_disabled: false\nresize_rootfs: True\"  >> /etc/cloud/cloud.cfg",
       "mkdir -p /opt/mpi",
 	  "chmod -R a+w /opt",
+      "yum update --disableexcludes=main -y",
       "sudo /sbin/reboot"
     ]
   }
