@@ -219,8 +219,8 @@ class OFSTestNode(object):
         ## @var created_openmpihosts
         # Created openmpihosts file
         
-        self.openmpi_installation_location = ""
-        self.openmpi_source_location = ""
+        self.openmpi_installation_location = "/opt/mpi/openmpi"
+        self.openmpi_source_location = "/opt/mpi/openmpi-1.8.8"
         self.openmpi_version = ""
         self.created_openmpihosts = None  
         self.ior_installation_location = ""
@@ -1583,7 +1583,7 @@ class OFSTestNode(object):
     #
     
 
-    def installOpenMPI(self,install_location=None,build_location=None):
+    def configureOpenMPI(self,install_location=None,build_location=None):
         
         
         if install_location == None:
