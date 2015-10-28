@@ -1581,7 +1581,7 @@ class OFSTestNetwork(object):
         # Also download and build IOR benchmark.
         #rc = build_node.installOpenMPI(install_location=self.mpi_nfs_directory,build_location=mpi_local_directory)
     
-
+        rc = 0
                 
         # how many slots per node do we need?
 
