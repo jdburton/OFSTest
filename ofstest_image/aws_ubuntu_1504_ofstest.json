@@ -34,7 +34,7 @@
   }],
     "provisioners": [ 
   
-  {
+    {
     "type": "shell",
     "inline": [
       "set -x",
@@ -42,19 +42,32 @@
 	  "sudo add-apt-repository -y ppa:saltstack/salt",
 	  "sudo apt-get update",
 	  "sudo apt-get -y install salt-master salt-minion salt-syndic salt-ssh wget perl gcc",
+      "sudo apt-get -y dist-upgrade",
 	  "sudo chmod -R a+w /opt",
-	  "mkdir -p /opt/mpi"
-	  
+	  "mkdir -p /opt/mpi",
+      "sudo /sbin/reboot"
 
     ]
   },
 
   {
     "type": "salt-masterless",
+    "pause_before": "90s",
     "bootstrap_args": "",
     "local_state_tree": "./salt",
     "minion_config": "./salt/masterMinionConfig",
     "skip_bootstrap": true
+   },
+  {
+    "type": "shell",
+    "pause_before": "10s",
+    "inline": [
+      "sudo chown -R ubuntu:ubuntu /opt",
+      "sudo /sbin/modprobe -v fuse",
+      "sudo chmod a+x /bin/fusermount",
+      "sudo chmod a+r /etc/fuse.conf"
+
+    ]
   }
   ]
 }
