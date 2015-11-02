@@ -13,9 +13,7 @@ orangefs_depends:
       - kernel-devel 
       - kernel-headers
       - perl 
-      - make 
-      - automake 
-      - autoconf 
+      - make
       - zip 
       - fuse 
       - fuse-devel 
@@ -77,7 +75,6 @@ other_depends:
       - boost-devel
       - python-pip
       - time
-#      - nmap-ncat
       - environment-modules
   
 local_pkgs:
