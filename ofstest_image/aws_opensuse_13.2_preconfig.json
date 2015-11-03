@@ -16,7 +16,7 @@
     "source_ami": "{{user `aws_source_ami`}}",
     "instance_type": "m3.large",
     "region": "{{user `aws_region`}}",
-    "ami_name": "{{user `user`}}-packer-opensuse-13.2-{{timestamp}}",
+    "ami_name": "{{user `user`}}-packer-opensuse-13.2-preconfig-{{timestamp}}",
     "vpc_id": "{{user `aws_vpc`}}",
     "subnet_id": "{{user `aws_subnet`}}",
     "security_group_id": "{{user `aws_security_group`}}",
