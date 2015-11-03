@@ -47,8 +47,6 @@ orangefs_depends:
       - httpd-devel
       - pam-devel
       - perl-Test-Harness
-      - automake: /tmp/automake-1.13.4-6_Oso.noarch.rpm
-      - autoconf: /tmp/autoconf-2.69-12.2.noarch.rpm
 
 orangefs_hadoop_depends:
   pkg.installed:

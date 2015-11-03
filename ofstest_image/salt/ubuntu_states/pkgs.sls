@@ -27,9 +27,7 @@ orangefs_depends:
       - uuid-dev 
       - uuid-runtime 
       - gdb 
-#      - maven 
-      - git 
-      - libtool 
+      - git
       - libacl1-dev 
       - xfslibs-dev 
       - xfsprogs 

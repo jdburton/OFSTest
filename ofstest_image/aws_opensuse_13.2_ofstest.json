@@ -21,7 +21,7 @@
     "subnet_id": "{{user `aws_subnet`}}",
     "security_group_id": "{{user `aws_security_group`}}",
     "associate_public_ip_address": true,
-    "ssh_username": "ec2-user",
+    "ssh_username": "root",
     "ssh_pty": "true",
     "launch_block_device_mappings": [
       {
@@ -42,7 +42,7 @@
       "sudo zypper --non-interactive  --gpg-auto-import-keys refresh",
       "sudo zypper  --non-interactive dup --from http://download.opensuse.org/repositories/devel:/languages:/python/openSUSE_13.2/",
       "sudo zypper --non-interactive install salt salt-cloud salt-minion salt-master salt-syndic salt-ssh",
-      "sudo zypper --non-interactive install iproute2 libgit2 libgit2-devel binutils xfsprogs java-1_7_0-openjdk-devel nfs-kernel-server dmapi-devel openssh-askpass java-1_7_0-openjdk gdb nfs-doc automake libuuid-devel mdadm apache2-devel gcc git zip nfs-client make autoconf fuse-devel openldap2-back-meta apache2 subversion patchutils libacl-devel gcc-c++ gcc-fortran flex uuidd boost-devel traceroute java-1_7_0-openjdk-headless kernel-syms nfsidmap apache2-mod_nss fuse libtool xfs python libattr-devel perl-Crypt-SaltedHash libopenssl-devel attr openldap2 kernel-source yast2 patch openldap2-devel plymouth libaio-devel bison yast2-firstboot python-base xfsdump openldap2-client xfsprogs-devel fuse-devel-static libxml2-devel pam-devel python-devel"
+      "sudo zypper --non-interactive install iproute2 libgit2-21 libgit2-devel binutils xfsprogs java-1_7_0-openjdk-devel nfs-kernel-server dmapi-devel openssh-askpass java-1_7_0-openjdk gdb nfs-doc automake libuuid-devel mdadm apache2-devel gcc git zip nfs-client make autoconf fuse-devel openldap2-back-meta apache2 subversion patchutils libacl-devel gcc-c++ gcc-fortran flex uuidd boost-devel traceroute java-1_7_0-openjdk-headless kernel-syms nfsidmap apache2-mod_nss fuse libtool xfs python libattr-devel perl-Crypt-SaltedHash libopenssl-devel attr openldap2 kernel-source yast2 patch openldap2-devel plymouth libaio-devel bison yast2-firstboot python-base xfsdump openldap2-client xfsprogs-devel fuse-devel-static libxml2-devel pam-devel python-devel"
       ]
     },
 
@@ -61,8 +61,8 @@
       "inline": [
         "sudo bash -c 'echo 0 > /selinux/enforce'",
         "sudo /sbin/SuSEfirewall2 off",
-        "sudo cp /boot/config-`uname -r` /usr/src/linux-`uname -r | sed s/-[\d].*//`/.config",
-        "cd /usr/src/linux-`uname -r | sed s/-[\d].*//`; sudo make oldconfig && sudo make modules_prepare && sudo make prepare",
+        "sudo cp /boot/config-`uname -r` /usr/src/linux-`uname -r | sed s/-[\\d].*//`/.config",
+        "cd /usr/src/linux-`uname -r | sed s/-[\\d].*//`; sudo make oldconfig && sudo make modules_prepare && sudo make prepare",
         "sudo ln -s /lib/modules/`uname -r`/build/Module.symvers /lib/modules/`uname -r`/source",
         "if [ ! -f /lib/modules/`uname -r`/build/include/linux/version.h ] then; sudo ln -s include/generated/uapi/version.h /lib/modules/`uname -r`/build/include/linux/version.h; fi",
         "sudo /sbin/modprobe -v fuse",
