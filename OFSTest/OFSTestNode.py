@@ -1675,7 +1675,7 @@ class OFSTestNode(object):
         elif security_mode.lower() == "cert":
             configure_opts = configure_opts+" --enable-security-cert"
         
-        
+        print "Configuring OrangeFS"
         rc = self.runSingleCommand("./configure %s" % configure_opts, output)
         
         # did configure run correctly?
