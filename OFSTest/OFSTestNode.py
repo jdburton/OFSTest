@@ -868,21 +868,21 @@ class OFSTestNode(object):
             # Uninstall the old kernel
             # Must escape double quotes and backquotes for command to run correctly on remote machine.
             # Otherwise shell will interpret them for local machine and commands won't work.
-            if "6." in self.distro or "5." in self.distro:
-                rc = self.runSingleCommandAsRoot("\\`uname -r\\`")
-                
-                rc = self.runSingleCommandAsRoot("rpm -e kernel-\\`uname -r\\`")
-                
-                rc = self.runSingleCommandAsRoot("echo \\\"\\`rpm -q --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}\n' kernel\\`\\\"")
-                
-                            
-                rc = self.runSingleCommandAsRoot("perl -e \\\"s/\\`uname -r\\`/\\`rpm -q --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}\n' kernel\\`/g\\\" -p /boot/grub/grub.conf")
-                
-                
-                rc = self.runSingleCommandAsRoot("perl -e \\\"s/\\`uname -r\\`/\\`rpm -q --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}\n' kernel\\`/g\\\" -p -i /boot/grub/grub.conf")
-                
-            else:
-                rc = self.runSingleCommandAsRoot("mkdir -p /var/log/journal")
+            # if "6." in self.distro or "5." in self.distro:
+            #     rc = self.runSingleCommandAsRoot("\\`uname -r\\`")
+            #
+            #     rc = self.runSingleCommandAsRoot("rpm -e kernel-\\`uname -r\\`")
+            #
+            #     rc = self.runSingleCommandAsRoot("echo \\\"\\`rpm -q --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}\n' kernel\\`\\\"")
+            #
+            #
+            #     rc = self.runSingleCommandAsRoot("perl -e \\\"s/\\`uname -r\\`/\\`rpm -q --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}\n' kernel\\`/g\\\" -p /boot/grub/grub.conf")
+            #
+            #
+            #     rc = self.runSingleCommandAsRoot("perl -e \\\"s/\\`uname -r\\`/\\`rpm -q --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}\n' kernel\\`/g\\\" -p -i /boot/grub/grub.conf")
+            #
+            # else:
+            rc = self.runSingleCommandAsRoot("mkdir -p /var/log/journal")
                     
         #self.runAllBatchCommands()
         if custom_kernel == True:
