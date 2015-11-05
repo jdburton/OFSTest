@@ -19,6 +19,6 @@
 /etc/profile.d/maven.sh:
   file.append:
     - text: 
-      - export M2_HOME=/opt/maven
-      - export M2=/opt/maven/bin
+      - export M2_HOME=/opt/apache-maven-3.2.5
+      - export M2=$M2_HOME/bin
     

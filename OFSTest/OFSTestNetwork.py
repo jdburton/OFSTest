@@ -1435,19 +1435,23 @@ class OFSTestNetwork(object):
     # @param hadoop_nodes Nodes on which to setup hadoop
     # @param master_node Hadoop master node
      
-    def setupHadoop(self,hadoop_nodes=None,master_node=None):
+    def setupHadoop(self,hadoop_version="hadoop-2.6.0",hadoop_nodes=None,master_node=None):
         if hadoop_nodes is None:
             hadoop_nodes = self.network_nodes
         
         if master_node is None:
             master_node = hadoop_nodes[0]
-        
+
+        # Was originally set during installation, but now set here.
+        master_node.hadoop_version = hadoop_version
+
         # remove list of slaves. We will be rebuilding it.
         master_node.runSingleCommand("rm %s/conf/slaves" % master_node.hadoop_location)
 
+
         for node in hadoop_nodes:
             
-            
+            node.hadoop_version = master_node.hadoop_version
             # copy templates to node
             #master_node.copyToRemoteNode(source="%s/test/automated/hadoop-tests.d/conf/" % master_node.ofs_source_location,destination_node=node,destination="%s/conf/" % node.hadoop_location,recursive=True)
             if master_node.hadoop_version == "hadoop-1.2.1":

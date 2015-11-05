@@ -445,7 +445,7 @@ class OFSTestMain(object):
             print ""
             print "==================================================================="
             print "Setup Hadoop"
-            self.ofs_network.setupHadoop()
+            self.ofs_network.setupHadoop(hadoop_version=self.config.hadoop_version)
         
         
         return self.checkNetwork()

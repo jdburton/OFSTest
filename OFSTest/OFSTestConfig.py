@@ -218,7 +218,7 @@ class OFSTestConfig(object):
         
         ## @var install_hadoop
         # Enable OrangeFS hadoop support
-        self.hadoop_version = "hadoop-1.2.1" # Web Interface: select
+        self.hadoop_version = "hadoop-2.6.0" # Web Interface: select
 
         ## @var configure_opts
         # Additional options for configure
