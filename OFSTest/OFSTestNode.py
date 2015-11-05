@@ -387,7 +387,7 @@ class OFSTestNode(object):
 
         # SuSE distros require a hostname kludge to get it to work. Otherwise all instances will be set to the same hostname
         # That's a better solution than what Openstack gives us. So why not? 
-        if self.is_cloud == True:
+        if self.is_cloud:
             
             suse_host = "ofsnode-%03d" % (self.node_number)
             msg = "Renaming %s based node to %s" % (self.distro,suse_host)
@@ -398,7 +398,7 @@ class OFSTestNode(object):
             self.hostname = suse_host
             
         # Torque doesn't like long hostnames. Truncate the hostname to 15 characters if necessary.
-#         elif len(self.hostname) > 15 and self.is_cloud == True:
+#         elif len(self.hostname) > 15 and self.is_cloud:
 #             short_hostname = self.hostname[:15]
 #             self.runSingleCommandAsRoot("bash -c 'echo %s > /etc/hostname'" % short_hostname)
 #             self.runSingleCommandAsRoot("hostname %s" % short_hostname)
@@ -544,7 +544,7 @@ class OFSTestNode(object):
         
         
         #print command
-        if remote_user==None:
+        if remote_user is None:
             remote_user = self.current_user
     
         # get the correct format of the command line for the node we are running on.    
@@ -568,11 +568,11 @@ class OFSTestNode(object):
             output.append(i)
 
         logging.info("RC: %r" % p.returncode)
-	try:
-	        logging.info("STDOUT: %s" % output[1] )
-        	logging.info("STDERR: %s" % output[2] )
-	except:
-		pass
+        try:
+            logging.info("STDOUT: %s" % output[1] )
+            logging.info("STDERR: %s" % output[2] )
+        except:
+            pass
         
         return p.returncode
     
@@ -598,7 +598,7 @@ class OFSTestNode(object):
           
     def runSingleCommandBacktick(self,command,output=[],remote_user=None,debug=False):
         
-        if remote_user==None:
+        if remote_user is None:
             remote_user = self.current_user
       
         
@@ -817,7 +817,7 @@ class OFSTestNode(object):
         
         rflag = ""
         # verify source file exists
-        if recursive == True:
+        if recursive:
             rflag = "-a"
         else:
             rflag = ""
@@ -869,7 +869,7 @@ class OFSTestNode(object):
             rc = self.runSingleCommandAsRoot("mkdir -p /var/log/journal")
                     
         #self.runAllBatchCommands()
-        if custom_kernel == True:
+        if custom_kernel:
             rc = self.installCustomKernel(kernel_git_location,kernel_git_branch)
             if rc != 0:
                 print "Could not install custom kernel. Continuing with default kernel."
@@ -995,10 +995,10 @@ class OFSTestNode(object):
     def configureOpenMPI(self,install_location=None,build_location=None):
         
         
-        if install_location == None:
+        if install_location is None:
             install_location = "/opt/mpi"
         
-        if build_location == None:
+        if build_location is None:
             build_location = install_location
         
         
@@ -1257,7 +1257,7 @@ class OFSTestNode(object):
         self.ofs_branch = os.path.basename(svnurl)
     
         #export svn by default. This merely copies from SVN without allowing updatezz
-        if svn_options == None:
+        if svn_options is None:
             svn_options = ""
         svn_action = "export --force"
         
@@ -1295,7 +1295,7 @@ class OFSTestNode(object):
 
 
     def installBenchmarks(self,tarurl=None,dest_dir="",configure_options="",make_options="",install_options=""):
-        if tarurl == None:
+        if tarurl is None:
             tarurl = self.url_base+"/benchmarks-20121017.tar.gz"
         if dest_dir == "":
             dest_dir = "/home/%s/" % self.current_user
@@ -1620,9 +1620,7 @@ class OFSTestNode(object):
             logging.exception( "Could not create directory "+ofs_prefix)
             ofs_prefix = "/home/%s/orangefs" % self.current_user
             logging.exception( "Using default %s" % ofs_prefix)
-        else:
-            self.runSingleCommand("rmdir "+ofs_prefix)
-            
+
         
         # get the kernel version if it has been updated
         self.kernel_version = self.runSingleCommandBacktick("uname -r")
@@ -1634,7 +1632,7 @@ class OFSTestNode(object):
 
        
         # Add various options to the configure
-        if build_kmod == True:
+        if build_kmod:
             
             if "suse" in self.distro.lower():
                 # SuSE puts kernel source in a different location.
@@ -1642,7 +1640,7 @@ class OFSTestNode(object):
             else:
                 configure_opts = "%s --with-kernel=%s/build" % (configure_opts,self.kernel_source_location)
         
-        if enable_strict == True:
+        if enable_strict:
             # should check gcc version, but am too lazy for that. Will work on gcc > 4.4
             # gcc_ver = self.runSingleCommandBacktick("gcc -v 2>&1 | grep gcc | awk {'print \$3'}")
              
@@ -1655,20 +1653,20 @@ class OFSTestNode(object):
             # otherwise, disable optimizations
             configure_opts = configure_opts+" --disable-opt"
 
-        if enable_hadoop == True:
+        if enable_hadoop:
             configure_opts =  configure_opts + " --with-jdk=%s --enable-jni --enable-user-env-vars" % self.jdk6_location
             enable_shared = True
 
 
-        if enable_shared == True:
+        if enable_shared:
             configure_opts = configure_opts+" --enable-shared"
 
-        if enable_fuse == True:
+        if enable_fuse:
             configure_opts = configure_opts+" --enable-fuse"
         
 
         
-        if security_mode == None:
+        if security_mode is None:
             # no security mode, ignore
             # must come first to prevent exception
             pass
@@ -1711,7 +1709,7 @@ class OFSTestNode(object):
 
         
     def checkMount(self,mount_point=None,output=[]):
-        if mount_point == None:
+        if mount_point is None:
             mount_point = self.ofs_mount_point
         mount_check = self.runSingleCommand("mount | grep %s" % mount_point,output)
         '''    
@@ -1761,7 +1759,7 @@ class OFSTestNode(object):
             
             return rc
         # Make the kernel module
-        if self.build_kmod == True:
+        if self.build_kmod:
             rc = self.runSingleCommand("make kmod",output)
             if rc != 0:
                 logging.exception( "Build (make) of of OrangeFS-kmod at %s Failed!" % self.ofs_source_location)
@@ -1795,7 +1793,7 @@ class OFSTestNode(object):
     def installOFSSource(self,install_options="",install_as_root=False):
         self.changeDirectory(self.ofs_source_location)
         output = []
-        if install_as_root == True:
+        if install_as_root:
             rc = self.runSingleCommandAsRoot("make install",output)
         else:
             rc = self.runSingleCommand("make install",output)
@@ -1804,12 +1802,12 @@ class OFSTestNode(object):
             logging.exception("Could not install OrangeFS from %s to %s" % (self.ofs_source_location,self.ofs_installation_location))
             return rc
         
-        if self.build_kmod == True:
+        if self.build_kmod:
             rc = self.runSingleCommand("make kmod_install kmod_prefix=%s" % self.ofs_installation_location,output)
             if rc != 0:
                 logging.exception("Could not install OrangeFS from %s to %s" % (self.ofs_source_location,self.ofs_installation_location))
                 
-        if self.enable_hadoop == True:
+        if self.enable_hadoop:
             if self.hadoop_version == 'hadoop-1.2.1':
                 self.changeDirectory("%s/src/client/hadoop/orangefs-hadoop1" % self.ofs_source_location)
                 rc = self.runSingleCommand("mvn -Dmaven.compiler.target=1.6 -Dmaven.compiler.source=1.6 -DskipTests clean package")
@@ -2111,7 +2109,7 @@ class OFSTestNode(object):
         ''' 
       
         security_args = ""
-        if security == None:
+        if security is None:
             pass
         elif security.lower() == "key":
             msg = "Configuring key based security"
@@ -2142,7 +2140,7 @@ class OFSTestNode(object):
             return rc
         
         # do we need to copy the file to a new location?
-        if ofs_conf_file == None:
+        if ofs_conf_file is None:
             self.ofs_conf_file = self.ofs_installation_location+"/etc/orangefs.conf"
         else:
             rc = self.copyLocal(self.ofs_installation_location+"/etc/orangefs.conf",ofs_conf_file,False)
@@ -2190,7 +2188,7 @@ class OFSTestNode(object):
 
 
         # need to get the alias list from orangefs.conf file
-        if self.alias_list == None:
+        if self.alias_list is None:
             self.alias_list = self.getAliasesFromConfigFile(self.ofs_conf_file)
         
         if len(self.alias_list) == 0:
@@ -2343,7 +2341,7 @@ class OFSTestNode(object):
         
         # TODO: Add cert-based security.
         keypath = ""
-        if security==None:
+        if security is None:
             pass
         elif security.lower() == "key":
             keypath = "--keypath=%s/etc/pvfs2-clientkey.pem" % self.ofs_installation_location
@@ -2408,7 +2406,7 @@ class OFSTestNode(object):
         self.runSingleCommand("mkdir -p %s" % self.ofs_mount_point)
         
         # mount with fuse
-        if mount_fuse == True:
+        if mount_fuse:
             print "Mounting OrangeFS service at tcp://%s:%d/%s at mount_point %s via fuse" % (self.hostname,self.ofs_tcp_port,self.ofs_fs_name,self.ofs_mount_point)
             self.runSingleCommand("%s/bin/pvfs2fuse %s -o fs_spec=tcp://%s:%d/%s -o nonempty" % (self.ofs_installation_location,self.ofs_mount_point,self.hostname,self.ofs_tcp_port,self.ofs_fs_name),output)
             #print output
@@ -2565,7 +2563,7 @@ class OFSTestNode(object):
 
     def createUserCerts(self,user=None):
         self.changeDirectory("%s/examples/certs" % self.ofs_source_location)
-        if user == None:
+        if user is None:
             user = self.current_user
         
         self.runSingleCommandAsRoot("rm -f pvfs2-cert.pem pvfs2-cert-key.pem pvfs2-cert-req.pem")
