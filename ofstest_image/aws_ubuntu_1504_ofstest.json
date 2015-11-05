@@ -16,7 +16,7 @@
     "source_ami": "{{user `aws_source_ami`}}",
     "instance_type": "t2.micro",
     "region": "{{user `aws_region`}}",
-    "ami_name": "{{user `user`}}-packer-ubuntu-15.04-{{timestamp}}",
+    "ami_name": "Ubuntu 15.04 LTS OrangeFS Test Image",
     "vpc_id": "{{user `aws_vpc`}}",
     "subnet_id": "{{user `aws_subnet`}}",
     "security_group_id": "{{user `aws_security_group`}}",
@@ -65,8 +65,7 @@
       "sudo apt-get -y install libtool-bin",
       "sudo chown -R ubuntu:ubuntu /opt",
       "sudo /sbin/modprobe -v fuse",
-      "sudo chmod a+x /bin/fusermount",
-      "sudo find /etc -name fuse.conf -exec chmod a+r {} \\; || echo 'not found'"
+      "sudo chmod a+x /bin/fusermount"
 
     ]
   }

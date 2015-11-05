@@ -13,6 +13,11 @@ maui_install:
     - source: salt://src_installs/maui.sh
     - creates: /opt/maui/
 
+maven_install:
+  cmd.script:
+    - source: salt://src_installs/maven.sh
+    - creates: /usr/bin/mvn
+
 orangefs_install:
   cmd.script:
     - source: salt://src_installs/orangefs.sh
