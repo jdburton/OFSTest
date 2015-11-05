@@ -277,21 +277,6 @@ class OFSTestMain(object):
         self.ofs_network.setUrlBase(self.config.url_base)
        
 
-        # Install software required to compile and run OFS and all tests.
-        # All this should be done with saltstack. If not, fix salt!
-#        print ""
-#        print "==================================================================="
-#        print "Installing Required Software"
-#        self.ofs_network.installRequiredSoftware()
-
-        
-#         # Install software required to compile and run OFS and all tests.
-#         print ""
-#         print "==================================================================="
-#         print "Installing Berkeley DB 4.8"
-#         self.ofs_network.installDB4()
-#         
-#         
 #                 # Install software required to compile and run OFS and all tests.
 #         print ""
 #         print "==================================================================="
@@ -340,40 +325,6 @@ class OFSTestMain(object):
         
     def setupOFS(self):
 
-        '''
-        # If you're using any NFS mounts, could put them here.
-        # No longer needed, but will save code stub for possible future 
-        # development
-        print ""
-        print "==================================================================="
-        print "Exporting and mounting test nfs directories"
-        
-        nfs_dir = "/home/%s/nfsdir" % self.ofs_network.network_nodes[0].current_user
-        rc = self.ofs_network.network_nodes[0].runSingleCommand("mkdir -p %s" % nfs_dir)
-        
-        self.ofs_network.exportNFSDirectory(directory=nfs_dir,nfs_server_list=[self.ofs_network.network_nodes[0]])
-        nfs_share = "%s:%s" % (self.ofs_network.network_nodes[0].ip_address,nfs_dir)
-        nfs_mount_point = "/opt/nfsmount"
-        self.ofs_network.mountNFSDirectory(nfs_share=nfs_share,mount_point=nfs_mount_point,options="bg,intr,noac,nfsvers=3")
-        
-        for node in self.ofs_network.network_nodes:
-            node.runSingleCommand("mount -t nfs")
-
-        '''    
-
-        # # DB4 and hadoop are required to build OrangeFS. Make sure they are installed in the proper location.
-        # print ""
-        # print "==================================================================="
-        # print "Installing Berkeley DB 4.8"
-        # self.ofs_network.installDB4()
-        #
-        # if self.config.install_hadoop == True or self.config.run_hadoop_tests == True:
-        #     print ""
-        #     print "==================================================================="
-        #     print "Installing Hadoop"
-        #     self.ofs_network.installHadoop(hadoop_version=self.config.hadoop_version)
-
-
 
         print ""
         print "==================================================================="
@@ -406,26 +357,6 @@ class OFSTestMain(object):
         if rc != 0:
             print "Could not install OrangeFS. Aborting."
             return rc
-        
-#         if self.config.install_tests == True:
-#             print ""
-#             print "==================================================================="
-#             print "Installing OrangeFS Tests"
-#             rc = self.ofs_network.installOFSTests()
-#             if rc != 0:
-#                 print "Could not install OrangeFS tests. Aborting."
-#                 return rc
-# 
-#       
-#             print ""
-#             print "==================================================================="
-#             print "Installing Third-Party Benchmarks"
-#             rc = self.ofs_network.installBenchmarks()
-#             if rc != 0:
-#                 print "Could not install third-party benchmarks. Aborting."
-#                 return rc
-
-
 
 
         # Cert based security must be done before copy. Key based must be done after copy. 
@@ -462,30 +393,6 @@ class OFSTestMain(object):
             print "Install OpenMPI"
             self.ofs_network.configureOpenMPI()
 
-            '''
-
-            # TODO: Add mpich support.
-            print ""
-            print "==================================================================="
-            print "Install mpich2"
-            self.ofs_network.installMpich2()
-            print ""
-            print "==================================================================="
-            '''
-            
-            '''
-            # No longer using Torque for testing, but may need later.
-            print ""
-            print "==================================================================="
-            print "Installing Torque" 
-            self.ofs_network.installTorque()
-
-            print ""
-            print "==================================================================="
-            print "Check Torque"
-            # Check to see if Torque is installed correctly
-            self.ofs_network.checkTorque()
-            '''
         
 
         if self.config.install_tests:

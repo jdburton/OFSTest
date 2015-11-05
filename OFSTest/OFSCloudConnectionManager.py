@@ -194,60 +194,6 @@ class OFSCloudConnectionManager(object):
     def printAllInstanceStatus(self):
         pass
 
-    ##
-    #
-    # @fn	instanceIsDaysOld(self,instance,days_old):	
-    # Tests whether an instance is so many days old.
-    # @param self The object pointer
-    # @param instance Instance to check
-    # @param days_old Age to check
-    # 
-    # @return True if instance is at least days_old days old
-    # @return Fals if instance is not days_old
-    #
-        
-    def instanceIsDaysOld(self,instance,days_old=7):
-        today = datetime.today()
-        launch = datetime.strptime(instance.launch_time,"%Y-%m-%dT%H:%M:%S.000Z")
-        # 2012-12-22T00:05:30.000Z
-        week = timedelta(days=days_old)
-              
-        print today
-        print launch
-        
-        if today - launch >= week:
-            print "Expired"
-            return True
-        else:
-            return False
-
-    ##
-    # deleteOldInstances(days_old,name_filter,key_filter)
-    #
-    # Delete instances over a certain number of days old.
-    # @param self The object pointer
-    # @param days_old Age to check
-    # @param name_filter Filter to only delete instances matching name
-    # @param key_filter Filter to only delete instance associated with this Cloud key
-    #
-    #
-    def deleteOldInstances(self,days_old=7,name_filter="",key_filter=""):    
-        
-        self.checkCloudConnection()
-        
-        for i in self.cloud_instance_list:
-            #pprint(i.__dict__)
-            
-            if name_filter in i.public_dns_name and i.key_name.lower() == key_filter.lower():
-                print "Instance name %s, Instance IP: %s, Instance host: %s Key %s" % (i.id,i.ip_address,i.public_dns_name,i.key_name)
-                if self.instanceIsDaysOld(i,days_old):
-                    try:
-                        i.terminate()
-                    except AttributeError:
-                        # Terminate will throw an attribute error when it tries to set the status of a terminated instance. 
-                        pass
-        
-        self.getAllCloudInstances()
         
     #
     #
