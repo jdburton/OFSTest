@@ -16,7 +16,7 @@
     "source_ami": "{{user `aws_source_ami`}}",
     "instance_type": "t2.micro",
     "region": "{{user `aws_region`}}",
-    "ami_name": "Fedora 23 OrangeFS Test Image",
+    "ami_name": "cloud-fedora23-ofstest",
     "vpc_id": "{{user `aws_vpc`}}",
     "subnet_id": "{{user `aws_subnet`}}",
     "security_group_id": "{{user `aws_security_group`}}",
