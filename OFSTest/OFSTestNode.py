@@ -258,7 +258,7 @@ class OFSTestNode(object):
         
         ## @var jdk6_location
         # Location of Oracle JDK 6
-        #self.jdk6_location = "/usr/lib/jvm/java"
+        self.jdk6_location = None
         
         
         
@@ -1654,6 +1654,8 @@ class OFSTestNode(object):
             configure_opts = configure_opts+" --disable-opt"
 
         if enable_hadoop:
+            if self.jdk6_location is None:
+                self.jdk6_location = self.runSingleCommandBacktick(command="echo \\$(dirname \\$(dirname \\$(readlink -f \\$(which javac))))")
             configure_opts =  configure_opts + " --with-jdk=%s --enable-jni --enable-user-env-vars" % self.jdk6_location
             enable_shared = True
 
