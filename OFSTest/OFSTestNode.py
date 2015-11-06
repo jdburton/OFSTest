@@ -1578,6 +1578,7 @@ class OFSTestNode(object):
         security_mode=None,
         ofs_patch_files=[],
         configure_opts="",
+        hadoop_version="hadoop-2.6.0",
         debug=False):
     
     
@@ -1590,6 +1591,8 @@ class OFSTestNode(object):
         self.build_kmod = build_kmod
         
         self.enable_hadoop = enable_hadoop
+        self.hadoop_version = hadoop_version
+
         
         # Change directory to source location.
         self.changeDirectory(self.ofs_source_location)

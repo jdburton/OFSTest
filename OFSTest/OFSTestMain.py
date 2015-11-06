@@ -343,7 +343,8 @@ class OFSTestMain(object):
         configure_opts=self.config.configure_opts,
         security_mode=self.config.ofs_security_mode,
         debug=self.config.ofs_compile_debug,
-        svn_options=self.config.svn_options
+        svn_options=self.config.svn_options,
+        hadoop_version=self.config.hadoop_version
         )
         
         if rc != 0:

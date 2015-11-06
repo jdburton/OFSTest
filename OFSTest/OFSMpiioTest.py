@@ -228,17 +228,17 @@ def mpi_md_test(testing_node,output=[]):
 
     rc = mpi_md_test_create(testing_node,output)
     if rc:
-        print "mpi_md_test create failed with rc = "+rc
+        print "mpi_md_test create failed with rc = %r" % rc
         return rc
 
     rc = mpi_md_test_resize(testing_node,output)
     if rc:
-        print "mpi_md_test resize failed with rc = "+rc
+        print "mpi_md_test resize failed with rc = %r" % rc
         return rc
 
     rc = mpi_md_test_delete(testing_node,output)
     if rc:
-        print "mpi_md_test delete failed with rc = "+rc
+        print "mpi_md_test delete failed with rc = %r" % rc
         return rc
 
 
