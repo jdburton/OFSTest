@@ -1446,6 +1446,8 @@ class OFSTestNetwork(object):
         # Was originally set during installation, but now set here.
         master_node.hadoop_version = hadoop_version
         master_node.hadoop_location = "/opt/"+hadoop_version
+        master_node.hadoop_examples_location = master_node.hadoop_location+"/share/hadoop/mapreduce/hadoop*examples*.jar"
+        master_node.hadoop_test_location = master_node.hadoop_location+"/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-*-tests.jar"
 
         # remove list of slaves. We will be rebuilding it.
         master_node.runSingleCommand("rm %s/conf/slaves" % master_node.hadoop_location)
@@ -1455,6 +1457,8 @@ class OFSTestNetwork(object):
             
             node.hadoop_version = master_node.hadoop_version
             node.hadoop_location = "/opt/"+master_node.hadoop_version
+            node.hadoop_examples_location = node.hadoop_location+"/share/hadoop/mapreduce/hadoop*examples*.jar"
+            node.hadoop_test_location = node.hadoop_location+"/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-*-tests.jar"
             # copy templates to node
             #master_node.copyToRemoteNode(source="%s/test/automated/hadoop-tests.d/conf/" % master_node.ofs_source_location,destination_node=node,destination="%s/conf/" % node.hadoop_location,recursive=True)
             if master_node.hadoop_version == "hadoop-1.2.1":
