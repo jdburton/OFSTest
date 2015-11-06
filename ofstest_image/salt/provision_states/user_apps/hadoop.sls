@@ -15,3 +15,11 @@ hadoop_path:
   file.append:
     - name: /etc/profile.d/path_additions.sh
     - text: export PATH=$PATH:/opt/hadoop-2.6.0/bin
+
+hadoop_env:
+  file.append:
+    - name: /etc/profile.d/hadoop_env.sh
+    - text:
+      - export HADOOP_PREFIX=/opt/hadoop-2.6.0
+      - export HADOOP_CONF_DIR=/opt/hadoop-2.6.0/etc/hadoop
+
