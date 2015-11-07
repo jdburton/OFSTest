@@ -1,10 +1,10 @@
 hadoop_de:
   cmd.script:
     - source: salt://utils/de.sh
-    - args: "https://s3.amazonaws.com/cloudycluster/ami_src_depends/user_apps/hadoop-2.6.0.tar.gz /opt/"
-    - creates: /opt/hadoop-2.6.0/
+    - args: "http://www.apache.org/dyn/closer.cgi/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz /opt/"
+    - creates: /opt/hadoop-2.7.1/
   file.directory:
-    - name: /opt/hadoop-2.6.0/
+    - name: /opt/hadoop-2.7.1/
     - user: root
     - group: root
     - recurse:
@@ -14,12 +14,12 @@ hadoop_de:
 hadoop_path:
   file.append:
     - name: /etc/profile.d/path_additions.sh
-    - text: export PATH=$PATH:/opt/hadoop-2.6.0/bin
+    - text: export PATH=$PATH:/opt/hadoop-2.7.1/bin
 
 hadoop_env:
   file.append:
     - name: /etc/profile.d/hadoop_env.sh
     - text:
-      - export HADOOP_PREFIX=/opt/hadoop-2.6.0
-      - export HADOOP_CONF_DIR=/opt/hadoop-2.6.0/etc/hadoop
+      - export HADOOP_PREFIX=/opt/hadoop-2.7.1
+      - export HADOOP_CONF_DIR=/opt/hadoop-2.7.1/etc/hadoop
 
