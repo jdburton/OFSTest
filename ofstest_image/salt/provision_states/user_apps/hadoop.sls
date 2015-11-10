@@ -1,7 +1,7 @@
 hadoop_de:
   cmd.script:
     - source: salt://utils/de.sh
-    - args: "http://www.apache.org/dyn/closer.cgi/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz /opt/"
+    - args: "http://www.us.apache.org/dist/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz /opt/"
     - creates: /opt/hadoop-2.7.1/
   file.directory:
     - name: /opt/hadoop-2.7.1/
