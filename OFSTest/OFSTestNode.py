@@ -1340,7 +1340,8 @@ class OFSTestNode(object):
             logging.exception( "Could not untar benchmarks")
             return rc
         
-        self.ofs_extra_tests_location = dest_dir+"/benchmarks" 
+        self.ofs_extra_tests_location = dest_dir+"/benchmarks"
+        self.setEnvironmentVariable("OFS_EXTRA_TESTS_DIR",self.ofs_extra_tests_location)
         logging.info("Extra tests location: "+self.ofs_extra_tests_location)
         logging.info(self.runSingleCommandBacktick("ls %s" % self.ofs_extra_tests_location))
         return 0
@@ -2207,6 +2208,10 @@ class OFSTestNode(object):
         self.runSingleCommand("echo \"tcp://%s:%d/%s %s pvfs2 defaults 0 0\" > %s/etc/orangefstab" % (self.hostname,self.ofs_tcp_port,self.ofs_fs_name,self.ofs_mount_point,self.ofs_installation_location))
         self.runSingleCommandAsRoot("ln -s %s/etc/orangefstab /etc/pvfs2tab" % self.ofs_installation_location)
         self.setEnvironmentVariable("PVFS2TAB_FILE",self.ofs_installation_location + "/etc/orangefstab")
+        self.setEnvironmentVariable("OFS_SRC_DIR",self.ofs_source_location)
+        self.setEnvironmentVariable("OFS_INSTALL_DIR",self.ofs_installation_location)
+
+
 
 
         # for all the aliases in the file
@@ -2246,7 +2251,8 @@ class OFSTestNode(object):
         self.runSingleCommand("mkdir -p %s/etc" % self.ofs_installation_location)
         self.runSingleCommand("echo \"tcp://%s:%d/%s %s pvfs2 defaults 0 0\" > %s/etc/orangefstab" % (self.hostname,self.ofs_tcp_port,self.ofs_fs_name,self.ofs_mount_point,self.ofs_installation_location))
         self.runSingleCommandAsRoot("ln -s %s/etc/orangefstab /etc/pvfs2tab" % self.ofs_installation_location)
-        self.setEnvironmentVariable("PVFS2TAB_FILE",self.ofs_installation_location + "/etc/orangefstab")
+        self.setEnvironmentVariable("OFS_MOUNTPOINT",self.ofs_mount_point)
+
 
         # set the debug mask
         self.runSingleCommand("%s/bin/pvfs2-set-debugmask -m %s \"%s\"" % (self.ofs_installation_location,self.ofs_mount_point,debug_mask))

@@ -92,7 +92,7 @@ def drop_caches(testing_node,output=[]):
     #    print "pvfs2-chmod failed with code %d" % rc
     #    return 1
     #else:
-    # Meh, let's just pass it anyway. I shhould fix this.
+    # Meh, let's just pass it anyway. I should fix this.
     return 0
 
 def fsck(testing_node,output=[]):

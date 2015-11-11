@@ -675,6 +675,8 @@ class OFSTestNetwork(object):
         self.copyResourceToNodeList(node_function=OFSTestNode.OFSTestNode.copyOFSInstallationToNode,destination_list=destination_list)
 
 
+
+
     ##    
     #    @fn copyOpenMPIToNodeList(self,destination_list=None):
     #

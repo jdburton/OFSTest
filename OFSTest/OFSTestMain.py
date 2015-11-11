@@ -864,9 +864,7 @@ class OFSTestMain(object):
         
         self.ofs_network.unmountOFSFilesystemAllNodes()
         self.ofs_network.stopOFSClientAllNodes()
-        self.ofs_network.stopOFSServers()
-        self.ofs_network.startOFSServers()
-        self.ofs_network.startOFSClientAllNodes(security=self.config.ofs_security_mode,disable_acache=self.config.ofs_disable_acache) 
+        self.ofs_network.startOFSClientAllNodes(security=self.config.ofs_security_mode,disable_acache=self.config.ofs_disable_acache)
         self.ofs_network.mountOFSFilesystemAllNodes()
     
     def doPostTest(self):
