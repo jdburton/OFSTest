@@ -41,7 +41,7 @@
         "sudo zypper --non-interactive --gpg-auto-import-keys  addrepo http://download.opensuse.org/repositories/devel:languages:python/openSUSE_13.2/devel:languages:python.repo",
         "sudo zypper --non-interactive  --gpg-auto-import-keys refresh",
         "sudo zypper  --non-interactive dup --from http://download.opensuse.org/repositories/devel:/languages:/python/openSUSE_13.2/",
-        "sudo zypper --non-interactive install salt salt-cloud salt-minion salt-master salt-syndic salt-ssh",
+        "sudo zypper --non-interactive install salt salt-cloud salt-minion salt-master salt-syndic salt-ssh"
       ]
     },
 
