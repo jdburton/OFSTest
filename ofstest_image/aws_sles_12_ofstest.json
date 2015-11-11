@@ -68,8 +68,8 @@
       "inline": [
         "sudo bash -c 'echo 0 > /selinux/enforce'",
         "sudo /sbin/SuSEfirewall2 off",
-        "sudo cp /boot/config-`uname -r` /usr/src/linux-`uname -r | sed s/-[\d].*//`/.config",
-        "cd /usr/src/linux-`uname -r | sed s/-[\d].*//`; sudo make oldconfig && sudo make modules_prepare && sudo make prepare",
+        "sudo cp /boot/config-`uname -r` /usr/src/linux-`uname -r | sed s/-[\\d].*//`/.config",
+        "cd /usr/src/linux-`uname -r | sed s/-[\\d].*//`; sudo make oldconfig && sudo make modules_prepare && sudo make prepare",
         "sudo ln -s /lib/modules/`uname -r`/build/Module.symvers /lib/modules/`uname -r`/source",
         "sudo /sbin/modprobe -v fuse",
         "sudo chmod a+x /bin/fusermount",
