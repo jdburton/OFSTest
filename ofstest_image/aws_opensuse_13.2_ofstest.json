@@ -41,7 +41,7 @@
         "sudo zypper --non-interactive --gpg-auto-import-keys  addrepo http://download.opensuse.org/repositories/devel:languages:python/openSUSE_13.2/devel:languages:python.repo",
         "sudo zypper --non-interactive  --gpg-auto-import-keys refresh",
         "sudo zypper  --non-interactive dup --from http://download.opensuse.org/repositories/devel:/languages:/python/openSUSE_13.2/",
-        "sudo zypper --non-interactive install salt salt-cloud salt-minion salt-master salt-syndic salt-ssh"
+        "sudo zypper --non-interactive install gcc salt salt-cloud salt-minion salt-master salt-syndic salt-ssh"
       ]
     },
 
@@ -59,7 +59,6 @@
       "pause_before": "10s",
       "inline": [
         "sudo bash -c 'echo 0 > /selinux/enforce'",
-        "sudo /sbin/SuSEfirewall2 off",
         "sudo cp /boot/config-`uname -r` /usr/src/linux-`uname -r | sed s/-[\\d].*//`/.config",
         "cd /usr/src/linux-`uname -r | sed s/-[\\d].*//`; sudo make oldconfig && sudo make modules_prepare && sudo make prepare",
         "sudo ln -s /lib/modules/`uname -r`/build/Module.symvers /lib/modules/`uname -r`/source",

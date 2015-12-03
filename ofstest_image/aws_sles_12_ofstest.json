@@ -43,7 +43,7 @@
       "sudo zypper --non-interactive up",
       "sudo zypper --non-interactive --gpg-auto-import-keys  addrepo http://download.opensuse.org/repositories/devel:languages:python/SLE_12/devel:languages:python.repo",
       "sudo zypper --non-interactive --gpg-auto-import-keys  refresh",
-      "sudo zypper --non-interactive  install salt salt-minion salt-master salt-syndic salt-ssh",
+      "sudo zypper --non-interactive  install gcc salt salt-minion salt-master salt-syndic salt-ssh",
       "sudo chmod -R a+w /opt",
       "sudo chmod -R a+w /srv",
       "#sudo ln -s /etc/HOSTNAME /etc/hostname",
@@ -67,15 +67,13 @@
       "pause_before": "10s",
       "inline": [
         "sudo bash -c 'echo 0 > /selinux/enforce'",
-        "sudo /sbin/SuSEfirewall2 off",
         "sudo cp /boot/config-`uname -r` /usr/src/linux-`uname -r | sed s/-[\\d].*//`/.config",
         "cd /usr/src/linux-`uname -r | sed s/-[\\d].*//`; sudo make oldconfig && sudo make modules_prepare && sudo make prepare",
         "sudo ln -s /lib/modules/`uname -r`/build/Module.symvers /lib/modules/`uname -r`/source",
         "sudo /sbin/modprobe -v fuse",
-        "sudo chmod a+x /bin/fusermount",
-        "sudo chmod a+r /etc/fuse.conf",
         "sudo chmod -R a+w /opt",
-        "sudo chown -R ec2-user:ec2-user /opt"
+        "ls -l /home/ec2-user",
+        "sudo chown -R ec2-user /opt"
       ]
     }
 

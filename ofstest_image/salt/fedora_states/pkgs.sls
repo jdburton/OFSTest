@@ -48,6 +48,7 @@ orangefs_depends:
       - apr-devel
       - httpd-devel
       - pam-devel
+      - perl-Math-BigInt
 
 orangefs_hadoop_depends:
   pkg.installed:

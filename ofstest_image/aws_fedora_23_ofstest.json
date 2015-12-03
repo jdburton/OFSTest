@@ -54,17 +54,6 @@
     "local_state_tree": "./salt",
     "minion_config": "./salt/masterMinionConfig",
     "skip_bootstrap": true
-  },
-  {
-    "type": "shell",
-    "pause_before": "10s",
-    "inline": [
-      "sudo chown -R fedora:fedora /opt",
-
-      "sudo /sbin/modprobe -v fuse",
-      "sudo chmod a+x /bin/fusermount",
-      "sudo chmod a+r /etc/fuse.conf"
-    ]
   }
 
   ]
