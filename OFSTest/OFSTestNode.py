@@ -1582,7 +1582,8 @@ class OFSTestNode(object):
         hadoop_version="hadoop-2.6.0",
         debug=False):
     
-    
+
+        rc = self.runSingleCommandAsRoot("chmod a+w /opt")
         # Is the OrangeFS module already in the kernel?
         rc = self.runSingleCommandAsRoot("modprobe -v orangefs")
         if rc == 0:
