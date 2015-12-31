@@ -43,7 +43,18 @@
 	  "sudo yum -y install wget salt-master salt-minion salt-syndic",
 	  "sudo chmod -R a+w /opt",
 	  "mkdir -p /opt/mpi",
+      "sudo mkdir -p /var/log/journal",
+      "sudo systemd-tmpfiles --create --prefix /var/log/journal",
       "sudo /sbin/reboot"
+
+    ]
+  },
+  {
+    "type": "shell",
+    "pause_before": "10s",
+    "inline": [
+      "sudo chown -R fedora:fedora /tmp",
+      "sudo chown -R fedora:fedora /opt"
 
     ]
   },
@@ -54,7 +65,19 @@
     "local_state_tree": "./salt",
     "minion_config": "./salt/masterMinionConfig",
     "skip_bootstrap": true
+
+  },
+  {
+    "type": "shell",
+    "pause_before": "10s",
+    "inline": [
+      "sudo chown -R fedora:fedora /opt",
+      "sudo /sbin/modprobe -v fuse",
+      "sudo chmod a+x /bin/fusermount",
+      "sudo chmod a+r /etc/fuse.conf"
+    ]
   }
+
 
   ]
 }
