@@ -703,7 +703,7 @@ def dd(testing_node,output=[]):
 
 def linux_untar(testing_node,output=[]):
     
-    rc = testing_node.runSingleCommand("cd /tmp; wget https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.1.15.tar.xz" % testing_node.base_url, output)
+    rc = testing_node.runSingleCommand("cd /tmp; wget https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.1.15.tar.xz", output)
     
     rc = testing_node.runSingleCommand("cd /tmp; unxz linux-4.1.15.tar.xz",output)
     
