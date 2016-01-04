@@ -703,16 +703,16 @@ def dd(testing_node,output=[]):
 
 def linux_untar(testing_node,output=[]):
     
-    rc = testing_node.runSingleCommand("cd /tmp; wget %s/linux-3.18.9.tar.gz" % testing_node.base_url, output)
+    rc = testing_node.runSingleCommand("cd /tmp; wget https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.1.15.tar.xz" % testing_node.base_url, output)
     
-    rc = testing_node.runSingleCommand("cd /tmp; gunzip linux-3.18.9.tar.gz",output)
+    rc = testing_node.runSingleCommand("cd /tmp; unxz linux-4.1.15.tar.xz",output)
     
     ts = datetime.now()
     
-    rc = testing_node.runSingleCommandAsRoot("cd %s; tar xf /tmp/linux-3.18.9.tar" % testing_node.ofs_mount_point)
+    rc = testing_node.runSingleCommandAsRoot("cd %s; tar xf /tmp/linux-4.1.15.tar" % testing_node.ofs_mount_point)
     
     total_time = str(datetime.now()-ts)
-    print "Total time to untar Linux 3.18.9 source is %s ms" % total_time
+    print "Total time to untar Linux 4.1.15 source is %s ms" % total_time
     
     return rc
 
