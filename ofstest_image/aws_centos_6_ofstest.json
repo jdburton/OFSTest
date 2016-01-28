@@ -14,7 +14,7 @@
     "access_key": "{{user `aws_access_key`}}",
     "secret_key": "{{user `aws_secret_key`}}",
     "source_ami": "{{user `aws_source_ami`}}",
-    "instance_type": "t2.micro",
+    "instance_type": "m3.medium",
     "region": "{{user `aws_region`}}",
     "ami_name": "cloud-centos6-ofstest",
     "vpc_id": "{{user `aws_vpc`}}",
@@ -46,6 +46,8 @@
     "source": "./etc/automake-1.13.4-6_Oso.noarch.rpm",
     "destination": "/tmp/automake-1.13.4-6_Oso.noarch.rpm"
   },
+  
+  
 
   {
     "type": "salt-masterless",
