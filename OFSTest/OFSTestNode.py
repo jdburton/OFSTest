@@ -2157,7 +2157,7 @@ class OFSTestNode(object):
             else:
                 self.ofs_conf_file = ofs_conf_file
 
-        self.runSingleCommand("sed -i s/'FileStuffing yes'/'FileStuffing no'/g %s" % self.ofs_conf_file)
+        #self.runSingleCommand("sed -i s/'FileStuffing yes'/'FileStuffing no'/g %s" % self.ofs_conf_file)
         # Now set the fs name
         self.ofs_fs_name = self.runSingleCommandBacktick("grep Name %s | awk '{print \\$2}'" % self.ofs_conf_file)
         
