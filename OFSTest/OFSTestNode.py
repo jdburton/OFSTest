@@ -1850,9 +1850,9 @@ class OFSTestNode(object):
         
         if configure_options == "":
             if self.openmpi_installation_location == "":
-                configure_options = "--with-db=%s --prefix=%s" % (self.db4_dir,self.ofs_installation_location)
+                configure_options = configure_options + " --with-db=%s --prefix=%s" % (self.db4_dir,self.ofs_installation_location)
             else:
-                configure_options = "--with-db=%s --prefix=%s --with-mpi=%s" % (self.db4_dir,self.ofs_installation_location,self.openmpi_installation_location)
+                configure_options = configure_options + " --with-db=%s --prefix=%s --with-mpi=%s" % (self.db4_dir,self.ofs_installation_location,self.openmpi_installation_location)
         
         
         self.changeDirectory("%s/test" % self.ofs_source_location)
