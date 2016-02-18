@@ -400,7 +400,7 @@ class OFSTestMain(object):
             print ""
             print "==================================================================="
             print "Installing OrangeFS Tests"
-            rc = self.ofs_network.installOFSTests()
+            rc = self.ofs_network.installOFSTests(configure_options=self.config.configure_opts)
             if rc != 0:
                 print "Could not install OrangeFS tests. Aborting."
                 return rc
