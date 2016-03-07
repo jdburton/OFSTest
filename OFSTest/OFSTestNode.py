@@ -1139,11 +1139,14 @@ class OFSTestNode(object):
             print "Warning: Could not untar simul"
         
         rc = self.changeDirectory(build_location+"/simul-1.14") 
-        # remove inline due to changes in fedora 23    
-        self.runSingleCommand("sed -i s/inline//g simul.c")
+        
         rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; export MPI_CC='mpicc -Wall'; make" % self.openmpi_installation_location)
         if rc != 0:
-            print "Warning: Could not make simul"
+            # remove inline due to changes in fedora 23    
+            self.runSingleCommand("sed -i s/inline//g simul.c")
+            rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; export MPI_CC='mpicc -Wall'; make" % self.openmpi_installation_location)
+            if rc != 0:
+                print "Warning: Could not make simul"
             
         self.simul_installation_location = build_location+"/simul-1.14"
 
