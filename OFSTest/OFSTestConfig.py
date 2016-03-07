@@ -359,6 +359,7 @@ class OFSTestConfig(object):
         
         self.url_base = "http://devorange.clemson.edu/pvfs"
     
+        self.ofs_database = "lmdb"
     ##
     #
     # @fn setConfig(self,kwargs={}):
@@ -802,4 +803,8 @@ class OFSTestConfig(object):
         temp = d.get("url_base")
         if temp != None:
             self.url_base = temp
+        
+        temp = d.get("ofs_database")
+        if temp != None:
+            self.ofs_database = temp
         

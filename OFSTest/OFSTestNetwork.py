@@ -519,7 +519,8 @@ class OFSTestNetwork(object):
         debug=False,
         svn_options=None,
         node_list=None,
-        hadoop_version="hadoop-2.6.0"
+        hadoop_version="hadoop-2.6.0",
+        ofs_database="lmdb"
         ):
         
         output = []
@@ -576,7 +577,7 @@ class OFSTestNetwork(object):
                 return rc
 
 
-        rc = build_node.configureOFSSource(build_kmod=build_kmod,enable_strict=enable_strict,enable_shared=enable_shared,enable_fuse=enable_fuse,ofs_prefix=ofs_prefix,db4_prefix=db4_prefix,ofs_patch_files=ofs_patch_files,configure_opts=configure_opts,security_mode=security_mode,enable_hadoop=enable_hadoop,hadoop_version=hadoop_version)
+        rc = build_node.configureOFSSource(build_kmod=build_kmod,enable_strict=enable_strict,enable_shared=enable_shared,enable_fuse=enable_fuse,ofs_prefix=ofs_prefix,db4_prefix=db4_prefix,ofs_patch_files=ofs_patch_files,configure_opts=configure_opts,security_mode=security_mode,enable_hadoop=enable_hadoop,hadoop_version=hadoop_version,ofs_database=ofs_database)
         if rc != 0:
             return rc
         

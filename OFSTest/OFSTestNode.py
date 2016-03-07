@@ -285,6 +285,8 @@ class OFSTestNode(object):
         self.ldap_container = None
         
         self.url_base = "http://localhost"
+        
+        self.ofs_database="lmdb"
 
     ##
     # 
@@ -1581,6 +1583,7 @@ class OFSTestNode(object):
         ofs_patch_files=[],
         configure_opts="",
         hadoop_version="hadoop-2.6.0",
+        ofs_database="lmdb",
         debug=False):
     
 
@@ -1595,6 +1598,7 @@ class OFSTestNode(object):
         
         self.enable_hadoop = enable_hadoop
         self.hadoop_version = hadoop_version
+        self.ofs_database = ofs_database
 
         
         # Change directory to source location.
@@ -1634,7 +1638,7 @@ class OFSTestNode(object):
         self.kernel_source_location = "/lib/modules/%s" % self.kernel_version
         
         # Will always need prefix and db4 location.
-        configure_opts = configure_opts+" --prefix=%s --with-db=%s" % (ofs_prefix,db4_prefix)
+        configure_opts = configure_opts+" --prefix=%s --with-db=%s ---with-db-backend=%s" % (ofs_prefix,db4_prefix,ofs_database)
 
        
         # Add various options to the configure
@@ -1850,9 +1854,9 @@ class OFSTestNode(object):
         
 
         if self.openmpi_installation_location == "":
-            configure_options = configure_options + " --with-db=%s --prefix=%s" % (self.db4_dir,self.ofs_installation_location)
+            configure_options = configure_options + " --with-db=%s --prefix=%s --with-db-backend=%s" % (self.db4_dir,self.ofs_installation_location,self.ofs_database)
         else:
-            configure_options = configure_options + " --with-db=%s --prefix=%s --with-mpi=%s" % (self.db4_dir,self.ofs_installation_location,self.openmpi_installation_location)
+            configure_options = configure_options + " --with-db=%s --prefix=%s --with-mpi=%s --with-db-backend=%s" % (self.db4_dir,self.ofs_installation_location,self.openmpi_installation_location,self.ofs_database)
         
         
         self.changeDirectory("%s/test" % self.ofs_source_location)
