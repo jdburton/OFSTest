@@ -1638,7 +1638,7 @@ class OFSTestNode(object):
         self.kernel_source_location = "/lib/modules/%s" % self.kernel_version
         
         # Will always need prefix and db4 location.
-        configure_opts = configure_opts+" --prefix=%s --with-db=%s ---with-db-backend=%s" % (ofs_prefix,db4_prefix,ofs_database)
+        configure_opts = configure_opts+" --prefix=%s --with-db=%s --with-db-backend=%s" % (ofs_prefix,db4_prefix,ofs_database)
 
        
         # Add various options to the configure
