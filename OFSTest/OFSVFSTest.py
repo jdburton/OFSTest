@@ -425,10 +425,7 @@ def iozone(testing_node,output=[]):
     tmp = []
     testing_node.checkMount(mount_point=testing_node.ofs_mount_point,output=tmp)
     
-    if "pvfs2fuse" in tmp[1]:
-        rc = testing_node.runSingleCommandAsRoot("./iozone -a -y 4096 -q $((1024*16)) -n 4096 -g $((1024*16*4)) -f %s/test_iozone_file" % testing_node.ofs_mount_point,output)
-    else:
-        rc = testing_node.runSingleCommand("./iozone -a -y 4096 -q $((1024*16)) -n 4096 -g $((1024*16*4)) -f %s/test_iozone_file" % testing_node.ofs_mount_point,output)
+    rc = testing_node.runSingleCommand("./iozone -a -y 4096 -q $((1024*16)) -n 4096 -g $((1024*16*4)) -f %s/test_iozone_file" % testing_node.ofs_mount_point,output)
 
 
     print output[1]
@@ -474,10 +471,10 @@ def ltp(testing_node,output=[]):
     tmp = []
     testing_node.checkMount(mount_point=testing_node.ofs_mount_point,output=tmp)
     
-    if "pvfs2fuse" in tmp[1]:
-        vfs_type = "fuse"
-        print "LTP test cannot be run for filesystem mounted via fuse"
-        return -999
+#     if "pvfs2fuse" in tmp[1]:
+#         vfs_type = "fuse"
+#         print "LTP test cannot be run for filesystem mounted via fuse"
+#         return -999
     
     #make sure that the benchmarks have been installed
     if testing_node.ofs_extra_tests_location == "":
@@ -717,6 +714,7 @@ def linux_untar(testing_node,output=[]):
     return rc
 
 def xfstests(testing_node,output=[]):
+    rc = testing_node.changeDirectory("/home/%s" % testing_node.current_user)
     rc = testing_node.runSingleCommand("git clone git://oss.sgi.com/xfs/cmds/xfstests")
     
     rc = testing_node.changeDirectory("/home/%s/xfstests" % testing_node.current_user)
