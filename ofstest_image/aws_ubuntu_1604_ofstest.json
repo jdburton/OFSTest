@@ -2,7 +2,7 @@
   "variables": {
     "aws_access_key": "{{env `AWS_ACCESS_KEY`}}",
     "aws_secret_key": "{{env `AWS_SECRET_KEY`}}",
-    "aws_source_ami": "{{env `AWS_SOURCE_AMI_UBUNTU_1510`}}",
+    "aws_source_ami": "{{env `AWS_SOURCE_AMI_UBUNTU_1604`}}",
     "aws_region": "{{env `AWS_REGION`}}",
     "aws_vpc": "{{env `AWS_VPC`}}",
     "aws_subnet": "{{env `AWS_SUBNET`}}",
@@ -16,7 +16,7 @@
     "source_ami": "{{user `aws_source_ami`}}",
     "instance_type": "t2.medium",
     "region": "{{user `aws_region`}}",
-    "ami_name": "cloud-ubuntu-15.10-ofstest",
+    "ami_name": "cloud-ubuntu-16.04-ofstest",
     "vpc_id": "{{user `aws_vpc`}}",
     "subnet_id": "{{user `aws_subnet`}}",
     "security_group_id": "{{user `aws_security_group`}}",
