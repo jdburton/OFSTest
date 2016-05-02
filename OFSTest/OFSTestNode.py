@@ -1876,7 +1876,7 @@ class OFSTestNode(object):
         #kludge because perfbase fails
         self.runSingleCommand("rm -rf %s/test/perfbase" % self.ofs_source_location)
         # Another kludge because io fails with a linker error.
-        self.runSingleCommand("rm -rf %s/test/io" % self.ofs_source_location)
+        #self.runSingleCommand("rm -rf %s/test/io" % self.ofs_source_location)
         
         rc = self.runSingleCommand("make all")
         if rc != 0:
