@@ -41,7 +41,7 @@ maui_de:
 maven_de:
   cmd.script:
     - source: salt://utils/de.sh
-    - args: "http://apache.mesi.com.ar/maven/maven-3/3.2.5/binaries/apache-maven-3.2.5-bin.tar.gz /opt"
+    - args: "http://archive.apache.org/dist/maven/maven-3/3.2.5/binaries/apache-maven-3.2.5-bin.tar.gz /opt"
     - creates: /opt/apache-maven-3.2.5/
   file.directory:
     - name: /opt/apache-maven-3.2.5/

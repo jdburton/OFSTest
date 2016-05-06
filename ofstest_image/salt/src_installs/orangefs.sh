@@ -7,7 +7,7 @@ mkdir -p /opt/orangefs
 
 whoami
 
-svn co http://www.orangefs.org/svn/orangefs/trunk /opt/orangefs_src
+svn co http://dev.orangefs.org/svn/orangefs/trunk /opt/orangefs_src
 cd /opt/orangefs_src
 ./prepare
 

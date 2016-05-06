@@ -31,7 +31,6 @@ orangefs_depends:
       - libacl1-dev 
       - xfslibs-dev 
       - xfsprogs 
-      - libdm0-dev 
       - fuse 
       - libfuse2 
       - libfuse-dev
