@@ -14,10 +14,11 @@ base:
     - match: compound
     - ofstest_centos7
   # SuSE based systems (base image built in SuSE Studio)
-  'os:openSUSE':
+  'G@os:openSUSE or P@os:openSUSE?Leap':
     - match: grain
     - ofstest_opensuse
-  'G@os_family:Suse and not G@os:openSUSE':
+  'G@os_family:Suse and not G@os:openSUSE and not P@os:openSUSE?Leap':
+  #'G@os_family:Suse':
     - match: compound
     - ofstest_suse
   # Ubuntu based systems

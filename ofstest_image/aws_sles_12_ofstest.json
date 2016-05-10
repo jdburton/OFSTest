@@ -41,7 +41,7 @@
       "set -x",
       "ps -ef | grep zypp",
       "sudo zypper --non-interactive up",
-      "sudo zypper --non-interactive --gpg-auto-import-keys  addrepo http://download.opensuse.org/repositories/devel:languages:python/SLE_12_SP1/devel:languages:python.repo",
+      "sudo zypper --non-interactive --gpg-auto-import-keys  addrepo http://repo.saltstack.com/opensuse/SLE_12/systemsmanagement:saltstack.repo",
       "sudo zypper --non-interactive --gpg-auto-import-keys  refresh",
       "sudo zypper --non-interactive  install gcc salt salt-minion salt-master salt-syndic salt-ssh python-singledispatch",
       "sudo chmod -R a+w /opt",

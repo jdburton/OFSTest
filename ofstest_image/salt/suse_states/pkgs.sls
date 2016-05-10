@@ -23,6 +23,8 @@ orangefs_depends:
       - gdb
       - git
       - iputils
+      - java-1_7_1-ibm 
+      - java-1_7_1-ibm-devel
       - kernel-default
       - kernel-source
       - kernel-syms
