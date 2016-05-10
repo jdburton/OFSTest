@@ -85,9 +85,9 @@ os.chdir(output_dir)
 
 # initialize the network
 rc = test_driver.initNetwork()
-if rc == 0:
+#if rc == 0:
     # initialize the network
-    rc = test_driver.checkOFS()
+#    rc = test_driver.checkOFS()
 
 
 # if orangefs is not installed, set it up
