@@ -456,7 +456,7 @@ def iozone(testing_node,output=[]):
 def ltp(testing_node,output=[]):
     
     LTP_ARCHIVE_VERSION = "ltp-full-20120903"
-    LTP_ARCHIVE_VERSION = "20140422"
+    LTP_ARCHIVE_VERSION = "20160510"
     #LTP_ARCHIVE_TYPE = ".bz2"
     LTP_ARCHIVE_TYPE = ".tar.gz"
     LTP_ARCHIVE = "%s%s" % (LTP_ARCHIVE_VERSION,LTP_ARCHIVE_TYPE)
