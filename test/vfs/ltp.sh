@@ -22,7 +22,7 @@ then
     wget --no-check-certificate --output-document=${LTP_ARCHIVE} ${LTP_URL}/${LTP_ARCHIVE}
     tar zxf $LTP_ARCHIVE
     cd ltp-${LTP_ARCHIVE_VERSION}
-    patch -p1 < ${OFS_SRC_DIR}/test/automated/vfs-tests.d/ltp-20140422-zoo-path.patch
+    patch -p1 < ${OFS_SRC_DIR}/test/automated/vfs-tests.d/ltp-${LTP_ARCHIVE_VERSION}-zoo-path.patch
     make autotools
     DEBUG_CFLAGS='-g' OPT_CFLAGS='-O0' ./configure --prefix=${LTP_PREFIX}
     make all
