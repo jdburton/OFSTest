@@ -14,7 +14,7 @@
     "access_key": "{{user `aws_access_key`}}",
     "secret_key": "{{user `aws_secret_key`}}",
     "source_ami": "{{user `aws_source_ami`}}",
-    "instance_type": "t2.micro",
+    "instance_type": "t2.medium",
     "region": "{{user `aws_region`}}",
     "ami_name": "cloud-fedora23-ofstest",
     "vpc_id": "{{user `aws_vpc`}}",
@@ -40,9 +40,10 @@
     "inline": [
       "set -x",
       "sudo sed -i -e 's/^Defaults.*requiretty/# Defaults requiretty/g' /etc/sudoers",
-	  "sudo yum -y install wget salt-master salt-minion salt-syndic",
+      "sudo dnf -y install wget salt-master salt-minion salt-syndic",
+	  "sudo sed -i s/SELINUX=enforcing/SELINUX=permissive/g /etc/selinux/config",
+      "sudo mkdir -p /opt/mpi",
 	  "sudo chmod -R a+w /opt",
-	  "mkdir -p /opt/mpi",
       "sudo mkdir -p /var/log/journal",
       "sudo systemd-tmpfiles --create --prefix /var/log/journal",
       "sudo /sbin/reboot"
