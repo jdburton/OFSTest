@@ -922,9 +922,14 @@ class OFSTestNode(object):
         # Enable OrangeFS
         self.runSingleCommand("echo 'CONFIG_ORANGE_FS=y' >> .config",)
         
-        rc = self.runSingleCommand("make")
+        rc = self.runSingleCommand("make bzImage")
         if rc != 0:
-            print "Could not make"
+            print "Could not make bzImage"
+            return rc
+
+        rc = self.runSingleCommand("make modules")
+        if rc != 0:
+            print "Could not make modules"
             return rc
         
         rc = self.runSingleCommandAsRoot("make modules_install")
@@ -932,7 +937,7 @@ class OFSTestNode(object):
             print "Could not make modules_install"
             return rc
         
-        rc = self.runSingleCommand("make install")
+        rc = self.runSingleCommandAsRoot("make install")
         if rc != 0:
             print "Could not make install"
             return rc
@@ -1585,7 +1590,7 @@ class OFSTestNode(object):
         security_mode=None,
         ofs_patch_files=[],
         configure_opts="",
-        hadoop_version="hadoop-2.6.0",
+        hadoop_version="hadoop-2.7.2",
         ofs_database="lmdb",
         debug=False):
     
