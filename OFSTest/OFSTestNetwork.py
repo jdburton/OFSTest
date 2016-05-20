@@ -520,7 +520,9 @@ class OFSTestNetwork(object):
         svn_options=None,
         node_list=None,
         hadoop_version="hadoop-2.6.0",
-        ofs_database="lmdb"
+        ofs_database="lmdb",
+        svn_username="",
+        svn_password=""
         ):
         
         output = []
@@ -563,7 +565,7 @@ class OFSTestNetwork(object):
             resource_type = "BUILDNODE"
             resource_location = download_location+dir_list
             
-        rc = build_node.copyOFSSource(resource_type=resource_type,resource=resource_location,dest_dir=download_location+dir_list,options=svn_options)
+        rc = build_node.copyOFSSource(resource_type=resource_type,resource=resource_location,dest_dir=download_location+dir_list,options=svn_options,username=svn_username,password=svn_password)
         
         if rc != 0:
             return rc

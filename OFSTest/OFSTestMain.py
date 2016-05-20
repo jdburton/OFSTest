@@ -345,7 +345,9 @@ class OFSTestMain(object):
         debug=self.config.ofs_compile_debug,
         svn_options=self.config.svn_options,
         hadoop_version=self.config.hadoop_version,
-        ofs_database=self.config.ofs_database
+        ofs_database=self.config.ofs_database,
+        svn_username=self.config.svn_username,
+        svn_password=self.config.svn_password
         )
         
         if rc != 0:
