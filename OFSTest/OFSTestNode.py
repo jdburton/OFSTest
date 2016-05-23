@@ -1271,19 +1271,19 @@ class OFSTestNode(object):
         if svn_options is None:
             svn_options = ""
         svn_action = "export --force"
-        svn_options = "--non-interactive --trust-server-cert"
+        
         
         # use the co option if we have a username and password
         if svnusername != "" and svnpassword != "":
             #svn_options = "%s --username %s --password %s" % (svn_options, svnusername,svnpassword)
-            svn_options = "%s --username %s --password $SVN_PASS --non-interactive --trust-server-cert --no-auth-cache" % (svn_options, svnusername)
+            svn_options = "%s --username %s --password $SVN_PASS" % (svn_options, svnusername)
             svn_action = "co"
         
-        msg = "svn %s %s %s" % (svn_action,svnurl,svn_options)
+        msg = "svn %s %s %s --non-interactive --trust-server-cert --no-auth-cache" % (svn_action,svnurl,svn_options)
         print msg
         logging.info(msg)
         self.changeDirectory(dest_dir)
-        rc = self.runSingleCommand("svn %s %s %s" % (svn_action,svnurl,svn_options))
+        rc = self.runSingleCommand(msg)
         if rc != 0:
             logging.exception( "Could not export from svn")
             return rc
