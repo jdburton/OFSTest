@@ -1271,6 +1271,7 @@ class OFSTestNode(object):
         if svn_options is None:
             svn_options = ""
         svn_action = "export --force"
+        svn_options = "--non-interactive --trust-server-cert"
         
         # use the co option if we have a username and password
         if svnusername != "" and svnpassword != "":
