@@ -315,6 +315,36 @@ def fdtree(testing_node,output=[]):
 
 ##
 #
+# @fn direct(testing_node,output=[]):
+#
+#   Test direct io
+#
+#
+# @param testing_node OFSTestNode on which tests are run.
+# @param output Array that holds output from commands. Passed by reference. 
+#   
+# @return 0 Test ran successfully
+# @return Not 0 Test failed
+#    
+
+    
+def direct(testing_node,output=[]):
+    testing_node.runSingleCommand("mkdir -p %s/direct" % testing_node.ofs_mount_point,output)
+    
+    if testing_node.runSingleCommand( "[ -f %s/direct ]" % testing_node.ofs_source_location):
+        rc = testing_node.runSingleCommand("gcc %s/test/automated/vfs-tests.d/direct.c -o %s/direct" % (testing_node.ofs_source_location,testing_node.ofs_source_location),output)
+        if rc != 0:
+            return rc
+    
+    rc = testing_node.runSingleCommand("%s/direct %s/direct-testfile" % (testing_node.ofs_source_location,testing_node.ofs_mount_point),output)
+    print output[1]
+    print output[2]
+
+        
+    return rc
+
+##
+#
 # @fn fstest(testing_node,output=[]):
 #
 #   Test filesystem (for example, fusecompress) for errors in implementing 
@@ -751,6 +781,7 @@ symlink_vfs,
 tail,
 vfs_cp,
 simultaneous_ls,
+direct,
 
 #dd,
 fdtree,
