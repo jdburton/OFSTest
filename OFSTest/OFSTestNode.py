@@ -1274,12 +1274,12 @@ class OFSTestNode(object):
         
         
         # use the co option if we have a username and password
-        if svnusername != "" and svnpassword != "":
+        if svnusername is not None and svnusername != "None" and svnusername != "" and svnpassword != "":
             #svn_options = "%s --username %s --password %s" % (svn_options, svnusername,svnpassword)
             svn_options = "%s --username %s --password $SVN_PASS" % (svn_options, svnusername)
             svn_action = "co"
         
-        msg = "svn %s %s %s --non-interactive --trust-server-cert --no-auth-cache" % (svn_action,svnurl,svn_options)
+        msg = "svn %s %s %s --trust-server-cert --non-interactive --no-auth-cache" % (svn_action,svnurl,svn_options)
         print msg
         logging.info(msg)
         self.changeDirectory(dest_dir)

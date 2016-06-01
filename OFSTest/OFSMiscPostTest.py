@@ -89,7 +89,7 @@ def checkSHM(testing_node,output=[]):
 
 def dmesg(testing_node,output=[]):
  
-    rc = testing_node.runSingleCommand("dmesg",output)
+    rc = testing_node.runSingleCommandAsRoot("dmesg",output)
     return rc
 
 
