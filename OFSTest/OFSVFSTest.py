@@ -516,7 +516,7 @@ def ltp(testing_node,output=[]):
     
     if testing_node.runSingleCommand("[ -f %s/runltp ]" % LTP_PREFIX):
         testing_node.runSingleCommand("rm -rf ltp-" + LTP_ARCHIVE_VERSION + "*",output)
-        rc = testing_node.runSingleCommand("wget --no-check-certificate --output-document=%s %s/%s" % (LTP_ARCHIVE,LTP_URL,LTP_ARCHIVE),output)
+        rc = testing_node.runSingleCommand("wget --quiet --no-check-certificate --output-document=%s %s/%s" % (LTP_ARCHIVE,LTP_URL,LTP_ARCHIVE),output)
         if rc != 0:
             
             return rc
@@ -534,17 +534,17 @@ def ltp(testing_node,output=[]):
             
             return rc
         
-        rc = testing_node.runSingleCommand("make autotools")
-        rc = testing_node.runSingleCommand("DEBUG_CFLAGS='-g' OPT_CFLAGS='-O0' ./configure --prefix=%s" % LTP_PREFIX,output)
+        rc = testing_node.runSingleCommand("make autotools 2>&1> ./make-autotools.out")
+        rc = testing_node.runSingleCommand("DEBUG_CFLAGS='-g' OPT_CFLAGS='-O0' ./configure --prefix=%s 2>&1> ./configure.out" % LTP_PREFIX,output)
         #if rc != 0:
         #    return rc
 
-        rc = testing_node.runSingleCommand('make all',output)
+        rc = testing_node.runSingleCommand('make all  2>&1> ./make-all.out',output)
         if rc != 0:
             
             return rc
 
-        testing_node.runSingleCommand('make install',output)
+        testing_node.runSingleCommand('make install 2>&1> ./make-install.out',output)
         if rc != 0:
             return rc
         
