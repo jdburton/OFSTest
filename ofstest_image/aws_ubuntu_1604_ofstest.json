@@ -16,7 +16,7 @@
     "source_ami": "{{user `aws_source_ami`}}",
     "instance_type": "t2.medium",
     "region": "{{user `aws_region`}}",
-    "ami_name": "cloud-ubuntu-16.04-ofstest",
+    "ami_name": "cloud-ubuntu-16.04-java8-ofstest",
     "vpc_id": "{{user `aws_vpc`}}",
     "subnet_id": "{{user `aws_subnet`}}",
     "security_group_id": "{{user `aws_security_group`}}",
@@ -27,7 +27,7 @@
       {
         "device_name": "/dev/sda1",
         "delete_on_termination": true,
-        "volume_size": 16
+        "volume_size": 32
       }
     ],
     "run_tags": { "Name": "Packer Builder for {{user `user`}}" }

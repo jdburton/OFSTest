@@ -27,7 +27,7 @@
       {
         "device_name": "/dev/sda1",
         "delete_on_termination": true,
-        "volume_size": 16
+        "volume_size": 32
       }
     ],
     "run_tags": { "Name": "Packer opensuse 13.2 Builder for {{user `user`}}" }
