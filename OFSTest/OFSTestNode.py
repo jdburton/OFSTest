@@ -921,7 +921,7 @@ class OFSTestNode(object):
         
         number_cores = self.runSingleCommandBacktick("cat /proc/cpuinfo | grep 'core id' | wc -l")
         
-        rc = self.runSingleCommand("make olddefconfig 2>&1 > kbuild.log" % number_cores)
+        rc = self.runSingleCommand("make olddefconfig 2>&1 > kbuild.log")
         if rc != 0:
             print "Could not make olddefconfig"
             return rc
