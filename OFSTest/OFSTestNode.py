@@ -916,18 +916,21 @@ class OFSTestNode(object):
             print "Could not checkout %s" % kernel_git_branch
             return rc
         
-        rc = self.runSingleCommand("make -j %s olddefconfig 2>&1 > kbuild.log" % number_cores)
+        
+        
+        number_cores = self.runSingleCommandBacktick("cat /proc/cpuinfo | grep 'core id' | wc -l")
+        
+        rc = self.runSingleCommand("make olddefconfig 2>&1 > kbuild.log" % number_cores)
         if rc != 0:
             print "Could not make olddefconfig"
             return rc
         
-        number_cores = self.runSingleCommandBacktick("cat /proc/cpuinfo | grep 'core id' | wc -l")
         
         # CRYPTO_AES_NI_INTEL causes kernel panic on boot as of 4.2.0_rc2. Do not compile it.
-        self.runSingleCommand("sed -i s/CONFIG_CRYPTO_AES_NI_INTEL=y/CONFIG_CRYPTO_AES_NI_INTEL=n/ .config")
+        self.runSingleCommand("sed -i s/CONFIG_CRYPTO_AES_NI_INTEL=y/CONFIG_CRYPTO_AES_NI_INTEL=n/ ./.config")
         
         # Enable OrangeFS
-        self.runSingleCommand("echo 'CONFIG_ORANGE_FS=y' >> .config",)
+        self.runSingleCommand("echo 'CONFIG_ORANGEFS_FS=y' >> ./.config",)
         
         rc = self.runSingleCommand("make -j %s bzImage 2>&1 >> kbuild.log" % number_cores)
         if rc != 0:
@@ -1608,6 +1611,7 @@ class OFSTestNode(object):
         # Is the OrangeFS module already in the kernel?
         rc = self.runSingleCommandAsRoot("modprobe -v orangefs")
         if rc == 0:
+            self.module_name = "orangefs"
             build_kmod = False
         
         # Save build_kmod for later.
@@ -1791,11 +1795,12 @@ class OFSTestNode(object):
         # Is the OrangeFS module already in the kernel?
         rc = self.runSingleCommandAsRoot("modprobe -v orangefs")
         if rc == 0:
-            self.orangefs_kmodule = True
+            self.module_name = "orangefs"
             return rc;
         
         if self.build_kmod:
             rc = self.runSingleCommand("make kmod",output)
+            self.module_name = "pvfs2"
             if rc != 0:
                 logging.exception( "Build (make) of of OrangeFS-kmod at %s Failed!" % self.ofs_source_location)
                 
@@ -2461,7 +2466,7 @@ class OFSTestNode(object):
         #mount with kmod
         else:
             print "Mounting OrangeFS service at tcp://%s:%d/%s at mount_point %s" % (self.hostname,self.ofs_tcp_port,self.ofs_fs_name,self.ofs_mount_point)
-            self.runSingleCommandAsRoot("mount -t pvfs2 tcp://%s:%d/%s %s" % (self.hostname,self.ofs_tcp_port,self.ofs_fs_name,self.ofs_mount_point))
+            self.runSingleCommandAsRoot("mount -t %s tcp://%s:%d/%s %s" % (self.kmod_name,self.hostname,self.ofs_tcp_port,self.ofs_fs_name,self.ofs_mount_point))
 
         
         print "Waiting 30 seconds for mount"            
