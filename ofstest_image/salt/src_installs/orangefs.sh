@@ -12,7 +12,7 @@ cd /opt/orangefs_src
 ./prepare
 
 
-CFLAGS="$CFLAGS -std=gnu99" ./configure --with-db-backend=bdb --prefix=/opt/orangefs --with-db=/opt/db4 --enable-strict --enable-shared --enable-fuse && \
+./configure --with-db-backend=bdb --prefix=/opt/orangefs --with-db=/opt/db4 --enable-strict --enable-shared --enable-fuse && \
 make && \
 make install
 

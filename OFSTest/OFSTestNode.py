@@ -287,6 +287,9 @@ class OFSTestNode(object):
         self.url_base = "http://localhost"
         
         self.ofs_database="lmdb"
+        
+        self.custom_kernel = False
+        
 
     ##
     # 
@@ -875,6 +878,8 @@ class OFSTestNode(object):
             rc = self.installCustomKernel(kernel_git_location,kernel_git_branch)
             if rc != 0:
                 print "Could not install custom kernel. Continuing with default kernel."
+            else:
+                self.custom_kernel = True
         
         rc = self.runSingleCommandAsRoot("nohup /sbin/reboot &")
         msg = "Node "+self.hostname+" at "+self.ip_address+" updated."
@@ -911,10 +916,12 @@ class OFSTestNode(object):
             print "Could not checkout %s" % kernel_git_branch
             return rc
         
-        rc = self.runSingleCommand("make olddefconfig")
+        rc = self.runSingleCommand("make -j %s olddefconfig 2>&1 > kbuild.log" % number_cores)
         if rc != 0:
             print "Could not make olddefconfig"
             return rc
+        
+        number_cores = self.runSingleCommandBacktick("cat /proc/cpuinfo | grep 'core id' | wc -l")
         
         # CRYPTO_AES_NI_INTEL causes kernel panic on boot as of 4.2.0_rc2. Do not compile it.
         self.runSingleCommand("sed -i s/CONFIG_CRYPTO_AES_NI_INTEL=y/CONFIG_CRYPTO_AES_NI_INTEL=n/ .config")
@@ -922,22 +929,22 @@ class OFSTestNode(object):
         # Enable OrangeFS
         self.runSingleCommand("echo 'CONFIG_ORANGE_FS=y' >> .config",)
         
-        rc = self.runSingleCommand("make bzImage")
+        rc = self.runSingleCommand("make -j %s bzImage 2>&1 >> kbuild.log" % number_cores)
         if rc != 0:
             print "Could not make bzImage"
             return rc
 
-        rc = self.runSingleCommand("make modules")
+        rc = self.runSingleCommand("make -j %s modules 2>&1 >> kbuild.log"  % number_cores)
         if rc != 0:
             print "Could not make modules"
             return rc
         
-        rc = self.runSingleCommandAsRoot("make modules_install")
+        rc = self.runSingleCommandAsRoot("make -j %s modules_install 2>&1 > kinstall.log" % number_cores)
         if rc != 0:
             print "Could not make modules_install"
             return rc
         
-        rc = self.runSingleCommandAsRoot("make install")
+        rc = self.runSingleCommandAsRoot("make -j %s install 2>&1 >> kinstall.log" % number_cores)
         if rc != 0:
             print "Could not make install"
             return rc
@@ -1780,7 +1787,13 @@ class OFSTestNode(object):
             logging.exception( "Build (make) of of OrangeFS at %s Failed!" % self.ofs_source_location)
             
             return rc
-        # Make the kernel module
+        
+        # Is the OrangeFS module already in the kernel?
+        rc = self.runSingleCommandAsRoot("modprobe -v orangefs")
+        if rc == 0:
+            self.orangefs_kmodule = True
+            return rc;
+        
         if self.build_kmod:
             rc = self.runSingleCommand("make kmod",output)
             if rc != 0:
@@ -2321,15 +2334,16 @@ class OFSTestNode(object):
         '''
         output = []
         # first check to see if the kernel module is already installed.
-        rc = self.runSingleCommand('/sbin/lsmod | grep pvfs2',output)
+        rc = self.runSingleCommand("/sbin/lsmod | grep -E 'pvfs2|orangefs'",output)
         if rc == 0:
             print output[1]
             return 0
-        
-        # Is the OrangeFS module already in the kernel?
-        rc = self.runSingleCommandAsRoot("modprobe -v orangefs")
-        if rc == 0:
-            return 0;
+        else:
+            # try installing the in-tree orangefs module.
+            rc = self.runSingleCommandAsRoot("modprobe -v orangefs")
+            if rc == 0:
+                return 0
+
         # get the kernel version if it has been updated
         self.kernel_version = self.runSingleCommandBacktick("uname -r")
         
