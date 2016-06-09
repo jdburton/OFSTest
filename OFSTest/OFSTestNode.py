@@ -289,6 +289,7 @@ class OFSTestNode(object):
         self.ofs_database="lmdb"
         
         self.custom_kernel = False
+        self.module_name = "pvfs2"
         
 
     ##
@@ -2466,7 +2467,7 @@ class OFSTestNode(object):
         #mount with kmod
         else:
             print "Mounting OrangeFS service at tcp://%s:%d/%s at mount_point %s" % (self.hostname,self.ofs_tcp_port,self.ofs_fs_name,self.ofs_mount_point)
-            self.runSingleCommandAsRoot("mount -t %s tcp://%s:%d/%s %s" % (self.kmod_name,self.hostname,self.ofs_tcp_port,self.ofs_fs_name,self.ofs_mount_point))
+            self.runSingleCommandAsRoot("mount -t %s tcp://%s:%d/%s %s" % (self.module_name,self.hostname,self.ofs_tcp_port,self.ofs_fs_name,self.ofs_mount_point))
 
         
         print "Waiting 30 seconds for mount"            
