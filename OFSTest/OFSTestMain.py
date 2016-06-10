@@ -269,7 +269,7 @@ class OFSTestMain(object):
         print ""
         print "==================================================================="
         print "Updating New Nodes (This may take awhile...)"
-        self.ofs_network.updateCloudNodes(custom_kernel=self.config.custom_kernel,kernel_git_location=self.config.kernel_git_location, kernel_git_branch=self.config.kernel_git_branch)
+        self.ofs_network.updateCloudNodes(custom_kernel=self.config.custom_kernel,kernel_git_location=self.config.kernel_git_location, kernel_git_branch=self.config.kernel_git_branch, kernel_git_commit=self.config.kernel_git_commit)
  
  
         print "===========================================================" 

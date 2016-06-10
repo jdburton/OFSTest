@@ -854,7 +854,7 @@ class OFSTestNode(object):
     
     
     
-    def updateNode(self,custom_kernel=False,kernel_git_location=None,kernel_git_branch=None):
+    def updateNode(self,custom_kernel=False,kernel_git_location=None,kernel_git_branch=None,kernel_git_commit=None):
         logging.info("Update Node. Distro is " + self.distro)
            
         if "ubuntu" in self.distro.lower() or "mint" in self.distro.lower() or "debian" in self.distro.lower():
@@ -876,7 +876,7 @@ class OFSTestNode(object):
                     
         #self.runAllBatchCommands()
         if custom_kernel:
-            rc = self.installCustomKernel(kernel_git_location,kernel_git_branch)
+            rc = self.installCustomKernel(kernel_git_location,kernel_git_branch,kernel_git_commit)
             if rc != 0:
                 print "Could not install custom kernel. Continuing with default kernel."
             else:
@@ -901,7 +901,7 @@ class OFSTestNode(object):
     # @param kernel_git_branch The location of the git branch you want to use.
     
     
-    def installCustomKernel(self,kernel_git_location,kernel_git_branch):
+    def installCustomKernel(self,kernel_git_location,kernel_git_branch,kernel_git_commit):
         
         self.changeDirectory("/home/"+self.current_user)
         print "Cloning kernel repository: git clone %s" %kernel_git_location
@@ -912,7 +912,7 @@ class OFSTestNode(object):
         
         self.changeDirectory("/home/"+self.current_user+"/linux")
         
-        rc = self.runSingleCommand("git checkout %s" % kernel_git_branch)
+        rc = self.runSingleCommand("git checkout %s -b %s" % kernel_git_commit,kernel_git_branch)
         if rc != 0:
             print "Could not checkout %s" % kernel_git_branch
             return rc
