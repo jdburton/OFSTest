@@ -931,7 +931,7 @@ class OFSTestNode(object):
         self.runSingleCommand("sed -i s/CONFIG_CRYPTO_AES_NI_INTEL=y/CONFIG_CRYPTO_AES_NI_INTEL=n/ ./.config")
         
         # Enable OrangeFS
-        self.runSingleCommand("echo 'CONFIG_ORANGEFS_FS=y' >> ./.config",)
+        self.runSingleCommand("echo 'CONFIG_ORANGEFS_FS=m' >> ./.config",)
         
         rc = self.runSingleCommand("make -j %s bzImage 2>&1 >> kbuild.log" % number_cores)
         if rc != 0:
@@ -2467,7 +2467,7 @@ class OFSTestNode(object):
         #mount with kmod
         else:
             print "Mounting OrangeFS service at tcp://%s:%d/%s at mount_point %s" % (self.hostname,self.ofs_tcp_port,self.ofs_fs_name,self.ofs_mount_point)
-            self.runSingleCommandAsRoot("mount -t %s tcp://%s:%d/%s %s" % (self.module_name,self.hostname,self.ofs_tcp_port,self.ofs_fs_name,self.ofs_mount_point))
+            self.runSingleCommandAsRoot("mount -t pvfs2 tcp://%s:%d/%s %s" % (self.hostname,self.ofs_tcp_port,self.ofs_fs_name,self.ofs_mount_point))
 
         
         print "Waiting 30 seconds for mount"            
