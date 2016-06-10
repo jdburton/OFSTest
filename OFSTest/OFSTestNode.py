@@ -912,7 +912,7 @@ class OFSTestNode(object):
         
         self.changeDirectory("/home/"+self.current_user+"/linux")
         
-        rc = self.runSingleCommand("git checkout %s -b %s" % kernel_git_commit,kernel_git_branch)
+        rc = self.runSingleCommand("git checkout %s -b %s" % (kernel_git_commit,kernel_git_branch))
         if rc != 0:
             print "Could not checkout %s" % kernel_git_branch
             return rc
