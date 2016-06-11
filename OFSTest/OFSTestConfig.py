@@ -356,7 +356,6 @@ class OFSTestConfig(object):
         self.custom_kernel = False
         self.kernel_git_location = None
         self.kernel_git_branch = None
-        self.kernel_git_commit = ""
         
         self.url_base = "http://devorange.clemson.edu/pvfs"
     
@@ -798,10 +797,6 @@ class OFSTestConfig(object):
             self.kernel_git_location = temp
         
         temp = d.get("kernel_git_branch")
-        if temp != None:
-            self.kernel_git_branch = temp
-        
-        temp = d.get("kernel_git_commit")
         if temp != None:
             self.kernel_git_branch = temp
         
