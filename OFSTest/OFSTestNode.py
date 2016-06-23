@@ -359,7 +359,7 @@ class OFSTestNode(object):
         # get kernel version and processor type
         self.kernel_version = self.runSingleCommandBacktick("uname -r")
         self.processor_type = self.runSingleCommandBacktick("uname -p")
-        self.number_cores = self.runSingleCommandBacktick("grep processor /proc/cpuinfo | wc -l")
+        self.number_cores = int(self.runSingleCommandBacktick("grep processor /proc/cpuinfo | wc -l"))
         
         
         # Find the distribution. Unfortunately Linux distributions each have their own file for distribution information.
