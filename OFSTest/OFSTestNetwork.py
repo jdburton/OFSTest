@@ -48,6 +48,8 @@ class OFSTestNetwork(object):
         self.local_master = OFSTestLocalNode.OFSTestLocalNode()
         self.mpi_nfs_directory = ""
         self.openmpi_version = ""
+        self.number_mpi_slots = 1
+        self.number_mpi_hosts = 1
 
         #self.network_nodes['127.0.0.1']=self.local_master
    
@@ -359,11 +361,18 @@ class OFSTestNetwork(object):
         if node_list is None:
             node_list = self.network_nodes
         
- 
+        
+        self.number_mpi_hosts = len(node_list)
+        self.number_mpi_slots = 0
+        
         for node in node_list:
-            node.created_openmpihosts = "~/openmpihosts"
-            node.created_mpichhosts = "~/mpichhosts"
+            self.number_mpi_slots += node.number_cores
+            node.number_mpi_slots = self.number_mpi_slots
+            node.number_mpi_hosts = self.number_mpi_hosts
+            node.created_openmpihosts = "/home/%s/openmpihosts" % node.current_user
+            node.created_mpichhosts = "/home/%s/mpichhosts" % node.current_user
             for n2 in node_list:
+                
                 # can we ping the node?
                 #print "Pinging %s from local node" % n2.hostname
                 rc = node.runSingleCommand("ping -c 1 %s" % n2.hostname)
@@ -372,9 +381,9 @@ class OFSTestNetwork(object):
                     logging.info("Could not ping %s at %s from %s. Manually adding to /etc/hosts" % (n2.hostname,n2.ip_address,node.hostname))
                 node.runSingleCommandAsRoot('bash -c \'echo -e "%s     %s     %s" >> /etc/hosts\'' % (n2.ip_address,n2.hostname,n2.hostname))
                 # also create mpihosts files
-                node.runSingleCommand('echo "%s   slots=2" >> %s' % (n2.hostname,node.created_openmpihosts))
-                node.runSingleCommand('echo "%s:2" >> %s' % (n2.hostname,node.created_mpichhosts))
-
+                node.runSingleCommand('echo "%s   slots=%d" >> %s' % (n2.hostname,n2.number_cores,node.created_openmpihosts))
+                node.runSingleCommand('echo "%s:%d" >> %s' % (n2.hostname,n2.number_cores,node.created_mpichhosts))
+                
                     
             node.hostname = node.runSingleCommandBacktick("hostname")
 
@@ -1387,21 +1396,6 @@ class OFSTestNetwork(object):
         # Also download and build IOR benchmark.
         rc = build_node.configureOpenMPI(install_location=self.mpi_nfs_directory,build_location=mpi_local_directory)
     
-
-                
-        # how many slots per node do we need?
-
-        # Testing requires np=4
-        MAX_SLOTS = 4
-        number_nodes = len(self.network_nodes)
-    
-        # number of slots needed is total/nodes.
-        slots = (MAX_SLOTS / number_nodes) 
-        
-        # if this doesn't divide evenly, add an extra slot per node. Works well enough.
-        if (MAX_SLOTS % number_nodes) != 0:
-            slots = slots+1
-        
         self.openmpi_version = build_node.openmpi_version
         
         build_node.changeDirectory(self.mpi_nfs_directory)

@@ -106,7 +106,7 @@ def romio_testsuite(testing_node,output=[]):
 def IOR(testing_node,output=[]):
 
     rc = testing_node.changeDirectory("%s/src/C" % testing_node.ior_installation_location)
-    np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
+    np = testing_node.number_mpi_slots
     
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/src/C/IOR -a POSIX -F -i 4 -N %s -b 2g -t 4m -s 1 -o %s/mpivfsfile" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ior_installation_location,np,testing_node.ofs_mount_point),output)
     
@@ -134,7 +134,7 @@ def IOR(testing_node,output=[]):
 def mdtest(testing_node,output=[]):
 
     rc = testing_node.changeDirectory(testing_node.mdtest_installation_location)
-    np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
+    np = testing_node.number_mpi_slots
     
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/mdtest  -n 50 -w 4194304 -i 5 -v -d %s/mdtest" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.mdtest_installation_location,testing_node.ofs_mount_point),output)
     
@@ -163,7 +163,7 @@ def mdtest(testing_node,output=[]):
 def simul(testing_node,output=[]):
 
     rc = testing_node.changeDirectory(testing_node.mdtest_installation_location)
-    np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
+    np = testing_node.number_mpi_slots
     
     #skip tests 18,38,39. OrangeFS does not support hard links.
     rc = testing_node.runSingleCommand("mkdir -p %s/simul" % testing_node.ofs_mount_point)
@@ -196,7 +196,7 @@ def simul(testing_node,output=[]):
 def miranda_io(testing_node,output=[]):
 
     
-    np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
+    np = testing_node.number_mpi_slots
     
     rc = testing_node.changeDirectory(testing_node.ofs_mount_point)
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/miranda_io" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.miranda_io_installation_location),output)
@@ -226,7 +226,7 @@ def miranda_io(testing_node,output=[]):
 def multi_md_test(testing_node,output=[]):
 
     
-    np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
+    np = testing_node.number_mpi_slots
     
     rc = testing_node.changeDirectory(testing_node.ofs_mount_point)
     testing_node.runSingleCommand("mkdir -p %s/multi_md_test" % testing_node.ofs_mount_point)
@@ -257,7 +257,7 @@ def multi_md_test(testing_node,output=[]):
 def multi_md_test_size_sweep(testing_node,output=[]):
 
     
-    np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
+    np = testing_node.number_mpi_slots
     
     rc = testing_node.changeDirectory(testing_node.ofs_mount_point)
     testing_node.runSingleCommand("mkdir -p %s/multi_md_size_sweep" % testing_node.ofs_mount_point)
@@ -287,7 +287,7 @@ def multi_md_test_size_sweep(testing_node,output=[]):
 def mpi_active_delete(testing_node,output=[]):
 
     
-    np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
+    np = testing_node.number_mpi_slots
     
     rc = testing_node.changeDirectory(testing_node.ofs_mount_point)
     testing_node.runSingleCommand("mkdir -p %s/active-delete" % testing_node.ofs_mount_point)
@@ -300,7 +300,7 @@ def mpi_active_delete(testing_node,output=[]):
 
 
 
-tests = [ romio_testsuite, mpi_active_delete, IOR, mdtest, miranda_io, multi_md_test, multi_md_test_size_sweep ]
+tests = [ romio_testsuite, mpi_active_delete, IOR_single, IOR, mdtest, miranda_io, multi_md_test, multi_md_test_size_sweep ]
 
 
 

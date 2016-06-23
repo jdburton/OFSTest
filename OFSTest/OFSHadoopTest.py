@@ -53,9 +53,9 @@ def wordcount(testing_node,output=[]):
     testing_node.runSingleCommand("%s/bin/hadoop dfs -mkdir -p /user/%s/gutenberg" % (testing_node.hadoop_location,testing_node.current_user))
     
     # get the gutenberg files
-    testing_node.runSingleCommand("wget http://www.gutenberg.org/cache/epub/5000/pg5000.txt")
-    testing_node.runSingleCommand("wget http://www.gutenberg.org/cache/epub/20417/pg20417.txt")
-    testing_node.runSingleCommand("wget http://www.gutenberg.org/cache/epub/4300/pg4300.txt")
+    testing_node.runSingleCommand("wget http://www.gutenberg.org/files/5000/5000-8.txt")
+    testing_node.runSingleCommand("wget http://www.gutenberg.org/files/20417/20417.txt")
+    testing_node.runSingleCommand("wget http://www.gutenberg.org/files/4300/4300.txt")
     
     testing_node.runSingleCommand("%s/bin/hadoop dfs -copyFromLocal /home/%s/gutenberg/* /user/%s/gutenberg" % (testing_node.hadoop_location,testing_node.current_user,testing_node.current_user))
     
@@ -136,8 +136,8 @@ def TestDFSIO_write(testing_node,output=[]):
 def terasort_full(testing_node,output=[]):
     
 
-    # generate 1G of data. Not much, but good enough to kick the tires.
-    gensize = 10000000 
+    # generate 5G of data. Not much, but good enough to kick the tires.
+    gensize = 50000000 
      
     rc = testing_node.runSingleCommand("%s/bin/hadoop jar %s  teragen %d /user/%s/terasort1G-input" % (testing_node.hadoop_location,testing_node.hadoop_examples_location,gensize,testing_node.current_user),output)
     if rc != 0:

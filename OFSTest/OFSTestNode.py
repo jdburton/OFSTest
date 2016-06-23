@@ -223,6 +223,9 @@ class OFSTestNode(object):
         self.openmpi_source_location = "/opt/mpi/openmpi-1.8.8"
         self.openmpi_version = ""
         self.created_openmpihosts = None  
+        self.number_cores = 1
+        self.number_mpi_slots = 1
+        self.number_mpi_hosts = 1  
         self.ior_installation_location = ""
         self.mdtest_installation_location = ""
         self.simul_installation_location = ""
@@ -310,6 +313,8 @@ class OFSTestNode(object):
         self.runSingleCommand("ls -l /home/ | grep %s | awk '{print \\$4}'" % self.current_user)
         
         
+        
+        
         self.current_group = self.runSingleCommandBacktick(command="ls -l /home/ | grep %s | awk '{print \\$4}'" % self.current_user)
 
         # is this a mac? Home located under /Users
@@ -354,6 +359,7 @@ class OFSTestNode(object):
         # get kernel version and processor type
         self.kernel_version = self.runSingleCommandBacktick("uname -r")
         self.processor_type = self.runSingleCommandBacktick("uname -p")
+        self.number_cores = self.runSingleCommandBacktick("grep processor /proc/cpuinfo | wc -l")
         
         
         # Find the distribution. Unfortunately Linux distributions each have their own file for distribution information.

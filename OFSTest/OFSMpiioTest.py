@@ -102,10 +102,10 @@ def romio_testsuite(testing_node,output=[]):
 #
 #
 
-def IOR(testing_node,output=[]):
+def IOR_single(testing_node,output=[]):
 
     rc = testing_node.changeDirectory("%s/src/C" % testing_node.ior_installation_location)
-    np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
+    np = testing_node.number_mpi_hosts
     
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/src/C/IOR -a MPIIO -C -i 4 -N %s -b 2g -t 4m -s 1 -o pvfs2:%s/mpiiofile" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ior_installation_location,np,testing_node.ofs_mount_point),output)
     time.sleep(30)
@@ -115,6 +115,32 @@ def IOR(testing_node,output=[]):
     
     return rc
 
+##
+#
+# @fn IOR(testing_node,output=[]):
+#
+# @brief This is the IOR testsuite from LLNL. 
+#
+# @param testing_node OFSTestNode on which tests are run.
+# @param output Array that holds output from commands. Passed by reference. 
+#   
+# @return 0 Test ran successfully
+# @return Not 0 Test failed
+#
+#
+
+def IOR(testing_node,output=[]):
+
+    rc = testing_node.changeDirectory("%s/src/C" % testing_node.ior_installation_location)
+    np = testing_node.number_mpi_slots
+    
+    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/src/C/IOR -a MPIIO -C -i 4 -N %s -b 2g -t 4m -s 1 -o pvfs2:%s/mpiiofile" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ior_installation_location,np,testing_node.ofs_mount_point),output)
+    time.sleep(30)
+    print output[1]
+    print output[2]
+    
+    
+    return rc
 
 ##
 #
@@ -134,7 +160,7 @@ def heidelberg_IO(testing_node,output=[]):
     #/opt/mpi/openmpi-1.6.5/ompi/mca/io/romio/romio/test
     
     rc = testing_node.changeDirectory("%s" % testing_node.heidelberg_installation_location)
-    np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
+    np = testing_node.number_mpi_slots
     
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/heidelberg-IO pvfs2:%s/heidelberg-io-test level0 level1 level2 level3" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.heidelberg_installation_location,testing_node.ofs_mount_point),output)
 
@@ -166,7 +192,7 @@ def mpi_io_test(testing_node,output=[]):
     #/opt/mpi/openmpi-1.6.5/ompi/mca/io/romio/romio/test
     
     rc = testing_node.changeDirectory("%s" % testing_node.ofs_mount_point)
-    np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
+    np = testing_node.number_mpi_slots
     
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/test/mpi-io-test pvfs2:%s/mpi-io-test -b $((1024*1024*32))" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
     
@@ -197,7 +223,7 @@ def mpi_io_test_collective(testing_node,output=[]):
     #/opt/mpi/openmpi-1.6.5/ompi/mca/io/romio/romio/test
     
     rc = testing_node.changeDirectory("%s" % testing_node.ofs_mount_point)
-    np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
+    np = testing_node.number_mpi_slots
     
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/test/mpi-io-test pvfs2:%s/mpi-io-test-C -b $((1024*1024*32)) -C" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
     
@@ -248,7 +274,7 @@ def mpi_md_test_create(testing_node,output=[]):
     #/opt/mpi/openmpi-1.6.5/ompi/mca/io/romio/romio/test
     
     rc = testing_node.changeDirectory("%s" % testing_node.ofs_mount_point)
-    np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
+    np = testing_node.number_mpi_slots
     testing_node.runSingleCommand("mkdir -p %s/mpi_md_test" % testing_node.ofs_mount_point)
     time.sleep(10)
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/test/mpi-md-test -O -n 100 -d pvfs2:%s/mpi_md_test" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
@@ -266,7 +292,7 @@ def mpi_md_test_resize(testing_node,output=[]):
     #/opt/mpi/openmpi-1.6.5/ompi/mca/io/romio/romio/test
 
     rc = testing_node.changeDirectory("%s" % testing_node.ofs_mount_point)
-    np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
+    np = testing_node.number_mpi_slots
 
     time.sleep(10)
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/test/mpi-md-test -R -n 100 -d pvfs2:%s/mpi_md_test" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
@@ -284,7 +310,7 @@ def mpi_md_test_delete(testing_node,output=[]):
     #/opt/mpi/openmpi-1.6.5/ompi/mca/io/romio/romio/test
 
     rc = testing_node.changeDirectory("%s" % testing_node.ofs_mount_point)
-    np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
+    np = testing_node.number_mpi_slots
     time.sleep(10)
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/test/mpi-md-test -D -n 100 -d pvfs2:%s/mpi_md_test" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
 
@@ -314,7 +340,7 @@ def mpi_unbalanced_test(testing_node,output=[]):
     #/opt/mpi/openmpi-1.6.5/ompi/mca/io/romio/romio/test
     
     rc = testing_node.changeDirectory("%s" % testing_node.ofs_mount_point)
-    np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
+    np = testing_node.number_mpi_slots
     testing_node.runSingleCommand("mkdir -p %s/mpi_unbalanced_test" % testing_node.ofs_mount_point)
     time.sleep(10)
     rc = testing_node.runSingleCommand("time %s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/test/mpi-unbalanced-test pvfs2:%s/mpi_unbalanced_test > /dev/null" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
@@ -350,7 +376,7 @@ def stadler(testing_node,output=[]):
     #/opt/mpi/openmpi-1.6.5/ompi/mca/io/romio/romio/test
     
     rc = testing_node.changeDirectory("%s" % testing_node.stadler_installation_location)
-    np = testing_node.runSingleCommandBacktick("wc -l < %s" % testing_node.created_openmpihosts)
+    np = testing_node.number_mpi_slots
     
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/stadler-file-view-test pvfs2:%s/stadler-file-view-test " % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.stadler_installation_location,testing_node.ofs_mount_point),output)
     
@@ -365,7 +391,8 @@ def stadler(testing_node,output=[]):
 
 
 
-tests = [ romio_testsuite, 
+tests = [ romio_testsuite,
+         IOR_single, 
          IOR, 
          heidelberg_IO, 
          mpi_io_test,
