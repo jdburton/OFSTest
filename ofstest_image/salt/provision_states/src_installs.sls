@@ -28,6 +28,11 @@ openmpi_install:
     - source: salt://src_installs/openmpi.sh
     - creates: /opt/openmpi/
 
+hdf5_install:
+  cmd.script:
+    - source: salt://src_installs/hdf5.sh
+    - creates: /opt/hdf5/
+
 orangefs_test_install:
   cmd.script:
     - source: salt://src_installs/orangefs_tests.sh

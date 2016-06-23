@@ -61,3 +61,15 @@ openmpi_de:
   file.directory:
     - name: /opt/mpi/openmpi-1.8.8/
 
+hdf5_de:
+  cmd.script:
+    - source: salt://utils/de.sh
+    - args: "https://www.hdfgroup.org/ftp/HDF5/current/src/hdf5-1.8.17.tar.gz /usr/src/"
+    - creates: /opt/hdf5-1.8.17/
+  file.directory:
+    - name: /opt/hdf5-1.8.17/
+    - user: root
+    - group: root
+    - recurse:
+      - user
+      - group

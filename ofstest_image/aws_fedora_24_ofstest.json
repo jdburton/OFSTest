@@ -14,7 +14,7 @@
     "access_key": "{{user `aws_access_key`}}",
     "secret_key": "{{user `aws_secret_key`}}",
     "source_ami": "{{user `aws_source_ami`}}",
-    "instance_type": "t2.small",
+    "instance_type": "t2.medium",
     "region": "{{user `aws_region`}}",
     "ami_name": "cloud-fedora24-ofstest",
     "vpc_id": "{{user `aws_vpc`}}",
