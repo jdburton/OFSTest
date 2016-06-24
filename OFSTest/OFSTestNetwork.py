@@ -1401,16 +1401,16 @@ class OFSTestNetwork(object):
         build_node.changeDirectory(self.mpi_nfs_directory)
 
 
-        # we created an openmpihost file earlier. Now copy it to the appropriate directory.
-        if build_node.created_openmpihosts is None:
-            rc = build_node.runSingleCommand("/bin/cp %s %s" % (build_node.created_openmpihosts,self.mpi_nfs_directory))
-            if rc == 0:
-                build_node.created_openmpihosts = self.mpi_nfs_directory + "/" + os.path.basename(build_node.created_openmpihosts)
-            
-        else:
-            #print 'grep -v localhost /etc/hosts | awk \'{print \\\$2 "\tslots=%r"}\' > %s/openmpihosts' % (slots,self.mpi_nfs_directory)
-            build_node.runSingleCommand("grep -v localhost /etc/hosts | awk '{print \$2 \"\\tslots=%r\"}' > %s/openmpihosts" % (slots,self.mpi_nfs_directory))
-            
+#         # we created an openmpihost file earlier. Now copy it to the appropriate directory.
+#         if build_node.created_openmpihosts is None:
+#             rc = build_node.runSingleCommand("/bin/cp %s %s" % (build_node.created_openmpihosts,self.mpi_nfs_directory))
+#             if rc == 0:
+#                 build_node.created_openmpihosts = self.mpi_nfs_directory + "/" + os.path.basename(build_node.created_openmpihosts)
+#             
+#         else:
+#             #print 'grep -v localhost /etc/hosts | awk \'{print \\\$2 "\tslots=%r"}\' > %s/openmpihosts' % (slots,self.mpi_nfs_directory)
+#             build_node.runSingleCommand("grep -v localhost /etc/hosts | awk '{print \$2 \"\\tslots=%r\"}' > %s/openmpihosts" % (slots,self.mpi_nfs_directory))
+#             
         # Copy to all nodes with rsync
         self.copyOpenMPIToNodeList(node_list)
 
