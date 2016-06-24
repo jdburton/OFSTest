@@ -366,13 +366,13 @@ class OFSTestNetwork(object):
         self.number_mpi_slots = 0
         
         for node in node_list:
-            self.number_mpi_slots += node.number_cores
-            node.number_mpi_slots = self.number_mpi_slots
+            node.number_mpi_slots = 0
             node.number_mpi_hosts = self.number_mpi_hosts
             node.created_openmpihosts = "/home/%s/openmpihosts" % node.current_user
             node.created_mpichhosts = "/home/%s/mpichhosts" % node.current_user
             for n2 in node_list:
-                
+                node.number_mpi_slots += n2.number_cores
+                np = testing_node.number_mpi_hosts
                 # can we ping the node?
                 #print "Pinging %s from local node" % n2.hostname
                 rc = node.runSingleCommand("ping -c 1 %s" % n2.hostname)
@@ -383,7 +383,8 @@ class OFSTestNetwork(object):
                 # also create mpihosts files
                 node.runSingleCommand('echo "%s   slots=%d" >> %s' % (n2.hostname,n2.number_cores,node.created_openmpihosts))
                 node.runSingleCommand('echo "%s:%d" >> %s' % (n2.hostname,n2.number_cores,node.created_mpichhosts))
-                
+            
+            self.number_mpi_slots = node.number_mpi_slots
                     
             node.hostname = node.runSingleCommandBacktick("hostname")
 
