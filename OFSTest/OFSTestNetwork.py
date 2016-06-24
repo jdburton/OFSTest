@@ -372,7 +372,6 @@ class OFSTestNetwork(object):
             node.created_mpichhosts = "/home/%s/mpichhosts" % node.current_user
             for n2 in node_list:
                 node.number_mpi_slots += n2.number_cores
-                np = testing_node.number_mpi_hosts
                 # can we ping the node?
                 #print "Pinging %s from local node" % n2.hostname
                 rc = node.runSingleCommand("ping -c 1 %s" % n2.hostname)
