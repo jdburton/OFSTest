@@ -119,6 +119,34 @@ def IOR(testing_node,output=[]):
 
 ##
 #
+# @fn IOR(testing_node,output=[]):
+#
+# @brief This is the IOR testsuite from LLNL. 
+#
+# @param testing_node OFSTestNode on which tests are run.
+# @param output Array that holds output from commands. Passed by reference. 
+#   
+# @return 0 Test ran successfully
+# @return Not 0 Test failed
+#
+#
+
+def IOR_single(testing_node,output=[]):
+
+    rc = testing_node.changeDirectory("%s/src/C" % testing_node.ior_installation_location)
+    np = testing_node.number_mpi_nodes
+    
+    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/src/C/IOR -a POSIX -F -i 4 -N %s -b 2g -t 4m -s 1 -o %s/mpivfsfile" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ior_installation_location,np,testing_node.ofs_mount_point),output)
+    
+    #TODO: Compare actual results with expected.
+    time.sleep(60)
+    print output[1]
+    print output[2]
+
+    return rc
+
+##
+#
 # @fn mdtest(testing_node,output=[]):
 #
 # @brief This is the mdtest testsuite from LLNL. 
