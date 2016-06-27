@@ -109,7 +109,7 @@ def IOR_single(testing_node,output=[]):
     
     bs = 16384 / int(np)
     
-    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/src/C/IOR -a MPIIO -C -i 4 -N %s -b %dm -t 4m -s 1 -o pvfs2:%s/mpiiofile" % (testing_node.openmpi_installation_location,np,bs,testing_node.created_openmpihosts,testing_node.ior_installation_location,np,testing_node.ofs_mount_point),output)
+    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/src/C/IOR -a MPIIO -C -i 4 -N %s -b %dm -t 4m -s 1 -o pvfs2:%s/mpiiofile" % (testing_node.openmpi_installation_location,np,bs,testing_node.created_openmpihosts,testing_node.ior_installation_location,np,bs,testing_node.ofs_mount_point),output)
     time.sleep(30)
     print output[1]
     print output[2]
@@ -137,7 +137,7 @@ def IOR(testing_node,output=[]):
     np = testing_node.number_mpi_slots
     bs = 16384 / int(np)
     
-    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/src/C/IOR -a MPIIO -C -i 4 -N %s -b %dm -t 4m -s 1 -o pvfs2:%s/mpiiofile" % (testing_node.openmpi_installation_location,np,bs,testing_node.created_openmpihosts,testing_node.ior_installation_location,np,testing_node.ofs_mount_point),output)
+    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/src/C/IOR -a MPIIO -C -i 4 -N %s -b %dm -t 4m -s 1 -o pvfs2:%s/mpiiofile" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ior_installation_location,np,bs,testing_node.ofs_mount_point),output)
     time.sleep(30)
     print output[1]
     print output[2]
