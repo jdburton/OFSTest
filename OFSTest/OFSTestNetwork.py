@@ -362,7 +362,8 @@ class OFSTestNetwork(object):
             node_list = self.network_nodes
         
         
-        self.number_mpi_hosts = len(node_list)
+        self.number_mpi_hosts = len(node_list) 
+
         self.number_mpi_slots = 0
         
         for node in node_list:
@@ -371,7 +372,12 @@ class OFSTestNetwork(object):
             node.created_openmpihosts = "/home/%s/openmpihosts" % node.current_user
             node.created_mpichhosts = "/home/%s/mpichhosts" % node.current_user
             for n2 in node_list:
-                node.number_mpi_slots += n2.number_cores
+                # limit slots to 8 per node.
+                mpi_slots = 8
+                if n2.number_cores < 8:
+                    mpi_slots = n2.number_cores
+                    
+                node.number_mpi_slots += mpi_slots
                 # can we ping the node?
                 #print "Pinging %s from local node" % n2.hostname
                 rc = node.runSingleCommand("ping -c 1 %s" % n2.hostname)
@@ -380,8 +386,9 @@ class OFSTestNetwork(object):
                     logging.info("Could not ping %s at %s from %s. Manually adding to /etc/hosts" % (n2.hostname,n2.ip_address,node.hostname))
                 node.runSingleCommandAsRoot('bash -c \'echo -e "%s     %s     %s" >> /etc/hosts\'' % (n2.ip_address,n2.hostname,n2.hostname))
                 # also create mpihosts files
-                node.runSingleCommand('echo "%s   slots=%d" >> %s' % (n2.hostname,n2.number_cores,node.created_openmpihosts))
-                node.runSingleCommand('echo "%s:%d" >> %s' % (n2.hostname,n2.number_cores,node.created_mpichhosts))
+                node.runSingleCommand('echo "%s   slots=%d" >> %s' % (n2.hostname,mpi_slots,node.created_openmpihosts))
+                node.runSingleCommand('echo "%s:%d" >> %s' % (n2.hostname,mpi_slots,node.created_mpichhosts))
+            
             
             self.number_mpi_slots = node.number_mpi_slots
                     
