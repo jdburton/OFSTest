@@ -114,6 +114,7 @@ def IOR(testing_node,output=[]):
     
     #TODO: Compare actual results with expected.
     time.sleep(60)
+    testing_node.runSingleCommand("rm -f /tmp/mount/orangefs/mpivfsfile*")
     print output[1]
     print output[2]
     
@@ -144,6 +145,7 @@ def IOR_single(testing_node,output=[]):
     
     #TODO: Compare actual results with expected.
     time.sleep(60)
+    testing_node.runSingleCommand("rm -f /tmp/mount/orangefs/mpivfsfile*")
     print output[1]
     print output[2]
 
