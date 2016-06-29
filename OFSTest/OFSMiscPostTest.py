@@ -93,5 +93,24 @@ def dmesg(testing_node,output=[]):
     return rc
 
 
+## 
+# @fn dmesg(testing_node,output=[]):
+#
+# Runs dmesg after testing.
+#
+# @param testing_node OFSTestNode on which tests are run.
+# @param output Array that holds output from commands. Passed by reference. 
+#   
+# @return 0 Test ran successfully
+# @return Not 0 Test failed
+#
+#
 
-tests = [ checkSHM, dmesg ]
+
+def server_log(testing_node,output=[]):
+ 
+    rc = testing_node.runSingleCommandAsRoot("cat %s/pvfs2-server-%s.log" % (testing_node.ofs_installation_location,testing_node.ofs_branch),output)
+    return rc
+
+
+tests = [ checkSHM, dmesg, server_log ]

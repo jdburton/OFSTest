@@ -800,18 +800,19 @@ class OFSTestMain(object):
             # This is an array of strings that correspond to function names.
             # The functions are run in the order they are listed in the array.
 
-            for callable in OFSMiscPostTest.tests:
-                try:
-                    rc = head_node.runOFSTest("misc-post", callable)
-                    self.writeOutput(filename,callable,rc)
-                except:
-                    print "Unexpected error:", sys.exc_info()[0]
-                    traceback.print_exc()
-                    if self.config.stop_on_failure == True:
-                        return -888
-                    pass
-                if rc != 0 and self.config.stop_on_failure == True:
-                    return rc
+            for node in self.ofs_network.network_nodes:
+                for callable in OFSMiscPostTest.tests:
+                    try:
+                        rc = node.runOFSTest("misc-post", callable)
+                        self.writeOutput(filename,callable,rc)
+                    except:
+                        print "Unexpected error:", sys.exc_info()[0]
+                        traceback.print_exc()
+                        if self.config.stop_on_failure == True:
+                            return -888
+                        pass
+                    if rc != 0 and self.config.stop_on_failure == True:
+                        return rc
         
 
         # Test runfunction group
