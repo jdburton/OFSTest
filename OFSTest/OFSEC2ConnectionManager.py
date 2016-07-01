@@ -420,12 +420,12 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
 
 
     
-    def createNewCloudNodes(self,number_nodes,image_name=None,flavor_name="t2.micro",local_master=None,associateip=False,domain=None,cloud_subnet=None,instance_suffix="",image_id=None):
+    def createNewCloudNodes(self,number_nodes,image_name=None,flavor_name="t2.micro",local_master=None,associateip=False,domain=None,cloud_subnet=None,instance_suffix="",image_id=None,security_group_ids=None):
         
         # This function creates number nodes on the cloud system. 
         # It returns a list of nodes
         
-        new_instances = self.createNewCloudInstances(number_nodes,image_name,flavor_name,cloud_subnet,instance_suffix,image_id)
+        new_instances = self.createNewCloudInstances(number_nodes,image_name,flavor_name,cloud_subnet,instance_suffix,image_id,security_group_ids)
         # new instances should have a 60 second delay to make sure everything is running.
 
         ip_addresses = []

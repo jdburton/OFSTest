@@ -238,7 +238,7 @@ class OFSCloudConnectionManager(object):
 
 
     
-    def createNewCloudNodes(self,number_nodes,image_name,flavor_name,local_master,associateip=False,domain=None,cloud_subnet=None,instance_suffix=""):
+    def createNewCloudNodes(self,number_nodes,image_name,flavor_name,local_master,associateip=False,domain=None,cloud_subnet=None,instance_suffix="",security_group_ids=None):
         pass
         
 
