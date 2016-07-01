@@ -16,7 +16,7 @@
     "source_ami": "{{user `aws_source_ami`}}",
     "instance_type": "t2.medium",
     "region": "{{user `aws_region`}}",
-    "ami_name": "cloud-ubuntu-16.04-java8-ofstest",
+    "ami_name": "cloud-ubuntu-16.04-ofstest-new",
     "vpc_id": "{{user `aws_vpc`}}",
     "subnet_id": "{{user `aws_subnet`}}",
     "security_group_id": "{{user `aws_security_group`}}",
@@ -39,7 +39,7 @@
     "inline": [
       "set -x",
 	  "sudo apt-get update",
-	  "sudo apt-get -y install salt-master salt-minion salt-syndic salt-ssh wget perl gcc",
+	  "sudo apt-get -y install salt-master salt-minion salt-syndic salt-ssh wget perl",
       "sudo apt-get -y dist-upgrade",
 	  "sudo chmod -R a+w /opt",
 	  "mkdir -p /opt/mpi",

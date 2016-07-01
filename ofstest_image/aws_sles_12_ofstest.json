@@ -16,7 +16,7 @@
     "source_ami": "{{user `aws_source_ami`}}",
     "instance_type": "m3.large",
     "region": "{{user `aws_region`}}",
-    "ami_name": "cloud-sles12-ofstest",
+    "ami_name": "cloud-sles12-ofstest-new",
     "vpc_id": "{{user `aws_vpc`}}",
     "subnet_id": "{{user `aws_subnet`}}",
     "security_group_id": "{{user `aws_security_group`}}",
@@ -41,9 +41,11 @@
       "set -x",
       "ps -ef | grep zypp",
       "sudo zypper --non-interactive up",
-      "sudo zypper --non-interactive --gpg-auto-import-keys  addrepo http://repo.saltstack.com/opensuse/SLE_12/systemsmanagement:saltstack.repo",
+      "sudo zypper --non-interactive --gpg-auto-import-keys  addrepo http://repo.saltstack.com/opensuse/SLE_12_SP1/systemsmanagement:saltstack.repo",
       "sudo zypper --non-interactive --gpg-auto-import-keys  refresh",
       "sudo zypper --non-interactive  install gcc salt salt-minion salt-master salt-syndic salt-ssh python-singledispatch",
+      "sudo systemctl enable salt-master.service",
+      "sudo systemctl enable salt-minion.service",
       "sudo chmod -R a+w /opt",
       "sudo chmod -R a+w /srv",
       "#sudo ln -s /etc/HOSTNAME /etc/hostname",
@@ -54,6 +56,21 @@
 
     ]
   },
+      {
+      "type": "shell",
+      "pause_before": "10s",
+      "inline": [
+        "sudo bash -c 'echo 0 > /selinux/enforce'",
+        "sudo salt-key -F master",
+        "sudo salt-call --local key.finger",
+        "sudo salt-key -L",
+      	"sudo salt-key -y -A",
+      	"sudo chmod -R a+w /etc/salt",
+        "sudo chmod -R a+w /var/log/salt",
+        "sudo chmod -R a+w /var/cache/salt"
+      	
+      ]
+    },
     {
       "type": "salt-masterless",
       "pause_before": "90s",
