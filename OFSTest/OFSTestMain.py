@@ -240,7 +240,7 @@ class OFSTestMain(object):
 
         print "===========================================================" 
         print "Creating %d new EC2/OpenStack cloud nodes" % self.config.number_new_cloud_nodes
-        self.ofs_network.createNewCloudNodes(self.config.number_new_cloud_nodes,self.config.cloud_image,self.config.cloud_machine,self.config.cloud_associate_ip,self.config.cloud_domain,self.config.cloud_subnet,self.config.instance_suffix,self.config.cloud_image_id)
+        self.ofs_network.createNewCloudNodes(self.config.number_new_cloud_nodes,self.config.cloud_image,self.config.cloud_machine,self.config.cloud_associate_ip,self.config.cloud_domain,self.config.cloud_subnet,self.config.instance_suffix,self.config.cloud_image_id,self.config.cloud_security_groups)
     
                 
         # Upload the access key to all the nodes in the cluster.

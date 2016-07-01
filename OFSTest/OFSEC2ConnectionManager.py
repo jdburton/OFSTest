@@ -259,7 +259,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
     # @return	A list of new instances.
     #		
         
-    def createNewCloudInstances(self,number_nodes,image_name=None,flavor_name="t2.micro",subnet_id=None,instance_suffix="",image_id=None ):
+    def createNewCloudInstances(self,number_nodes,image_name=None,flavor_name="t2.micro",subnet_id=None,instance_suffix="",image_id=None,security_group_ids=None ):
         self.checkCloudConnection()  
         
         # This creates a new instance for the system of a given machine type
@@ -294,7 +294,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
             image_name = image.name
 
 
-        reservation = self.ec2_connection.run_instances(image_id=image.id,min_count=number_nodes, max_count=number_nodes, key_name=self.cloud_instance_key, user_data=None, instance_type=flavor_name, subnet_id=subnet_id)
+        reservation = self.ec2_connection.run_instances(image_id=image.id,min_count=number_nodes, max_count=number_nodes, key_name=self.cloud_instance_key, user_data=None, instance_type=flavor_name, subnet_id=subnet_id, security_group_ids=security_group_ids)
 
         msg = "Creating %d new %s %s instances from AMI %s." % (number_nodes,flavor_name,image_name,image_id)
         print msg

@@ -214,7 +214,7 @@ class OFSNovaConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManag
     # @return    A list of new instances.
     #        
         
-    def createNewCloudInstances(self,number_nodes,image_name=None,flavor_name="m1.small",subnet_id=None,instance_suffix="",image_id=None):
+    def createNewCloudInstances(self,number_nodes,image_name=None,flavor_name="m1.small",subnet_id=None,instance_suffix="",image_id=None,security_group_ids=None):
         self.checkCloudConnection()  
         
         #TODO: Lookup by ImageID.

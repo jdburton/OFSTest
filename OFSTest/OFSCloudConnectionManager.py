@@ -152,7 +152,7 @@ class OFSCloudConnectionManager(object):
     # @return	A list of new instances.
     #		
         
-    def createNewCloudInstances(self,number_nodes,image_system=None,instance_type="t2.micro",subnet_id=None,instance_suffix="",image_id=None):
+    def createNewCloudInstances(self,number_nodes,image_system=None,instance_type="t2.micro",subnet_id=None,instance_suffix="",image_id=None,security_group_ids=None):
         pass
 
     ##      

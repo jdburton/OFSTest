@@ -55,6 +55,11 @@ class OFSTestConfig(object):
         # Internal cloud key name. Must be consistant accross nodes.
         self.cloud_key_name = "" # Web Interface: auto
         
+        
+        ## @var cloud_security_group_ids
+        # List of AWS Cloud Security Group Ids.
+        self.cloud_security_group_ids = []  # Web Interface: not used
+        
         ## @var number_new_cloud_nodes
         # Number of new cloud nodes to be created. 
         # If == 0, then using existing nodes.
@@ -519,6 +524,15 @@ class OFSTestConfig(object):
             #print userlist
             for user in userlist:
                 self.node_usernames.append(user)
+        
+        temp = d.get('cloud_security_group_ids')
+        if temp != None:
+            
+            userlist = temp.split(" ")
+            #print userlist
+            for user in userlist:
+                self.cloud_security_group_ids(user)
+        
         
         temp = d.get('ofs_hostname_override')
         if temp == None:
