@@ -531,7 +531,7 @@ class OFSTestConfig(object):
             userlist = temp.split(" ")
             #print userlist
             for user in userlist:
-                self.cloud_security_group_ids(user)
+                self.cloud_security_group_ids.append(user)
         
         
         temp = d.get('ofs_hostname_override')
