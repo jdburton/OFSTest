@@ -483,7 +483,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
             
             
         
-            instance.add_tag("Name","%s ofsnode-%03d %s" % (image_name,idx,str(datetime.datetime.now()).split('.')[0]))
+            instance.add_tag("Name","%s ofsnode-%03d %s" % (image_name,idx,str(datetime.now()).split('.')[0]))
             
             new_node = OFSTestRemoteNode.OFSTestRemoteNode(username=name,ip_address=instance.private_ip_address,key=self.cloud_instance_key_location,local_node=local_master,is_cloud=True,ext_ip_address=ip_addresses[idx])
 
