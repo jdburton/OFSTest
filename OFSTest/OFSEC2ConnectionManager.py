@@ -461,6 +461,8 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
 
         print "===========================================================" 
         print "Adding new nodes to OFS cluster"
+        
+        ts = str(datetime.now()).split('.')[0]
  
         for idx,instance in enumerate(new_instances):
             # Create the node and get the instance name
@@ -483,7 +485,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
             
             
         
-            instance.add_tag("Name","%s ofsnode-%03d %s" % (image_name,idx,str(datetime.now()).split('.')[0]))
+            instance.add_tag("Name","ofsnode-%03d %s %s" % ((idx+1),ts,image_name))
             
             new_node = OFSTestRemoteNode.OFSTestRemoteNode(username=name,ip_address=instance.private_ip_address,key=self.cloud_instance_key_location,local_node=local_master,is_cloud=True,ext_ip_address=ip_addresses[idx])
 
