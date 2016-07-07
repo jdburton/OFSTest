@@ -329,7 +329,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
         
         
         
-        for i in new_instances:
+        for n in new_instances:
             msg = "Created new EC2 instance %s " % n.id
             print msg
             logging.info(msg)
