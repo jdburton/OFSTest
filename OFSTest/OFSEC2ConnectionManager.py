@@ -295,14 +295,15 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
             image_name = image.name
 
 
-        #reservation = self.ec2_connection.run_instances(image_id=image.id,min_count=number_nodes, max_count=number_nodes, key_name=self.cloud_instance_key, user_data=None, instance_type=flavor_name, subnet_id=subnet_id, security_group_ids=security_group_ids)
+        reservation = self.ec2_connection.run_instances(image_id=image.id,min_count=number_nodes, max_count=number_nodes, key_name=self.cloud_instance_key, user_data=None, instance_type=flavor_name, subnet_id=subnet_id, security_group_ids=security_group_ids)
 
-        reservation = (self.ec2_connection.request_spot_instances(price="0.03",image_id=image.id,count=number_nodes, key_name=self.cloud_instance_key, user_data=None, instance_type=flavor_name, subnet_id=subnet_id, security_group_ids=security_group_ids)[0])
+        # TODO: Add support for spot instances
+        #reservation = (self.ec2_connection.request_spot_instances(price="0.03",image_id=image.id,count=number_nodes, key_name=self.cloud_instance_key, user_data=None, instance_type=flavor_name, subnet_id=subnet_id, security_group_ids=security_group_ids)[0])
         msg = "Creating %d new %s %s instances from AMI %s." % (number_nodes,flavor_name,image_name,image_id)
         print msg
         logging.info(msg)
 
-        print "Waiting up to 3600s (1 hour) for spot instances."
+        print "Waiting up to 3600s (1 hour) for instances."
         time.sleep(240)
         
         count = 0
