@@ -259,7 +259,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
     # @return	A list of new instances.
     #		
         
-    def createNewCloudInstances(self,number_nodes,image_name=None,flavor_name="t2.micro",subnet_id=None,instance_suffix="",image_id=None,security_group_ids=None ):
+    def createNewCloudInstances(self,number_nodes,image_name=None,flavor_name="t2.micro",subnet_id=None,instance_suffix="",image_id=None,security_group_ids=None,spot_instance_bid=None ):
         self.checkCloudConnection()  
         
         
@@ -293,27 +293,41 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
                 return None
             
             image_name = image.name
-
-
-        reservation = self.ec2_connection.run_instances(image_id=image.id,min_count=number_nodes, max_count=number_nodes, key_name=self.cloud_instance_key, user_data=None, instance_type=flavor_name, subnet_id=subnet_id, security_group_ids=security_group_ids)
-
-        # TODO: Add support for spot instances
-        #reservation = (self.ec2_connection.request_spot_instances(price="0.03",image_id=image.id,count=number_nodes, key_name=self.cloud_instance_key, user_data=None, instance_type=flavor_name, subnet_id=subnet_id, security_group_ids=security_group_ids)[0])
-        msg = "Creating %d new %s %s instances from AMI %s." % (number_nodes,flavor_name,image_name,image_id)
-        print msg
-        logging.info(msg)
-
-        print "Waiting up to 3600s (1 hour) for instances."
-        time.sleep(240)
         
-        count = 0
-        while len(reservation.instances) < number_nodes and count < 360:
-            print "Waiting on instances %d seconds" % count*10
-            time.sleep(10)
-            count +=  1
-            #pprint(reservation.__dict__)
+        new_instances = []
+
+        if spot_instance_bid is not None or spot_instance_bid != "":
+            # TODO: Add support for spot instances
+            requests = self.ec2_connection.request_spot_instances(price=spot_instance_bid,image_id=image.id,count=number_nodes, key_name=self.cloud_instance_key, user_data=None, instance_type=flavor_name, subnet_id=subnet_id, security_group_ids=security_group_ids)
             
-        new_instances = [n for n in reservation.instances]
+            
+            new_instances = [r for r in requests if r.instance_id is not None]
+
+            while len(new_instances) < number_nodes:
+                time.sleep(10)
+                requests = connection.get_all_spot_instance_requests(request_ids=[r.id for r in requests])
+                new_instances = [r for r in requests if r.instance_id is not None]
+        else:
+            reservation = self.ec2_connection.run_instances(image_id=image.id,min_count=number_nodes, max_count=number_nodes, key_name=self.cloud_instance_key, user_data=None, instance_type=flavor_name, subnet_id=subnet_id, security_group_ids=security_group_ids)
+
+            
+            msg = "Creating %d new %s %s instances from AMI %s." % (number_nodes,flavor_name,image_name,image_id)
+            print msg
+            logging.info(msg)
+    
+            print "Waiting for instances."
+            time.sleep(240)
+            
+            count = 0
+            while len(reservation.instances) < number_nodes and count < 24:
+                print "Waiting on instances %d seconds" % count*10
+                time.sleep(10)
+                count +=  1
+                #pprint(reservation.__dict__)
+                
+            new_instances = [n for n in reservation.instances]
+        
+        
         
         for i in new_instances:
             msg = "Created new EC2 instance %s " % n.id
@@ -423,12 +437,12 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
 
 
     
-    def createNewCloudNodes(self,number_nodes,image_name=None,flavor_name="t2.micro",local_master=None,associateip=False,domain=None,cloud_subnet=None,instance_suffix="",image_id=None,security_group_ids=None):
+    def createNewCloudNodes(self,number_nodes,image_name=None,flavor_name="t2.micro",local_master=None,associateip=False,domain=None,cloud_subnet=None,instance_suffix="",image_id=None,security_group_ids=None,spot_instance_bid=None):
         
         # This function creates number nodes on the cloud system. 
         # It returns a list of nodes
         
-        new_instances = self.createNewCloudInstances(number_nodes,image_name,flavor_name,cloud_subnet,instance_suffix,image_id,security_group_ids)
+        new_instances = self.createNewCloudInstances(number_nodes,image_name,flavor_name,cloud_subnet,instance_suffix,image_id,security_group_ids,spot_instance_bid)
         # new instances should have a 60 second delay to make sure everything is running.
 
         ip_addresses = []

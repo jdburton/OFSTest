@@ -226,11 +226,11 @@ class OFSTestNetwork(object):
 
 
     
-    def createNewCloudNodes(self,number_nodes,image_name=None,machine_type="t2.micro",associateip=False,domain=None,cloud_subnet=None,instance_suffix="",image_id=None,security_group_ids=None):
+    def createNewCloudNodes(self,number_nodes,image_name=None,machine_type="t2.micro",associateip=False,domain=None,cloud_subnet=None,instance_suffix="",image_id=None,security_group_ids=None,spot_instance_bid=None):
         
         # This function creates number nodes on the cloud system. 
         # It returns a list of nodes
-        new_ofs_test_nodes = self.cloud_connection_manager.createNewCloudNodes(number_nodes,image_name,machine_type,self.local_master,associateip,domain,cloud_subnet,instance_suffix,image_id,security_group_ids)
+        new_ofs_test_nodes = self.cloud_connection_manager.createNewCloudNodes(number_nodes,image_name,machine_type,self.local_master,associateip,domain,cloud_subnet,instance_suffix,image_id,security_group_ids,spot_instance_bid)
         
                 
         # Add the node to the created nodes list.

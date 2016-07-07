@@ -365,6 +365,8 @@ class OFSTestConfig(object):
         self.url_base = "http://devorange.clemson.edu/pvfs"
     
         self.ofs_database = "lmdb"
+        
+        self.spot_instance_bid = None
     ##
     #
     # @fn setConfig(self,kwargs={}):
@@ -822,3 +824,7 @@ class OFSTestConfig(object):
         if temp != None:
             self.ofs_database = temp
         
+        temp = d.get("spot_instance_bid")
+        if temp != None:
+            self.spot_instance_bid = temp
+                
