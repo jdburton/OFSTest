@@ -305,7 +305,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
 
             while len(new_instances) < number_nodes:
                 time.sleep(10)
-                requests = connection.get_all_spot_instance_requests(request_ids=[r.id for r in requests])
+                requests = self.ec2_connection.get_all_spot_instance_requests(request_ids=[r.id for r in requests])
                 new_instances = [r for r in requests if r.instance_id is not None]
         else:
             reservation = self.ec2_connection.run_instances(image_id=image.id,min_count=number_nodes, max_count=number_nodes, key_name=self.cloud_instance_key, user_data=None, instance_type=flavor_name, subnet_id=subnet_id, security_group_ids=security_group_ids)
