@@ -309,12 +309,12 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
 
             print "Waiting up to 1 hour for spot requests"
             time.sleep(180)
-            count = 0
+            count = 180
             while len(fulfilled_requests) < number_nodes and count < 360:
-                print "%d requests filled in %d seconds" % (len(fulfilled_requests),count)
                 time.sleep(10)
                 requests = self.ec2_connection.get_all_spot_instance_requests(request_ids=[r.id for r in requests])
                 fulfilled_requests = [r for r in requests if r.instance_id is not None]
+                print "%d of %d requests filled in %d seconds" % (len(fulfilled_requests),number_nodes,count)
                 count += 10
             
             if count == 360:
@@ -325,7 +325,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
             
             spot_instance_ids = [r.instance_id for r in fulfilled_requests]
             reservations = self.ec2_connection.get_all_reservations(instance_ids=spot_instance_ids)
-            new_instances = [spot_res.instances for spot_res in reservations]
+            new_instances = [spot_res.instances[0] for spot_res in reservations]
         else:
             reservation = self.ec2_connection.run_instances(image_id=image.id,min_count=number_nodes, max_count=number_nodes, key_name=self.cloud_instance_key, user_data=None, instance_type=flavor_name, subnet_id=subnet_id, security_group_ids=security_group_ids)
 
