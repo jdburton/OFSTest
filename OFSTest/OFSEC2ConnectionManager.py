@@ -294,39 +294,43 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
             
             image_name = image.name
         
-        new_instances = []
+        reservation = None
 
         if spot_instance_bid is not None or spot_instance_bid != "":
             # TODO: Add support for spot instances
             requests = self.ec2_connection.request_spot_instances(price=spot_instance_bid,image_id=image.id,count=number_nodes, key_name=self.cloud_instance_key, user_data=None, instance_type=flavor_name, subnet_id=subnet_id, security_group_ids=security_group_ids)
             
             
-            new_instances = [r for r in requests if r.instance_id is not None]
+            fulfilled_requests = [r for r in requests if r.instance_id is not None]
 
-            while len(new_instances) < number_nodes:
+            print "Waiting for spot requests at $%s per node-hour" % spot_instance_bid
+            while len(fulfilled_requests) < number_nodes:
+                print "%d requests filled" % len(fulfilled_requests)
                 time.sleep(10)
                 requests = self.ec2_connection.get_all_spot_instance_requests(request_ids=[r.id for r in requests])
-                new_instances = [r for r in requests if r.instance_id is not None]
+                fulfilled_requests = [r for r in requests if r.instance_id is not None]
+            
+            reservation = self.ec2_connection.get_all_reservations(instance_ids=fulfilled_requests)
         else:
             reservation = self.ec2_connection.run_instances(image_id=image.id,min_count=number_nodes, max_count=number_nodes, key_name=self.cloud_instance_key, user_data=None, instance_type=flavor_name, subnet_id=subnet_id, security_group_ids=security_group_ids)
 
             
-            msg = "Creating %d new %s %s instances from AMI %s." % (number_nodes,flavor_name,image_name,image_id)
-            print msg
-            logging.info(msg)
-    
-            print "Waiting for instances."
-            time.sleep(240)
-            
-            count = 0
-            while len(reservation.instances) < number_nodes and count < 24:
-                print "Waiting on instances %d seconds" % count*10
-                time.sleep(10)
-                count +=  1
-                #pprint(reservation.__dict__)
-                
-            new_instances = [n for n in reservation.instances]
+        msg = "Creating %d new %s %s instances from AMI %s." % (number_nodes,flavor_name,image_name,image_id)
+        print msg
+        logging.info(msg)
+
+        print "Waiting for instances."
+        time.sleep(240)
         
+        count = 0
+        while len(reservation.instances) < number_nodes and count < 24:
+            print "Waiting on instances %d seconds" % count*10
+            time.sleep(10)
+            count +=  1
+            #pprint(reservation.__dict__)
+            
+        new_instances = [n for n in reservation.instances]
+    
         
         
         for n in new_instances:
