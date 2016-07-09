@@ -308,14 +308,14 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
             fulfilled_requests = [r for r in requests if r.instance_id is not None]
 
             print "Waiting up to 1 hour for spot requests"
-            time.sleep(180)
-            count = 180
+            count = 0
             while len(fulfilled_requests) < number_nodes and count < 360:
                 time.sleep(10)
                 requests = self.ec2_connection.get_all_spot_instance_requests(request_ids=[r.id for r in requests])
                 fulfilled_requests = [r for r in requests if r.instance_id is not None]
-                print "%d of %d requests filled in %d seconds" % (len(fulfilled_requests),number_nodes,count)
-                count += 10
+                count += 1
+                print "%d of %d requests filled in %d seconds" % (len(fulfilled_requests),number_nodes,count*10)
+                
             
             if count == 360:
                 print "Spot request was not fulfilled in 1 hour. Cancelling request."
