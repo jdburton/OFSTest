@@ -307,14 +307,19 @@ class OFSTestNode(object):
     def currentNodeInformation(self):
         
         self.distro = ""
-        
+
+        count = 0
+        rc = -1
+        while rc != 0:
+            print "Waiting %ds for ssh to become active on %s." % (count*20,self.ext_ip_address)
+            rc = self.runSingleCommand('whoami')
+            if rc != 0:
+                rc = self.runSingleCommandAsRoot('whoami')
+            
+            sleep(20)
 
         # can we ssh in? We'll need the group if we can't, so let's try this first.
-        self.runSingleCommand("ls -l /home/ | grep %s | awk '{print \\$4}'" % self.current_user)
-        
-        
-        
-        
+        #rc = self.runSingleCommand("ls -l /home/ | grep %s | awk '{print \\$4}'" % self.current_user)
         self.current_group = self.runSingleCommandBacktick(command="ls -l /home/ | grep %s | awk '{print \\$4}'" % self.current_user)
 
         # is this a mac? Home located under /Users
