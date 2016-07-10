@@ -310,14 +310,16 @@ class OFSTestNode(object):
 
         count = 0
         rc = -1
-        while rc != 0:
-            print "Waiting %ds for ssh to become active on %s." % (count*20,self.ext_ip_address)
+        while rc != 0 and count < 15:
+            print "Waited %ds of 300s for ssh to become active on %s." % (count*20,self.ext_ip_address)
             rc = self.runSingleCommand('whoami')
             if rc != 0:
                 rc = self.runSingleCommandAsRoot('whoami')
             
             sleep(20)
 
+        if count == 15:
+            return
         # can we ssh in? We'll need the group if we can't, so let's try this first.
         #rc = self.runSingleCommand("ls -l /home/ | grep %s | awk '{print \\$4}'" % self.current_user)
         self.current_group = self.runSingleCommandBacktick(command="ls -l /home/ | grep %s | awk '{print \\$4}'" % self.current_user)
