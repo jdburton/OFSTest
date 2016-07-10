@@ -57,6 +57,19 @@ class OFSTestRemoteNode(OFSTestNode.OFSTestNode):
             
         self.ssh_command = "/usr/bin/ssh %s %s@%s" % (ssh_key_parm,self.current_user,self.ext_ip_address)
         
+        count = 0
+        rc = -1
+        while rc != 0 and count < 15:
+            print "Waited %ds of 300s for ssh to become active on %s." % (count*20,self.ext_ip_address)
+            rc = self.runSingleCommand('whoami')
+            if rc != 0:
+                rc = self.runSingleCommandAsRoot('whoami')
+            
+            time.sleep(20)
+
+        if count == 15:
+            return
+        
         super(OFSTestRemoteNode,self).currentNodeInformation()
         
         if self.sshLocalKeyFile is not None:
