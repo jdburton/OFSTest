@@ -316,7 +316,7 @@ class OFSTestNode(object):
             if rc != 0:
                 rc = self.runSingleCommandAsRoot('whoami')
             
-            sleep(20)
+            time.sleep(20)
 
         if count == 15:
             return
