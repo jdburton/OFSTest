@@ -332,7 +332,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
             current_price_bid = current_price * 1.25                
             if current_price_bid <= max_bid:
                 calculated_bid = current_price_bid 
-                print "Automatic bid %r is 125% of current %s instance price" % (calculated_bid)
+                print "Automatic bid %r is 125% of current %s instance price" % (calculated_bid, current_price)
             else: 
                 calculated_bid = max_bid
                 print "Maximum automatic bid %r is 2 std_dev over mean of %r spot prices over %d days" % (calculated_bid,n,days_back)
