@@ -297,7 +297,22 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
         reservation = None
         new_instances = []
 
-        
+        try:
+            if spot_instance_bid.lower() == "auto":
+                start = datetime.now()
+                end = datetime.now()-timedelta(days=1)
+
+                prices = self.ec2_connection.get_spot_price_history(start_time=start.strftime("%Y-%m-%dT%H:%M:%S.%fZ"), end_time=end.strftime("%Y-%m-%dT%H:%M:%S.%fZ"), instance_type=flavor_name, product_description="Linux/UNIX")
+                spot_instance_bid_num = max([price.price for price in prices])
+                if spot_instance_bid_num < 1.00:
+                    spot_instance_bid = str(spot_instance_bid_num)
+                    print "Using automatic bid of %s" % spot_instance_bid
+                
+                                    
+        except:
+            print "Auto bid failed."
+
+            
         # If we have a valid bid, use spot instances.
         try:
             float(spot_instance_bid)
