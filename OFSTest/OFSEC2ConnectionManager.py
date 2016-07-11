@@ -297,6 +297,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
         reservation = None
         new_instances = []
 
+        print "spot_instance bid is "+spot_instance_bid
         if spot_instance_bid is not None or spot_instance_bid != "":
             # TODO: Add support for spot instances
             requests = self.ec2_connection.request_spot_instances(price=spot_instance_bid,image_id=image.id,count=number_nodes, key_name=self.cloud_instance_key, user_data=None, instance_type=flavor_name, subnet_id=subnet_id, security_group_ids=security_group_ids)
