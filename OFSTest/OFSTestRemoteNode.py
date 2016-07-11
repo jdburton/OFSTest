@@ -66,6 +66,7 @@ class OFSTestRemoteNode(OFSTestNode.OFSTestNode):
                 rc = self.runSingleCommandAsRoot('whoami')
             
             time.sleep(20)
+            count+=1
 
         if count == 15:
             return
