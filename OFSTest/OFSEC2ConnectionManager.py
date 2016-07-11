@@ -299,18 +299,47 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
 
         try:
             if spot_instance_bid.lower() == "auto":
-                start = datetime.now()
-                end = datetime.now()-timedelta(days=1)
-
-                prices = self.ec2_connection.get_spot_price_history(start_time=start.strftime("%Y-%m-%dT%H:%M:%S.%fZ"), end_time=end.strftime("%Y-%m-%dT%H:%M:%S.%fZ"), instance_type=flavor_name, product_description="Linux/UNIX")
-                spot_instance_bid_num = max([price.price for price in prices])
-                if spot_instance_bid_num < 1.00:
-                    spot_instance_bid = str(spot_instance_bid_num)
-                    print "Using automatic bid of %s" % spot_instance_bid
                 
-                                    
+                days_back = 14
+                start = datetime.now()-timedelta(days=days_back)
+                end = datetime.now()
+                next_token = None
+                count = 0
+                set_max = 0
+                prices = []
+                
+                while count < 30:
+                    history = self.ec2_connection.get_spot_price_history(start_time=start.strftime("%Y-%m-%dT%H:%M:%S.%fZ"), end_time=end.strftime("%Y-%m-%dT%H:%M:%S.%fZ"), instance_type=flavor_name, product_description="Linux/UNIX (Amazon VPC)",next_token=next_token)
+                    prices = prices + [price.price for price in history]
+                    next_token = history.next_token
+                    count += 1
+                    # if we are at the end of the set, the number of records returned will be less than 1000.
+                    if len(history) < 1000:
+                        break
+                        
+                n = len(prices)
+                current_price = max(prices[:3])
+                print "Current price for %s instances is %r per instance-hour" % (flavor_name,current_price)
+
+                std_dev = np.std(prices)
+                mean = np.mean(prices)
+                max_bid = mean + 2*std_dev
+                
+
+                #Bid 125% of current price, unless it is above the maximum bid.
+                current_price_bid = current_price * 1.25                
+                if current_price_bid <= max_bid:
+                    calculated_bid = current_price_bid 
+                    print "Automatic bid %r is 125%% of current %s instance price" % (calculated_bid)
+                else: 
+                    calculated_bid = max_bid
+                    print "Maximum automatic bid %r is 2 std_dev over mean of %r spot prices over %d days" % (calculated_bid,n,days_back)
+                
+                #print "n = %r, now = %r, Mean = %r, std_dev = %r, bid (2 stdev) = %r, bid (2.5 stdev) = %r, bid (3 stddev) = %r" % (n,now,mean,std_dev,mean+(2*std_dev),mean+(2.5*std_dev),mean+(3*std_dev))
+                spot_instance_bid = str(calculated_bid)
+                                                    
         except:
-            print "Auto bid failed."
+            print "Automatic bidding failed. Falling back to on-demand pricing."
 
             
         # If we have a valid bid, use spot instances.
