@@ -9,6 +9,8 @@ import os
 from pprint import pprint
 import re
 import time
+import sys
+import numpy as np
 
 import OFSCloudConnectionManager
 import OFSTestRemoteNode
@@ -330,7 +332,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
                 current_price_bid = current_price * 1.25                
                 if current_price_bid <= max_bid:
                     calculated_bid = current_price_bid 
-                    print "Automatic bid %r is 125%% of current %s instance price" % (calculated_bid)
+                    print "Automatic bid %r is 125% of current %s instance price" % (calculated_bid)
                 else: 
                     calculated_bid = max_bid
                     print "Maximum automatic bid %r is 2 std_dev over mean of %r spot prices over %d days" % (calculated_bid,n,days_back)
@@ -339,6 +341,8 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
                 spot_instance_bid = str(calculated_bid)
                                                     
         except:
+            e = sys.exc_info()[0]
+            print e
             print "Automatic bidding failed. Falling back to on-demand pricing."
 
             
@@ -541,7 +545,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
                 msg = "Instance %s using Public IP: %s ; Private IP: %s" % (i.id,i.ip_address,i.private_ip_address)
                 print msg
                 logging.info(msg)
-                pprint(i.__dict__)
+                #pprint(i.__dict__)
                 ip_addresses.append(i.ip_address)
                
 
