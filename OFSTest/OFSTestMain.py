@@ -836,6 +836,12 @@ class OFSTestMain(object):
             print "Terminating Nodes"
             self.ofs_network.terminateAllCloudNodes()
 
+
+    def stopAllCloudNodes(self):
+            print ""
+            print "==================================================================="
+            print "Stopping Nodes"
+            self.ofs_network.stopAllCloudNodes()
         
     ##
     #
@@ -873,9 +879,15 @@ class OFSTestMain(object):
     
     def doPostTest(self):
     
-        if self.config.cloud_delete_after_test == True:
-            print "Test complete. Deleting all cloud nodes."
-            self.terminateAllCloudNodes()
-        elif self.config.restart_ofs == True:
-            print "Test complete. Restarting OrangeFS clients and servers"
-            self.restartOFS()
+        try:
+            if self.config.cloud_delete_after_test or self.config.spot_instance_bid.lower() == "auto" or float(self.config.spot_instance_bid):
+                print "Test complete. Deleting all cloud nodes."
+                self.terminateAllCloudNodes()
+        
+        except ValueError:
+        
+            if self.config.restart_ofs == True:
+                print "Test complete. Restarting OrangeFS clients and servers"
+                self.restartOFS()
+            else:
+                self.stopAllCloudNodes()

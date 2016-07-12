@@ -247,6 +247,48 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
             # Terminate will throw an AttributeError when it tries to set the status of a terminated instance. Ignore it.
             pass
         return 0
+    
+    
+        ##
+    # @fn stopCloudInstance(self,ip_address)
+    # Stop a running EC2 instance 
+    #
+    # @param self The object pointer
+    # @param    ip_address IP address (internal) of the node.
+    #
+    # @return 1    Instance not found for that ip address
+    # @return 0    Instance terminated.
+    #
+    #
+        
+    def stopCloudInstance(self,ip_address):
+        
+        self.checkCloudConnection()
+        
+        node_instance = next(( i for i in self.cloud_instance_list if i.private_ip_address == ip_address),None)
+        
+        if node_instance is None:
+            self.getAllCloudInstances()
+            node_instance = next(( i for i in self.cloud_instance_list if i.private_ip_address == ip_address),None)
+        if node_instance is None:
+            logging.exception( "Instance at %s not found." % ip_address)
+            return 1
+            
+        # try:
+        #     logging.exception( "Releasing external IP address %s" % node_instance.ext_ip_address)
+        #     self.ec2_connection.release_address(node_instance.ext_ip_address)
+        # except:
+        #     logging.exception( "Warning: Could not release external IP Address "+ node_instance.ext_ip_address)
+            
+        print "Stopping node at %s" % ip_address
+        
+        try:
+            node_instance.stop()
+        except AttributeError:
+            # Terminate will throw an AttributeError when it tries to set the status of a terminated instance. Ignore it.
+            pass
+        return 0
+    
     ##
     #
     # @fn createNewCloudInstances(self,number_nodes,image_name,flavor_name): 

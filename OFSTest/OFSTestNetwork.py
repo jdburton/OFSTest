@@ -326,6 +326,31 @@ class OFSTestNetwork(object):
         return rc
 
     ##      
+    # @fn stopCloudNode(self, remote_node)
+    #
+    # Stop the remote node and remove it from the created node list.
+    #
+    #    @param self The object pointer
+    #    @param remote_node Node to be terminated.
+
+
+    def stopCloudNode(self,remote_node):
+                
+        if remote_node.is_cloud == False: 
+            logging.exception("Node at %s is not controlled by the cloud manager." % remote_node.ip_address)
+            return
+        
+        rc = self.cloud_connection_manager.stopCloudInstance(remote_node.ip_address)
+        
+        # if the node was terminated, remove it from the list.
+        if rc == 0:
+            self.network_nodes = [ x for x in self.network_nodes if x.ip_address != remote_node.ip_address]
+        else:
+            logging.exception( "Could not delete node at %s, error code %d" % (remote_node.ip_address,rc))
+            
+        return rc
+
+    ##      
     # @fn updateCloudNodes(self,node_list=None):
     #
     #    Update only the Cloud Nodes
@@ -970,6 +995,24 @@ class OFSTestNetwork(object):
             if node.is_cloud == True:
                 self.terminateCloudNode(node)
 
+   
+       ##    
+    #    @fn stopAllCloudNodes(self,node_list=None):
+    #
+    #    Terminate all the cloud nodes in a list
+    #    @param self The object pointer
+    #    @param node_list List of nodes in network.
+
+
+
+    def stopAllCloudNodes(self, node_list=None):
+        if node_list is None:
+            node_list = self.network_nodes
+        for node in node_list:
+            if node.is_cloud == True:
+                self.stopCloudNode(node)
+
+   
    
     ##    
     #    @fn setUrlBase(self,url_base="localhost",node_list=None):

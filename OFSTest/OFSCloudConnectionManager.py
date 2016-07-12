@@ -138,6 +138,22 @@ class OFSCloudConnectionManager(object):
     def terminateCloudInstance(self,ip_address):
         pass
 
+
+    ##
+    # @fn stopCloudInstance(self,ip_address)
+    # Stops a running Cloud instance 
+    #
+    # @param self The object pointer
+    # @param    ip_address IP address (internal) of the node.
+    #
+    # @return 1    Instance not found for that ip address
+    # @return 0    Instance terminated.
+    #
+    #
+        
+    def stopCloudInstance(self,ip_address):
+        pass
+
     ##
     #
     # @fn createNewCloudInstances(self,number_nodes,image_system,instance_type): 

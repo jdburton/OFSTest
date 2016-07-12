@@ -199,7 +199,45 @@ class OFSNovaConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManag
             return 1
             
             
-            
+    ##
+    # @fn stopCloudInstance(self,ip_address)
+    # Terminates a running Cloud instance 
+    #
+    # @param self The object pointer
+    # @param    ip_address IP address (internal) of the node.
+    #
+    # @return 1    Instance not found for that ip address
+    # @return 0    Instance terminated.
+    #
+    #
+        
+    def stopCloudInstance(self,ip_address):
+        
+        self.checkCloudConnection()
+        
+        
+        server_list = []
+        #server_list = [s for s in self.novaapi.servers.list() if s.addresses[self.nova_network_name][0]['addr'] == ip_address]
+        
+        for s in self.novaapi.servers.list():
+            try:
+                if s.addresses[self.nova_network_name][0]['addr'] == ip_address:
+                    server_list.append(s)
+            except:
+                pass
+        
+        
+        
+        print "Attempting to stop server at %s" % ip_address
+        if len(server_list) > 0:
+            print "Stopping server"
+            server_list[0].stop()
+            return 0
+        else:
+            print "Could not find server"
+            return 1
+    
+      
     ##
     #
     # @fn createNewCloudInstances(self,number_nodes,image_name,flavor_name): 
