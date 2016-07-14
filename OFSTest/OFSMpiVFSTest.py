@@ -334,7 +334,14 @@ def mpi_active_delete(testing_node,output=[]):
 
 
 
-tests = [ romio_testsuite, mpi_active_delete, IOR_single, IOR, mdtest, miranda_io, multi_md_test, multi_md_test_size_sweep ]
+tests = [ romio_testsuite, 
+         # mpi_active_delete, 
+         IOR_single, 
+         IOR, 
+         mdtest, 
+         miranda_io, 
+         multi_md_test, 
+         multi_md_test_size_sweep ]
 
 
 
