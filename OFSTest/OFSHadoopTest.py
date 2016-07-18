@@ -53,9 +53,15 @@ def wordcount(testing_node,output=[]):
     testing_node.runSingleCommand("%s/bin/hadoop dfs -mkdir -p /user/%s/gutenberg" % (testing_node.hadoop_location,testing_node.current_user))
     
     # get the gutenberg files
-    testing_node.runSingleCommand("wget --quiet http://www.gutenberg.org/files/5000/5000-8.txt")
-    testing_node.runSingleCommand("wget --quiet http://www.gutenberg.org/files/20417/20417.txt")
-    testing_node.runSingleCommand("wget --quiet http://www.gutenberg.org/files/4300/4300.txt")
+    rc = testing_node.runSingleCommand("wget http://www.gutenberg.org/files/5000/5000-8.txt 2>&1 > gutenberg.log")
+    if (rc != 0):
+        testing_node.runSingleCommand("cat gutenberg.log")
+    rc = testing_node.runSingleCommand("wget http://www.gutenberg.org/files/20417/20417.txt 2>&1 > gutenberg.log")
+    if (rc != 0):
+        testing_node.runSingleCommand("cat gutenberg.log")
+    rc = testing_node.runSingleCommand("wget http://www.gutenberg.org/files/4300/4300.txt 2>&1 > gutenberg.log")
+    if (rc != 0):
+        testing_node.runSingleCommand("cat gutenberg.log")
     
     testing_node.runSingleCommand("%s/bin/hadoop dfs -copyFromLocal /home/%s/gutenberg/* /user/%s/gutenberg" % (testing_node.hadoop_location,testing_node.current_user,testing_node.current_user))
     
@@ -201,6 +207,7 @@ tests = [ wordcount,
 TestDFSIO_write,
 TestDFSIO_read,
 TestDFSIO_clean,
-mrbench,
-terasort_full
+mrbench
+#,
+#terasort_full
  ]
