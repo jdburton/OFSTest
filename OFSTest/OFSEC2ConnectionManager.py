@@ -33,6 +33,31 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
     # @param ec2_config_file Path to ec2rc.sh file.
     # @param region_name Name of ec2 region to connect to.
     #
+    
+    self.flavors_order = [ 
+           'm3.medium',
+           'm3.large',
+           'c3.large',
+           'm3.xlarge',
+           'c3.xlarge',
+           'r3.xlarge',
+           'd2.xlarge',
+           'i2.xlarge',
+           'm3.2xlarge',
+           'c3.2xlarge',
+           'r3.2xlarge',
+           'd2.2xlarge',
+           'i2.2xlarge',
+           'c3.4xlarge',
+           'r3.4xlarge',
+           'd2.4xlarge',
+           'i2.4xlarge',
+           'c3.8xlarge',
+           'r3.8xlarge',
+           'd2.8xlarge',
+           'i2.8xlarge',
+           'm4.10xlarge'
+           ]
 
     
     def __init__(self,cloud_config_file=None,region_name='us-east-1'):
@@ -351,6 +376,8 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
             count = 0
             set_max = 0
             prices = []
+            
+            
             
             while count < 30:
                 history = self.ec2_connection.get_spot_price_history(start_time=start.strftime("%Y-%m-%dT%H:%M:%S.%fZ"), end_time=end.strftime("%Y-%m-%dT%H:%M:%S.%fZ"), instance_type=flavor_name, product_description="Linux/UNIX (Amazon VPC)",next_token=next_token)
