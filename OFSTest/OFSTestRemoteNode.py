@@ -61,9 +61,9 @@ class OFSTestRemoteNode(OFSTestNode.OFSTestNode):
         rc = -1
         while rc != 0 and count < 15:
             print "Waited %ds of 300s for ssh to become active on %s." % (count*20,self.ext_ip_address)
-            rc = self.runSingleCommand('whoami')
+            rc = self.runSingleCommand('whoami').rstrip()
             if rc != 0:
-                rc = self.runSingleCommandAsRoot('whoami')
+                rc = self.runSingleCommandAsRoot('whoami').rstrip()
             
             time.sleep(20)
             count+=1
