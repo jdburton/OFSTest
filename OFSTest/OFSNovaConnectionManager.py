@@ -110,21 +110,22 @@ class OFSNovaConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManag
             if "export OS_AUTH_URL" in line:
                 # check for AUTH_URL
                 
-                (export,variable,self.nova_auth_url) = re.split(" |=",line.rstrip())
+                (variable,self.nova_auth_url) = re.split("=",line.rstrip())
                 
 
             elif "export OS_TENANT_ID" in line:
 
-                (export,variable,self.nova_tenant_id) = re.split(" |=",line.rstrip())
+                (variable,self.nova_tenant_id) = re.split("=",line.rstrip())
             
             elif "export OS_TENANT_NAME" in line:
 
-                (export,variable,self.nova_tenant_name) = re.split(" |=",line.rstrip())
+                (variable,self.nova_tenant_name) = re.split("=",line.rstrip())
                 self.nova_tenant_name=self.nova_tenant_name.rstrip("\"").lstrip("\"")
 
             elif "export OS_USERNAME" in line:
 
-                (export,variable,self.nova_username) = re.split(" |=",line.rstrip())
+                (variable,self.nova_username) = re.split("=",line.rstrip())
+                self.nova_username=self.nova_username.rstrip("\"").lstrip("\"")
 
     ##
     #
