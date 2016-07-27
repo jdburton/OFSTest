@@ -153,9 +153,9 @@ class OFSNovaConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManag
 
     def connect(self,debug=0):
         
-        logging.info("AUTH_URL=%s NOVA_USERNAME=%s NOVA_PASSWORD=%s NOVA_TENANT_NAME=%s " % (self.nova_auth_url, self.nova_username, self.nova_password, self.nova_tenant_name))
-        self.keystoneapi = keystoneclient.v2_0.Client(username=self.nova_username, password=self.nova_password, tenant_name=self.nova_tenant_name, auth_url=self.nova_auth_url)
-        self.novaapi = novaclient.Client("2",self.nova_username, self.nova_password, self.nova_tenant_name, self.nova_auth_url, no_cache=True)
+        logging.info("AUTH_URL=%s NOVA_USERNAME=%s NOVA_PASSWORD=%s NOVA_TENANT_NAME=%s NOVA_TENANT_ID=%s" % (self.nova_auth_url, self.nova_username, self.nova_password, self.nova_tenant_name, self.nova_tenant_id))
+        self.keystoneapi = keystoneclient.v2_0.Client(username=self.nova_username, password=self.nova_password, tenant_id=self.nova_tenant_id, auth_url=self.nova_auth_url)
+        self.novaapi = novaclient.Client(version="2",username=self.nova_username, api_key=self.nova_password, tenant_id=self.nova_tenant_id, auth_url=self.nova_auth_url, no_cache=True)
         self.glance_endpoint = self.keystoneapi.service_catalog.get_endpoints("image")["image"][0]["publicURL"]
         self.glance_endpoint = self.glance_endpoint.replace("/v1","")
         self.glanceapi = glanceclient.Client('1',endpoint=self.glance_endpoint,token=self.keystoneapi.auth_token)
