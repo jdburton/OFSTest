@@ -448,7 +448,7 @@ class OFSNovaConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManag
         # This function creates number nodes on the cloud system. 
         # It returns a list of nodes
         
-        new_instances = self.createNewCloudInstances(number_nodes,image_name,flavor_name,cloud_subnet,instance_suffix,security_group_ids)
+        new_instances = self.createNewCloudInstances(number_nodes,image_name,flavor_name,cloud_subnet,instance_suffix,None,security_group_ids)
         # new instances should have a 60 second delay to make sure everything is running.
 
         ip_addresses = []
