@@ -291,7 +291,7 @@ class OFSNovaConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManag
 
         # put the network ID in the openstackrc.sh file, don't pass it in as a parameter.
         for index in range(0,number_nodes):
-            instance = self.novaapi.servers.create("ofsnode-%03d%s"%(index+1,instance_suffix), image.id, flavor.id, key_name=self.cloud_instance_key, nics = [ { "net-id" : self.nova_network_id } ])
+            instance = self.novaapi.servers.create("ofsnode-%03d%s"%(index+1,instance_suffix), image.id, flavor.id, key_name=self.cloud_instance_key, security_groups=security_group_ids, nics = [ { "net-id" : self.nova_network_id } ])
             msg = "Created new Cloud instance %s " % instance.name
             logging.info(msg)
             print msg
