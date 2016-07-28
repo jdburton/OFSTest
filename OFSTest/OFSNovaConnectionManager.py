@@ -73,8 +73,8 @@ class OFSNovaConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManag
         # hard code this in for now.
         #self.nova_network_name = 'flat'
         #self.nova_network_id = '42f48524-45d3-41fa-aee4-4e5ecf762f79'
-        self.nova_network_name = 'OrangeFS'
-        self.nova_network_id = 'efdc9f8f-2b90-421b-b041-aedc1aadce16' 
+        #self.nova_network_name = 'OrangeFS'
+        #self.nova_network_id = 'efdc9f8f-2b90-421b-b041-aedc1aadce16' 
      
     
         if cloud_config_file is not None:
@@ -126,6 +126,14 @@ class OFSNovaConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManag
 
                 (variable,self.nova_username) = re.split("=",line.rstrip())
                 self.nova_username=self.nova_username.rstrip("\"").lstrip("\"")
+                
+            elif "export OS_NETWORK_NAME" in line:
+                (variable,self.nova_network_name) = re.split("=",line.rstrip())
+                self.nova_network_name=self.nova_network_name.rstrip("\"").lstrip("\"")
+            
+            elif "export OS_NETWORK_ID" in line:
+                (variable,self.nova_network_id) = re.split("=",line.rstrip())
+                self.nova_network_id=self.nova_network_id.rstrip("\"").lstrip("\"")
 
     ##
     #
@@ -248,7 +256,6 @@ class OFSNovaConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManag
     # @param number_nodes  Number of nodes to create
     # @param image_name Image to run. (e.g. "cloud-ubuntu-12.04")
     # @param flavor_name Image "flavor" (e.g. "m1.medium")
-    # @param subnet_id Id of subnet instance should run on 
     #
     # @return    A list of new instances.
     #        
@@ -282,8 +289,9 @@ class OFSNovaConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManag
         #print image.__dict__
         new_instances = []
 
+        # put the network ID in the openstackrc.sh file, don't pass it in as a parameter.
         for index in range(0,number_nodes):
-            instance = self.novaapi.servers.create("ofsnode-%03d%s"%(index+1,instance_suffix), image.id, flavor.id, key_name=self.cloud_instance_key, nics = [ { "net-id" : subnet_id } ])
+            instance = self.novaapi.servers.create("ofsnode-%03d%s"%(index+1,instance_suffix), image.id, flavor.id, key_name=self.cloud_instance_key, nics = [ { "net-id" : self.nova_network_id } ])
             msg = "Created new Cloud instance %s " % instance.name
             logging.info(msg)
             print msg

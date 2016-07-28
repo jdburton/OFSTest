@@ -338,8 +338,7 @@ class OFSTestConfig(object):
         ## @var cloud_subnet
         # cloud subnet ID for primary network interface
         #self.cloud_subnet=None
-        #TODO: Remove hardcoded definition. 
-        self.cloud_subnet="03de6c88-231c-4c2c-9bfd-3c2d17604a82"
+        self.cloud_subnet=None
         
         self.cloud_type = 'EC2' # Web Interface: auto
         self.nova_password_file=None # Web Interface: auto
