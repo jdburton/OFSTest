@@ -305,7 +305,120 @@ class OFSTestNode(object):
     
 
     def currentNodeInformation(self):
-        pass
+        
+        self.distro = ""
+
+
+        # can we ssh in? We'll need the group if we can't, so let's try this first.
+        #rc = self.runSingleCommand("ls -l /home/ | grep %s | awk '{print \\$4}'" % self.current_user)
+        self.current_group = self.runSingleCommandBacktick(command="ls -l /home/ | grep %s | awk '{print \\$4}'" % self.current_user)
+
+        # is this a mac? Home located under /Users
+        # Wow, this is ugly. Need to stop hardcoding "/home"
+        if self.current_group.rstrip() == "":
+            self.current_group = self.runSingleCommandBacktick(command="ls -l /Users/ | grep %s | awk '{print \\$4}'" % self.current_user)
+
+        logging.info("Current group is "+self.current_group)
+
+        # Try to get in as root. If we can get in, we need to get the actual user in
+        # Gross hackery for SuseStudio images. OpenStack injects key into root, not user.
+                    
+        if self.current_group.rstrip() == "":
+            self.current_group = self.runSingleCommandBacktick(command="ls -l /home/ | grep %s | awk '{print \\$4}'" % self.current_user,remote_user="root")
+
+            logging.info("Current group for %s (from root) is %s" % (self.current_user,self.current_group))
+            if self.current_group.rstrip() == "":
+                logging.exception("Could not access node at "+self.ext_ip_address+" via ssh")
+                exit(-1)
+            
+            # copy the ssh key to the user's directory
+            rc = self.runSingleCommand(command="cp -r /root/.ssh /home/%s/" % self.current_user,remote_user="root")
+            if rc != 0:
+                logging.exception("Could not copy ssh key from /root/.ssh to /home/%s/ " % self.current_user)
+                exit(rc)
+            
+            #get the user and group name of the home directory
+            
+            # change the owner of the .ssh directory from root to the login user
+            rc = self.runSingleCommand(command="chown -R %s:%s /home/%s/.ssh/" % (self.current_user,self.current_group,self.current_user),remote_user="root") 
+            if rc != 0:
+                logging.exception("Could not change ownership of /home/%s/.ssh to %s:%s" % (self.current_user,self.current_user,self.current_group))
+                exit(rc)
+
+        # We got in. Now copy the key from user directoy to /root. If user has passwordless sudo access, might as well.          
+        else:
+            # only implement this when we want to implement it.
+            self.allowRootSshAccess();
+                
+        
+
+        # get kernel version and processor type
+        self.kernel_version = self.runSingleCommandBacktick("uname -r")
+        self.processor_type = self.runSingleCommandBacktick("uname -p")
+        self.number_cores = int(self.runSingleCommandBacktick("grep processor /proc/cpuinfo | wc -l"))
+        
+        
+        # Find the distribution. Unfortunately Linux distributions each have their own file for distribution information.
+            
+        # information for ubuntu and suse is in /etc/os-release
+
+        if self.runSingleCommand('test -f /etc/os-release') == 0:
+            #print "SuSE or Ubuntu based machine found"
+            pretty_name = self.runSingleCommandBacktick("cat /etc/os-release | grep PRETTY_NAME")
+            [var,self.distro] = pretty_name.split("=")
+        # for redhat based distributions, information is in /etc/system-release
+        elif self.runSingleCommand('test -f /etc/redhat-release') == 0:
+            #print "RedHat based machine found"
+            self.distro = self.runSingleCommandBacktick("cat /etc/redhat-release")
+        elif self.runSingleCommand('test -f /etc/lsb-release') == 0:
+            #print "Ubuntu based machine found"
+            #print self.runSingleCommandBacktick("cat /etc/lsb-release ")
+            pretty_name = self.runSingleCommandBacktick("cat /etc/lsb-release | grep DISTRIB_DESCRIPTION")
+            #print "Pretty name " + pretty_name
+            [var,self.distro] = pretty_name.split("=")    
+        # Mac OS X 
+        elif self.runSingleCommand('test -f /etc/SuSE-release') == 0: 
+            self.distro = self.runSingleCommandBacktick("head -n 1 /etc/SuSE-release").rstrip()
+
+            
+        elif self.runSingleCommandBacktick("uname").rstrip() == "Darwin":
+            #print "Mac OS X based machine found"
+            self.distro = "Mac OS X-%s" % self.runSingleCommandBacktick("sw_vers -productVersion")
+        
+        # Disable GSSAPI authentication, because it slows EVERYTHING down.
+        # http://stackoverflow.com/questions/21498322/unexpected-behavior-of-ssh-in-centos-6-x
+        #self.runSingleCommandAsBatch("sudo sed -i 's/GSSAPIAuthentication yes/GSSAPIAuthentication no/g' /etc/ssh/sshd", output)
+        #self.runSingleCommandAsBatch("nohup sudo service sshd restart &", output)
+        #time.sleep(15)
+        # get the hostname
+        self.hostname = self.runSingleCommandBacktick("hostname")
+
+        # SuSE distros require a hostname kludge to get it to work. Otherwise all instances will be set to the same hostname
+        # That's a better solution than what Openstack gives us. So why not? 
+        if self.is_cloud:
+            
+            suse_host = "ofsnode-%03d" % (self.node_number)
+            msg = "Renaming %s based node to %s" % (self.distro,suse_host)
+            print msg
+            logging.info(msg)
+            self.runSingleCommandAsRoot("hostname %s" % suse_host)
+            self.runSingleCommandAsRoot("bash -c 'echo %s > /etc/HOSTNAME'" % suse_host)
+            self.hostname = suse_host
+            
+        # Torque doesn't like long hostnames. Truncate the hostname to 15 characters if necessary.
+#         elif len(self.hostname) > 15 and self.is_cloud:
+#             short_hostname = self.hostname[:15]
+#             self.runSingleCommandAsRoot("bash -c 'echo %s > /etc/hostname'" % short_hostname)
+#             self.runSingleCommandAsRoot("hostname %s" % short_hostname)
+#             print "Truncating hostname %s to %s" % (self.hostname,short_hostname)
+#             self.hostname = self.hostname[:15]
+        else:
+             logging.info("Node %s is not a Cloud Node!" % self.hostname)
+        
+        # print out node information
+        msg = "Node: %s %s %s %s" % (self.hostname,self.distro,self.kernel_version,self.processor_type)
+        print msg
+        logging.info(msg)
         
     ##
     #

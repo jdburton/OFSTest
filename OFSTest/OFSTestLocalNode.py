@@ -61,78 +61,11 @@ class OFSTestLocalNode(OFSTestNode.OFSTestNode):
     
     def currentNodeInformation(self):
         
-        self.distro = ""
-
-        if self.current_user == 'root':
-            self.current_group = 'root'
-            
-        else:
-            # can we ssh in? We'll need the group if we can't, so let's try this first.
-            #rc = self.runSingleCommand("ls -l /home/ | grep %s | awk '{print \\$4}'" % self.current_user)
-            self.current_group = self.runSingleCommandBacktick(command="ls -l /home/ | grep %s | awk '{print \\$4}'" % self.current_user)
-    
-            # is this a mac? Home located under /Users
-            # Wow, this is ugly. Need to stop hardcoding "/home"
-            if self.current_group.rstrip() == "":
-                self.current_group = self.runSingleCommandBacktick(command="ls -l /Users/ | grep %s | awk '{print \\$4}'" % self.current_user)
-    
-            logging.info("Current group is "+self.current_group)
-
-
-                
-        
-
-        # get kernel version and processor type
-        self.kernel_version = self.runSingleCommandBacktick("uname -r")
-        self.processor_type = self.runSingleCommandBacktick("uname -p")
-        self.number_cores = int(self.runSingleCommandBacktick("grep processor /proc/cpuinfo | wc -l"))
-        
-        
-        # Find the distribution. Unfortunately Linux distributions each have their own file for distribution information.
-            
-        # information for ubuntu and suse is in /etc/os-release
-
-        if self.runSingleCommand('test -f /etc/os-release') == 0:
-            #print "SuSE or Ubuntu based machine found"
-            pretty_name = self.runSingleCommandBacktick("cat /etc/os-release | grep PRETTY_NAME")
-            [var,self.distro] = pretty_name.split("=")
-        # for redhat based distributions, information is in /etc/system-release
-        elif self.runSingleCommand('test -f /etc/redhat-release') == 0:
-            #print "RedHat based machine found"
-            self.distro = self.runSingleCommandBacktick("cat /etc/redhat-release")
-        elif self.runSingleCommand('test -f /etc/lsb-release') == 0:
-            #print "Ubuntu based machine found"
-            #print self.runSingleCommandBacktick("cat /etc/lsb-release ")
-            pretty_name = self.runSingleCommandBacktick("cat /etc/lsb-release | grep DISTRIB_DESCRIPTION")
-            #print "Pretty name " + pretty_name
-            [var,self.distro] = pretty_name.split("=")    
-        # Mac OS X 
-        elif self.runSingleCommand('test -f /etc/SuSE-release') == 0: 
-            self.distro = self.runSingleCommandBacktick("head -n 1 /etc/SuSE-release").rstrip()
-
-            
-        elif self.runSingleCommandBacktick("uname").rstrip() == "Darwin":
-            #print "Mac OS X based machine found"
-            self.distro = "Mac OS X-%s" % self.runSingleCommandBacktick("sw_vers -productVersion")
-        
-        # Disable GSSAPI authentication, because it slows EVERYTHING down.
-        # http://stackoverflow.com/questions/21498322/unexpected-behavior-of-ssh-in-centos-6-x
-        #self.runSingleCommandAsBatch("sudo sed -i 's/GSSAPIAuthentication yes/GSSAPIAuthentication no/g' /etc/ssh/sshd", output)
-        #self.runSingleCommandAsBatch("nohup sudo service sshd restart &", output)
-        #time.sleep(15)
-        # get the hostname
-        self.hostname = self.runSingleCommandBacktick("hostname")
-
-        
-        # print out node information
+        super(OFSTestLocalNode,self).currentNodeInformation()
         self.ext_ip_address = self.runSingleCommandBacktick("ifconfig  | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}'")
         
-        msg = "Node: %s %s %s %s" % (self.hostname,self.distro,self.kernel_version,self.processor_type)
-        print msg
-        logging.info(msg)
         
         
-            
         
         
         
