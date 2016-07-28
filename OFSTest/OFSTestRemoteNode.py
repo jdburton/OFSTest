@@ -71,7 +71,7 @@ class OFSTestRemoteNode(OFSTestNode.OFSTestNode):
         if count == 15:
             return
         
-        super(OFSTestRemoteNode,self).currentNodeInformation()
+        self.currentNodeInformation()
         
         if self.sshLocalKeyFile is not None:
             self.getKeyFileFromLocal(local_node)
