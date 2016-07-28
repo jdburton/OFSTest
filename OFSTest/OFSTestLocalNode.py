@@ -46,7 +46,7 @@ class OFSTestLocalNode(OFSTestNode.OFSTestNode):
         self.ip_address = "127.0.0.1"
         ## @var current_user 
         # Current logged in user.
-        self.current_user = self.runSingleCommandBacktick("whoami").rstrip()
+        self.current_user = self.runSingleCommandBacktick("whoami")
         #print self.current_user
         self.currentNodeInformation()
         print "Local machine"
