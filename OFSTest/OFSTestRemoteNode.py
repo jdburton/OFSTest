@@ -582,7 +582,7 @@ class OFSTestRemoteNode(OFSTestNode.OFSTestNode):
             print "Allowing root SSH access with user %s's credentials" % self.current_user
             self.changeDirectory("~")
             self.runSingleCommandBacktick(command="ls -l /home/%s/.ssh" % self.current_user)
-            self.runSingleCommandAsBatch(command="sudo rsync -a /home/%s/.ssh /root/ " % self.current_user)
+            self.runSingleCommandAsBatch(command="sudo /bin/cp -r /home/%s/.ssh /root/ " % self.current_user)
             #rsync isn't installed by default on some images. 
         else:   
             print "Not allowing root access because this is not a cloud node"
