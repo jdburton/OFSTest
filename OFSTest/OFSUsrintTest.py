@@ -387,7 +387,7 @@ def iozone(testing_node,output=[]):
         if rc != 0:
             return rc
             
-    rc = testing_node.runSingleCommand("LD_PRELOAD=%s/lib/libofs.so:%s/lib/libpvfs2.so ./iozone -a -y 4096 -q $((1024*16)) -n 4096 -g $((1024*16*2)) -f %s/test_iozone_file" %(testing_node.ofs_installation_location,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
+    rc = testing_node.runSingleCommand("LD_PRELOAD=%s/lib/libofs.so:%s/lib/libpvfs2.so ./iozone -a -y 4096 -n $((1024*512)) -g $((4*1024*1024)) -f %s/test_iozone_file" %(testing_node.ofs_installation_location,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
     
     print output[1]
     print output[2]    
