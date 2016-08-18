@@ -577,10 +577,8 @@ tail,
 vfs_cp,
 simultaneous_ls,
 direct,
-
 fstest,
 fsx,
-bonnie,
 ltp,
 xfstests,
 list_add_corruption

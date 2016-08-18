@@ -323,6 +323,8 @@ class OFSTestConfig(object):
         # Run the kernel module vfs tests?
         self.run_vfs_tests = False # Web Interface: user
         
+        self.run_vfs_benchmarks = False # Web Interface: user
+        
         ## @var run_fuse_tests
         # Run the fuse vfs tests?
         self.run_fuse_tests = False # Web Interface: user
@@ -330,6 +332,8 @@ class OFSTestConfig(object):
         ## @var run_mpi_tests
         # Run OrangeFS ROM-IO tests.
         self.run_mpi_tests = False # Web Interface: user
+        
+        self.run_mpi_benchmarks = False # Web Interface: user
         
         ## @var run_hadoop_tests
         # Run OrangeFS Hadoop tests
@@ -577,6 +581,10 @@ class OFSTestConfig(object):
         if temp != None:
             self.run_vfs_tests = temp
         
+        temp = d.get('run_vfs_benchmarks')
+        if temp != None:
+            self.run_vfs_benchmarks = temp
+        
         temp = d.get('run_sysint_tests')
         if temp != None:
             self.run_sysint_tests = temp
@@ -584,6 +592,10 @@ class OFSTestConfig(object):
         temp = d.get('run_mpi_tests')
         if temp != None:
             self.run_mpi_tests = temp
+        
+        temp = d.get('run_mpi_benchmarks')
+        if temp != None:
+            self.run_mpi_benchmarks = temp
         
         temp = d.get('run_usrint_tests')
         if temp != None:

@@ -323,8 +323,6 @@ tests = [
 
 #dd,
 fdtree,
-fstest,
-fsx,
 iozone,
 bonnie,
 dbench,
