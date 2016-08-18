@@ -546,7 +546,7 @@ class OFSTestMain(object):
                     return rc
 
         # Run the kmod vfs tests, if required.
-        if self.config.run_vfs_tests == True:
+        if self.config.run_vfs_tests == True or self.config.run_vfs_benchmarks == True:
             # vfs tests are located in OFSVFSTest
             # The same tests are used for both kmod-vfs and fuse.
             import OFSVFSTest
@@ -567,28 +567,50 @@ class OFSTestMain(object):
             rc = head_node.checkMount()
             
 
-            # if everything is good, run the test.
-            if rc == 0:
-                # print section header in output file.
-                self.writeOutputHeader(filename,"VFS Tests (%s)" % mount_type)
-
-
-                # The list of vfs tests to run is found in OFSVFSTest.test.
-                # This is an array of strings that correspond to function names.
-                # The functions are run in the order they are listed in the array.
-                for callable in OFSVFSTest.tests:
-                    try:
-                        rc = head_node.runOFSTest("vfs-%s" % mount_type,callable)
-                        self.writeOutput(filename,callable,rc)
-                    except:
-                        print "Unexpected error:", sys.exc_info()[0]
-                        traceback.print_exc()
-                        if self.config.stop_on_failure == True:
-                            return -888
-                        pass
-                    if rc != 0 and self.config.stop_on_failure == True:
-                        return rc
-
+            if self.config.run_vfs_tests == True:
+                # if everything is good, run the test.
+                if rc == 0:
+                    # print section header in output file.
+                    self.writeOutputHeader(filename,"VFS Tests (%s)" % mount_type)
+    
+    
+                    # The list of vfs tests to run is found in OFSVFSTest.test.
+                    # This is an array of strings that correspond to function names.
+                    # The functions are run in the order they are listed in the array.
+                    for callable in OFSVFSTest.tests:
+                        try:
+                            rc = head_node.runOFSTest("vfs-%s" % mount_type,callable)
+                            self.writeOutput(filename,callable,rc)
+                        except:
+                            print "Unexpected error:", sys.exc_info()[0]
+                            traceback.print_exc()
+                            if self.config.stop_on_failure == True:
+                                return -888
+                            pass
+                        if rc != 0 and self.config.stop_on_failure == True:
+                            return rc
+            if self.config.run_vfs_benchmarks == True:
+                import OFSVFSBenchmarks
+                if rc == 0:
+                    # print section header in output file.
+                    self.writeOutputHeader(filename,"VFS Tests (%s)" % mount_type)
+    
+    
+                    # The list of vfs tests to run is found in OFSVFSTest.test.
+                    # This is an array of strings that correspond to function names.
+                    # The functions are run in the order they are listed in the array.
+                    for callable in OFSVFSTest.tests:
+                        try:
+                            rc = head_node.runOFSTest("vfs-%s" % mount_type,callable)
+                            self.writeOutput(filename,callable,rc)
+                        except:
+                            print "Unexpected error:", sys.exc_info()[0]
+                            traceback.print_exc()
+                            if self.config.stop_on_failure == True:
+                                return -888
+                            pass
+                        if rc != 0 and self.config.stop_on_failure == True:
+                            return rc
 
 
 
@@ -644,24 +666,6 @@ class OFSTestMain(object):
                         return rc
 
                 
-                # run the mpi tests, if required.
-                if self.config.run_mpi_tests == True:
-                    
-                    import OFSMpiVFSTest
-                    self.writeOutputHeader(filename,"MPI VFS Tests (%s)" % mount_type)
-                    
-                    for callable in OFSMpiVFSTest.tests:
-                        try:
-                            rc = head_node.runOFSTest("mpivfs-%s" % mount_type,callable)
-                            self.writeOutput(filename,callable,rc)
-                        except:
-                            print "Unexpected error:", sys.exc_info()[0]
-                            traceback.print_exc()
-                            if self.config.stop_on_failure == True:
-                                return -888
-                            pass
-                        if rc != 0 and self.config.stop_on_failure == True:
-                            return rc
 
         
             else:
@@ -729,11 +733,11 @@ class OFSTestMain(object):
 
                 if rc != 0 and self.config.stop_on_failure == True:
                     return rc
-            # usrint tests are located in OFSMpiioTests
-            import OFSMpiioTest
+            
 
 
-
+                  
+            
             self.writeOutputHeader(filename,"MPI-IO Tests")
 
             # The list of mpiio tests to run is found in OFSMpiioTest.test.
@@ -751,6 +755,27 @@ class OFSTestMain(object):
                     pass
                 if rc != 0 and self.config.stop_on_failure == True:
                     return rc
+            
+            if self.config.run_mpi_benchmarks:
+                self.writeOutputHeader(filename,"MPI-Benchmarks")
+                
+                import OFSMpiBenchmarks
+    
+                # The list of mpiio tests to run is found in OFSMpiBenchmarks.test.
+                # This is an array of strings that correspond to function names.
+                # The functions are run in the order they are listed in the array.
+                for callable in OFSMpiBenchmarks.tests:
+                    try:
+                        rc = head_node.runOFSTest("mpi-bench", callable)
+                        self.writeOutput(filename,callable,rc)
+                    except:
+                        print "Unexpected error:", sys.exc_info()[0]
+                        traceback.print_exc()
+                        if self.config.stop_on_failure == True:
+                            return -888
+                        pass
+                    if rc != 0 and self.config.stop_on_failure == True:
+                        return rc
 
 
         # run the hadoop tests, if required.

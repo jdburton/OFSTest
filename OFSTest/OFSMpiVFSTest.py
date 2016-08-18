@@ -89,96 +89,6 @@ def romio_testsuite(testing_node,output=[]):
     time.sleep(60)
     return rc
 
-##
-#
-# @fn IOR(testing_node,output=[]):
-#
-# @brief This is the IOR testsuite from LLNL. 
-#
-# @param testing_node OFSTestNode on which tests are run.
-# @param output Array that holds output from commands. Passed by reference. 
-#   
-# @return 0 Test ran successfully
-# @return Not 0 Test failed
-#
-#
-
-def IOR(testing_node,output=[]):
-
-    rc = testing_node.changeDirectory("%s/src/C" % testing_node.ior_installation_location)
-    np = testing_node.number_mpi_slots
-
-    bs = 16384 / int(np)
-    
-    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/src/C/IOR -a POSIX -F -i 1 -N %s -b %dm -t 4m -s 1 -o %s/mpivfsfile" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ior_installation_location,np,bs,testing_node.ofs_mount_point),output)
-    
-    #TODO: Compare actual results with expected.
-    time.sleep(60)
-    testing_node.runSingleCommand("rm -f /tmp/mount/orangefs/mpivfsfile*")
-    print output[1]
-    print output[2]
-    
-    return rc
-
-##
-#
-# @fn IOR(testing_node,output=[]):
-#
-# @brief This is the IOR testsuite from LLNL. 
-#
-# @param testing_node OFSTestNode on which tests are run.
-# @param output Array that holds output from commands. Passed by reference. 
-#   
-# @return 0 Test ran successfully
-# @return Not 0 Test failed
-#
-#
-
-def IOR_single(testing_node,output=[]):
-
-    rc = testing_node.changeDirectory("%s/src/C" % testing_node.ior_installation_location)
-    np = testing_node.number_mpi_hosts
-
-    bs = 16384 / int(np)
-    
-    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/src/C/IOR -a POSIX -F -i 1 -N %s -b %dm -t 4m -s 1 -o %s/mpivfsfile" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ior_installation_location,np,bs,testing_node.ofs_mount_point),output)
-    
-    #TODO: Compare actual results with expected.
-    time.sleep(60)
-    testing_node.runSingleCommand("rm -f /tmp/mount/orangefs/mpivfsfile*")
-    print output[1]
-    print output[2]
-
-    return rc
-
-##
-#
-# @fn mdtest(testing_node,output=[]):
-#
-# @brief This is the mdtest testsuite from LLNL. 
-#
-# @param testing_node OFSTestNode on which tests are run.
-# @param output Array that holds output from commands. Passed by reference. 
-#   
-# @return 0 Test ran successfully
-# @return Not 0 Test failed
-#
-#
-
-def mdtest(testing_node,output=[]):
-
-    rc = testing_node.changeDirectory(testing_node.mdtest_installation_location)
-    np = testing_node.number_mpi_slots
-    
-    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/mdtest  -n 50 -w 4194304 -i 5 -v -d %s/mdtest" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.mdtest_installation_location,testing_node.ofs_mount_point),output)
-    
-    #TODO: Compare actual results with expected.
-    time.sleep(60)
-    print output[1]
-    print output[2]
-
-    return rc
-
 
 ##
 #
@@ -213,34 +123,6 @@ def simul(testing_node,output=[]):
     return rc
 
 
-##
-#
-# @fn miranda_io(testing_node,output=[]):
-#
-# @brief This is the miranda_io testsuite from LLNL. 
-#
-# @param testing_node OFSTestNode on which tests are run.
-# @param output Array that holds output from commands. Passed by reference. 
-#   
-# @return 0 Test ran successfully
-# @return Not 0 Test failed
-#
-#
-
-def miranda_io(testing_node,output=[]):
-
-    
-    np = testing_node.number_mpi_slots
-    
-    rc = testing_node.changeDirectory(testing_node.ofs_mount_point)
-    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/miranda_io" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.miranda_io_installation_location),output)
-    
-    #TODO: Compare actual results with expected.
-    time.sleep(60)
-    print output[1]
-    print output[2]
-
-    return rc
 
 
 ##
@@ -335,13 +217,10 @@ def mpi_active_delete(testing_node,output=[]):
 
 
 tests = [ romio_testsuite, 
-          mpi_active_delete, 
-         #IOR_single, 
-         IOR, 
-         mdtest, 
          miranda_io, 
          multi_md_test, 
-         multi_md_test_size_sweep ]
+         multi_md_test_size_sweep,
+         mpi_active_delete ]
 
 
 
