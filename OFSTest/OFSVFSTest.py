@@ -540,7 +540,7 @@ def dd(testing_node,output=[]):
 
 def xfstests(testing_node,output=[]):
     rc = testing_node.changeDirectory("/home/%s" % testing_node.current_user)
-    rc = testing_node.runSingleCommand("git clone git://oss.sgi.com/xfs/cmds/xfstests")
+    rc = testing_node.runSingleCommand("git clone git://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git")
     
     rc = testing_node.changeDirectory("/home/%s/xfstests" % testing_node.current_user)
     rc = testing_node.runSingleCommand("cp %s/test/automated/vfs-tests.d/xfstests-pvfs2.diff ./xfstests-pvfs2.diff" % testing_node.ofs_source_location)
