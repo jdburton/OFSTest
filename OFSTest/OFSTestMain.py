@@ -753,6 +753,8 @@ class OFSTestMain(object):
                 # The list of mpiio tests to run is found in OFSMpiioTest.test.
                 # This is an array of strings that correspond to function names.
                 # The functions are run in the order they are listed in the array.
+                import OFSMpiioTest
+                
                 for callable in OFSMpiioTest.tests:
                     try:
                         rc = head_node.runOFSTest("mpiio", callable)
