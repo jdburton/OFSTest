@@ -566,62 +566,72 @@ class OFSTestMain(object):
             # Make sure filesystem is mounted or we will get false positives.
             rc = head_node.checkMount()
             
-
-            if self.config.run_vfs_tests == True:
-                # if everything is good, run the test.
-                if rc == 0:
-                    # print section header in output file.
-                    self.writeOutputHeader(filename,"VFS Tests (%s)" % mount_type)
-    
-    
-                    # The list of vfs tests to run is found in OFSVFSTest.test.
-                    # This is an array of strings that correspond to function names.
-                    # The functions are run in the order they are listed in the array.
-                    for callable in OFSVFSTest.tests:
-                        try:
-                            rc = head_node.runOFSTest("vfs-%s" % mount_type,callable)
-                            self.writeOutput(filename,callable,rc)
-                        except:
-                            print "Unexpected error:", sys.exc_info()[0]
-                            traceback.print_exc()
-                            if self.config.stop_on_failure == True:
-                                return -888
-                            pass
-                        if rc != 0 and self.config.stop_on_failure == True:
-                            return rc
-            if self.config.run_vfs_benchmarks == True:
-                import OFSVFSBenchmarks
-                if rc == 0:
-                    # print section header in output file.
-                    self.writeOutputHeader(filename,"VFS Tests (%s)" % mount_type)
-    
-    
-                    # The list of vfs tests to run is found in OFSVFSTest.test.
-                    # This is an array of strings that correspond to function names.
-                    # The functions are run in the order they are listed in the array.
-                    for callable in OFSVFSTest.tests:
-                        try:
-                            rc = head_node.runOFSTest("vfs-%s" % mount_type,callable)
-                            self.writeOutput(filename,callable,rc)
-                        except:
-                            print "Unexpected error:", sys.exc_info()[0]
-                            traceback.print_exc()
-                            if self.config.stop_on_failure == True:
-                                return -888
-                            pass
-                        if rc != 0 and self.config.stop_on_failure == True:
-                            return rc
-
-
-
-            # if not, print failure.
-            else:
+            if rc != 0:
                 self.writeOutputHeader(filename,"VFS Tests (%s) could not run. Mount failed." % mount_type)           
                 # Each test should fail. Use error -999 to indicate mount failure.
                 for callable in OFSVFSTest.tests:
                     self.writeOutput(filename,callable,-999)
                 if self.config.stop_on_failure == True:
                     return -999
+
+            if self.config.run_vfs_tests == True:
+                # if everything is good, run the test.
+                
+                    # print section header in output file.
+                    self.writeOutputHeader(filename,"VFS Tests (%s)" % mount_type)
+    
+    
+                    # The list of vfs tests to run is found in OFSVFSTest.test.
+                    # This is an array of strings that correspond to function names.
+                    # The functions are run in the order they are listed in the array.
+                    for callable in OFSVFSTest.tests:
+                        try:
+                            rc = head_node.runOFSTest("vfs-%s" % mount_type,callable)
+                            self.writeOutput(filename,callable,rc)
+                        except:
+                            print "Unexpected error:", sys.exc_info()[0]
+                            traceback.print_exc()
+                            if self.config.stop_on_failure == True:
+                                return -888
+                            pass
+                        if rc != 0 and self.config.stop_on_failure == True:
+                            return rc
+                            # if not, print failure.
+
+
+                        
+            if self.config.run_vfs_benchmarks == True:
+                import OFSVFSBenchmarks
+                if rc == 0:
+                    # print section header in output file.
+                    self.writeOutputHeader(filename,"VFS Benchmarks (%s)" % mount_type)
+    
+    
+                    # The list of vfs tests to run is found in OFSVFSTest.test.
+                    # This is an array of strings that correspond to function names.
+                    # The functions are run in the order they are listed in the array.
+                    for callable in OFSVFSBenchmarks.tests:
+                        try:
+                            rc = head_node.runOFSTest("vfs-%s" % mount_type,callable)
+                            self.writeOutput(filename,callable,rc)
+                        except:
+                            print "Unexpected error:", sys.exc_info()[0]
+                            traceback.print_exc()
+                            if self.config.stop_on_failure == True:
+                                return -888
+                            pass
+                        if rc != 0 and self.config.stop_on_failure == True:
+                            return rc
+
+                else:
+                    self.writeOutputHeader(filename,"VFS Tests (%s) could not run. Mount failed." % mount_type)           
+                    # Each test should fail. Use error -999 to indicate mount failure.
+                    for callable in OFSVFSTest.tests:
+                        self.writeOutput(filename,callable,-999)
+                    if self.config.stop_on_failure == True:
+                        return -999
+
+
 
         
         # run fuse tests, if required.
