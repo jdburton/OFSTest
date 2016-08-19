@@ -722,49 +722,50 @@ class OFSTestMain(object):
 
                 
         # run the mpi tests, if required.
-        if self.config.run_mpi_tests == True:
-            self.writeOutputHeader(filename,"MPI VFS Tests (%s)" % mount_type)
+        if self.config.run_mpi_tests == True or self.config.run_mpi_benchmarks == True:
+            
             # Remount OrangeFS
             self.ofs_network.unmountOFSFilesystemAllNodes()
             self.ofs_network.mountOFSFilesystemAllNodes(mount_fuse=False)
             
-            import OFSMpiVFSTest
+            if self.config.run_mpi_tests == True:
             
-            for callable in OFSMpiVFSTest.tests:
-                try:
-                    rc = head_node.runOFSTest("mpivfs-%s" % mount_type,callable)
-                    self.writeOutput(filename,callable,rc)
-                except:
-                    print "Unexpected error:", sys.exc_info()[0]
-                    traceback.print_exc()
-                    if self.config.stop_on_failure == True:
-                        return -888
-                    pass
-
-                if rc != 0 and self.config.stop_on_failure == True:
-                    return rc
-            
-
-
-                  
-            
-            self.writeOutputHeader(filename,"MPI-IO Tests")
-
-            # The list of mpiio tests to run is found in OFSMpiioTest.test.
-            # This is an array of strings that correspond to function names.
-            # The functions are run in the order they are listed in the array.
-            for callable in OFSMpiioTest.tests:
-                try:
-                    rc = head_node.runOFSTest("mpiio", callable)
-                    self.writeOutput(filename,callable,rc)
-                except:
-                    print "Unexpected error:", sys.exc_info()[0]
-                    traceback.print_exc()
-                    if self.config.stop_on_failure == True:
-                        return -888
-                    pass
-                if rc != 0 and self.config.stop_on_failure == True:
-                    return rc
+                self.writeOutputHeader(filename,"MPI VFS Tests (%s)" % mount_type)
+                
+                import OFSMpiVFSTest
+                
+                for callable in OFSMpiVFSTest.tests:
+                    try:
+                        rc = head_node.runOFSTest("mpivfs-%s" % mount_type,callable)
+                        self.writeOutput(filename,callable,rc)
+                    except:
+                        print "Unexpected error:", sys.exc_info()[0]
+                        traceback.print_exc()
+                        if self.config.stop_on_failure == True:
+                            return -888
+                        pass
+    
+                    if rc != 0 and self.config.stop_on_failure == True:
+                        return rc
+                
+                self.writeOutputHeader(filename,"MPI-IO Tests")
+    
+                # The list of mpiio tests to run is found in OFSMpiioTest.test.
+                # This is an array of strings that correspond to function names.
+                # The functions are run in the order they are listed in the array.
+                for callable in OFSMpiioTest.tests:
+                    try:
+                        rc = head_node.runOFSTest("mpiio", callable)
+                        self.writeOutput(filename,callable,rc)
+                    except:
+                        print "Unexpected error:", sys.exc_info()[0]
+                        traceback.print_exc()
+                        if self.config.stop_on_failure == True:
+                            return -888
+                        pass
+                    if rc != 0 and self.config.stop_on_failure == True:
+                        return rc
+                
             
             if self.config.run_mpi_benchmarks:
                 self.writeOutputHeader(filename,"MPI-Benchmarks")
