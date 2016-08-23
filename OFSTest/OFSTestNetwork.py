@@ -244,7 +244,7 @@ class OFSTestNetwork(object):
         while rc != 0 and count < 300:
             count += 10
             print "Waiting %ds of 300s for connectivity to new nodes" % count 
-            sleep(10)
+            time.sleep(10)
             rc = self.checkExternalConnectivity()
             
             
