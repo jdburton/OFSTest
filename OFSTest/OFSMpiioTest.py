@@ -224,6 +224,8 @@ def stadler(testing_node,output=[]):
 
 
 tests = [ romio_testsuite,
+         mpi_io_test,
+         mpi_io_test_collective,
          #IOR_single, 
          heidelberg_IO
 

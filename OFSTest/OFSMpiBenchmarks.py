@@ -428,9 +428,9 @@ def mpi_unbalanced_test(testing_node,output=[]):
 
 tests = [
          mdtest,
-         mpi_io_test,
-         mpi_io_test_collective,
          mpi_md_test,
+         multi_md_test,
+         multi_md_test_size_sweep,
          mpi_unbalanced_test, 
          IOR_single_posix,
          IOR_single_mpiio,
