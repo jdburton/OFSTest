@@ -2359,8 +2359,8 @@ class OFSTestNode(object):
             self.runSingleCommandAsRoot("mount -t pvfs2 tcp://%s:%d/%s %s" % (self.hostname,self.ofs_tcp_port,self.ofs_fs_name,self.ofs_mount_point))
 
         
-        print "Waiting 30 seconds for mount"            
-        time.sleep(30)
+        print "Waiting 10 seconds for mount"            
+        time.sleep(10)
 
     ##
     # @fn unmountOFSFilesystem(self):
@@ -2373,7 +2373,7 @@ class OFSTestNode(object):
     def unmountOFSFilesystem(self):
         print "Unmounting OrangeFS mounted at " + self.ofs_mount_point
         self.runSingleCommandAsRoot("umount -f -l %s" % self.ofs_mount_point)
-        time.sleep(15)
+        time.sleep(10)
 
     ##
     # @fn stopOFSClient(self):

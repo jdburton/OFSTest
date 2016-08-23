@@ -239,6 +239,16 @@ class OFSTestNetwork(object):
         
         # return the list of newly created nodes.
         
+        rc = self.checkExternalConnectivity()
+        count = 0
+        while rc != 0 and count < 300:
+            count += 10
+            print "Waiting %ds of 300s for connectivity to new nodes" % count 
+            sleep(10)
+            rc = self.checkExternalConnectivity()
+            
+            
+        
         return new_ofs_test_nodes
     
 
@@ -1597,3 +1607,9 @@ class OFSTestNetwork(object):
        
         
         return failed
+    
+    def checkExternalConnectivity(self):
+        rc = 0
+        for node in self.network_nodes:
+            rc += self.local_master.runSingleCommand("ping -c 1 %s" % node.ext_ip_address )
+        return rc

@@ -87,7 +87,7 @@ def IOR_posix(testing_node,output=[]):
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/src/C/IOR -a POSIX -F -i 1 -N %s -b %dm -t 4m -s 1 -o %s/mpivfsfile" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ior_installation_location,np,bs,testing_node.ofs_mount_point),output)
     
     #TODO: Compare actual results with expected.
-    time.sleep(60)
+    time.sleep(30)
     testing_node.runSingleCommand("rm -f /tmp/mount/orangefs/mpivfsfile*")
     print output[1]
     print output[2]
@@ -118,7 +118,7 @@ def IOR_single_posix(testing_node,output=[]):
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/src/C/IOR -a POSIX -F -i 1 -N %s -b %dm -t 4m -s 1 -o %s/mpivfsfile" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ior_installation_location,np,bs,testing_node.ofs_mount_point),output)
     
     #TODO: Compare actual results with expected.
-    time.sleep(60)
+    time.sleep(30)
     testing_node.runSingleCommand("rm -f /tmp/mount/orangefs/mpivfsfile*")
     print output[1]
     print output[2]
@@ -205,7 +205,7 @@ def mdtest(testing_node,output=[]):
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/mdtest  -n 50 -w 4194304 -i 5 -v -d %s/mdtest" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.mdtest_installation_location,testing_node.ofs_mount_point),output)
     
     #TODO: Compare actual results with expected.
-    time.sleep(60)
+    time.sleep(30)
     print output[1]
     print output[2]
 
@@ -237,7 +237,7 @@ def simul(testing_node,output=[]):
     
     #TODO: Compare actual results with expected.
     # Wait for all changes to be written.
-    time.sleep(60)
+    time.sleep(30)
     print output[1]
     print output[2]
 
@@ -270,7 +270,7 @@ def multi_md_test(testing_node,output=[]):
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/test/multi-md-test -d %s/multi_md_test -n 100 -s 1024 -a 0 -p 5 -c 1,1,%s" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ofs_installation_location,testing_node.ofs_mount_point,np),output)
     
     #TODO: Compare actual results with expected.
-    time.sleep(60)
+    time.sleep(30)
     print output[1]
     print output[2]
 
@@ -301,7 +301,7 @@ def multi_md_test_size_sweep(testing_node,output=[]):
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/test/multi-md-test-size-sweep -d %s/multi_md_size_sweep -n 1000 -a 0 -s 1,1,%s" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ofs_installation_location,testing_node.ofs_mount_point,np),output)
     
     #TODO: Compare actual results with expected.
-    time.sleep(60)
+    time.sleep(30)
     print output[1]
     print output[2]
 
@@ -345,7 +345,7 @@ def mpi_md_test_create(testing_node,output=[]):
     rc = testing_node.changeDirectory("%s" % testing_node.ofs_mount_point)
     np = testing_node.number_mpi_slots
     testing_node.runSingleCommand("mkdir -p %s/mpi_md_test" % testing_node.ofs_mount_point)
-    time.sleep(10)
+    time.sleep(5)
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/test/mpi-md-test -O -n 100 -d pvfs2:%s/mpi_md_test" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
 
     print output[1]
@@ -363,7 +363,7 @@ def mpi_md_test_resize(testing_node,output=[]):
     rc = testing_node.changeDirectory("%s" % testing_node.ofs_mount_point)
     np = testing_node.number_mpi_slots
 
-    time.sleep(10)
+    time.sleep(5)
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/test/mpi-md-test -R -n 100 -d pvfs2:%s/mpi_md_test" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
 
     print output[1]
@@ -380,7 +380,7 @@ def mpi_md_test_delete(testing_node,output=[]):
 
     rc = testing_node.changeDirectory("%s" % testing_node.ofs_mount_point)
     np = testing_node.number_mpi_slots
-    time.sleep(10)
+    time.sleep(5)
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/test/mpi-md-test -D -n 100 -d pvfs2:%s/mpi_md_test" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
 
     print output[1]
@@ -411,7 +411,7 @@ def mpi_unbalanced_test(testing_node,output=[]):
     rc = testing_node.changeDirectory("%s" % testing_node.ofs_mount_point)
     np = testing_node.number_mpi_slots
     testing_node.runSingleCommand("mkdir -p %s/mpi_unbalanced_test" % testing_node.ofs_mount_point)
-    time.sleep(10)
+    time.sleep(5)
     rc = testing_node.runSingleCommand("time %s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/test/mpi-unbalanced-test pvfs2:%s/mpi_unbalanced_test > /dev/null" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
     
     time.sleep(30)

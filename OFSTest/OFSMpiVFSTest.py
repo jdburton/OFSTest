@@ -86,7 +86,7 @@ def romio_testsuite(testing_node,output=[]):
     rc = testing_node.runSingleCommand("%s -machinefile=%s -fname=%s/romioruntests" % (testing_node.romio_runtests_pvfs2,testing_node.created_openmpihosts,testing_node.ofs_mount_point),output)
     
     #TODO: Compare actual results with expected.
-    time.sleep(60)
+    time.sleep(30)
     return rc
 
 
@@ -115,7 +115,7 @@ def simul(testing_node,output=[]):
     
     #TODO: Compare actual results with expected.
     # Wait for all changes to be written.
-    time.sleep(60)
+    time.sleep(30)
     print output[1]
     print output[2]
 
@@ -149,7 +149,7 @@ def multi_md_test(testing_node,output=[]):
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/test/multi-md-test -d %s/multi_md_test -n 100 -s 1024 -a 0 -p 5 -c 1,1,%s" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ofs_installation_location,testing_node.ofs_mount_point,np),output)
     
     #TODO: Compare actual results with expected.
-    time.sleep(60)
+    time.sleep(30)
     print output[1]
     print output[2]
 
@@ -180,7 +180,7 @@ def multi_md_test_size_sweep(testing_node,output=[]):
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/test/multi-md-test-size-sweep -d %s/multi_md_size_sweep -n 1000 -a 0 -s 1,1,%s" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ofs_installation_location,testing_node.ofs_mount_point,np),output)
     
     #TODO: Compare actual results with expected.
-    time.sleep(60)
+    time.sleep(30)
     print output[1]
     print output[2]
 
@@ -210,7 +210,7 @@ def mpi_active_delete(testing_node,output=[]):
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/test/mpi-active-delete -i 20 -d %s/active-delete" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
     
     #TODO: Compare actual results with expected.
-    time.sleep(60)
+    time.sleep(30)
 
     return rc
 
@@ -238,7 +238,7 @@ def miranda_io(testing_node,output=[]):
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/miranda_io" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.miranda_io_installation_location),output)
     
     #TODO: Compare actual results with expected.
-    time.sleep(60)
+    time.sleep(30)
     print output[1]
     print output[2]
 

@@ -458,8 +458,8 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
             print msg
             logging.info(msg)
     
-            print "Waiting 240s for instances."
-            time.sleep(240)
+            print "Waiting 60s for instances."
+            time.sleep(60)
             
             count = 0
             while len(reservation.instances) < number_nodes and count < 24:
@@ -510,8 +510,9 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
         
             
             
-        print "Waiting 60 seconds for external networking"
-        time.sleep(60)
+        #print "Waiting 60 seconds for external networking"
+        time.sleep(10)
+        
         return external_addresses
         
     ##

@@ -214,7 +214,7 @@ def stadler(testing_node,output=[]):
     
     
     #TODO: Compare actual results with expected.
-    time.sleep(60)
+    time.sleep(30)
     
     print output[1]
     print output[2]
