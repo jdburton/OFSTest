@@ -444,8 +444,17 @@ class OFSTestNetwork(object):
         # Run updateNode on the nodes simultaneously. 
         self.runSimultaneousCommands(node_list=node_list,node_function=OFSTestNode.OFSTestNode.updateNode,args=[custom_kernel,kernel_git_location,kernel_git_branch])
         # Wait for reboot
-        print "Waiting 180 seconds for nodes to reboot"
-        time.sleep(180)
+        print "Waiting 60s for nodes to reboot"
+        time.sleep(60)
+        
+        rc = self.checkExternalConnectivity()
+        count = 0
+        while rc != 0 and count < 300:
+            count += 10
+            print "Waiting %ds of 300s for connectivity to new nodes" % count 
+            time.sleep(10)
+            rc = self.checkExternalConnectivity()
+        
         print "Nodes rebooted."
         # workaround for strange cuer1 issue where hostname changes on reboot.
         for node in node_list:
