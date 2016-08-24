@@ -284,7 +284,7 @@ def iozone(testing_node,output=[]):
     tmp = []
     testing_node.checkMount(mount_point=testing_node.ofs_mount_point,output=tmp)
     
-    rc = testing_node.runSingleCommand("./iozone -a -y 4096 -n $((1024*512)) -g $((1024*1024*4)) -f %s/test_iozone_file" % testing_node.ofs_mount_point,output)
+    rc = testing_node.runSingleCommand("./iozone -a -y 4096 -q 4096 -n $((1024*512)) -g $((1024*1024*4)) -f %s/test_iozone_file" % testing_node.ofs_mount_point,output)
 
 
     print output[1]

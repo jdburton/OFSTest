@@ -407,9 +407,9 @@ class OFSTestNetwork(object):
             node.created_openmpihosts = "/home/%s/openmpihosts" % node.current_user
             node.created_mpichhosts = "/home/%s/mpichhosts" % node.current_user
             for n2 in node_list:
-                # limit slots to 8 per node.
-                mpi_slots = 8
-                if n2.number_cores < 8:
+                # limit slots to 4 per node.
+                mpi_slots = 4
+                if n2.number_cores < 4:
                     mpi_slots = n2.number_cores
                     
                 node.number_mpi_slots += mpi_slots
