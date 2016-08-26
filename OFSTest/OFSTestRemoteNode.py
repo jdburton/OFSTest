@@ -71,7 +71,7 @@ class OFSTestRemoteNode(OFSTestNode.OFSTestNode):
         if count == 15:
             return
         
-        super(OFSTestRemoteNode,self).currentNodeInformation()
+        self.currentNodeInformation()
         
         if self.sshLocalKeyFile is not None:
             self.getKeyFileFromLocal(local_node)
@@ -457,8 +457,8 @@ class OFSTestRemoteNode(OFSTestNode.OFSTestNode):
             self.runSingleCommandBacktick(command="ls -l /home/%s/.ssh" % self.current_user)
             self.runSingleCommandAsBatch(command="sudo /bin/cp -r /home/%s/.ssh /root/ " % self.current_user)
             #rsync isn't installed by default on some images. 
-            
-        
+        else:   
+            print "Not allowing root access because this is not a cloud node"
         #============================================================================
         #
         # OFSBuilderFunctions

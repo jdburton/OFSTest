@@ -15,6 +15,30 @@ import numpy as np
 import OFSCloudConnectionManager
 import OFSTestRemoteNode
 
+flavors_order = [ 
+       'm3.medium',
+       'm3.large',
+       'c3.large',
+       'm3.xlarge',
+       'c3.xlarge',
+       'r3.xlarge',
+       'd2.xlarge',
+       'i2.xlarge',
+       'm3.2xlarge',
+       'c3.2xlarge',
+       'r3.2xlarge',
+       'd2.2xlarge',
+       'i2.2xlarge',
+       'c3.4xlarge',
+       'r3.4xlarge',
+       'd2.4xlarge',
+       'i2.4xlarge',
+       'c3.8xlarge',
+       'r3.8xlarge',
+       'd2.8xlarge',
+       'i2.8xlarge',
+       'm4.10xlarge'
+       ]
 
 ## 
 # @class OFSEC2ConnectionManager
@@ -33,6 +57,8 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
     # @param ec2_config_file Path to ec2rc.sh file.
     # @param region_name Name of ec2 region to connect to.
     #
+    
+
 
     
     def __init__(self,cloud_config_file=None,region_name='us-east-1'):
@@ -352,8 +378,10 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
             set_max = 0
             prices = []
             
+            
+            
             while count < 30:
-                history = self.ec2_connection.get_spot_price_history(start_time=start.strftime("%Y-%m-%dT%H:%M:%S.%fZ"), end_time=end.strftime("%Y-%m-%dT%H:%M:%S.%fZ"), instance_type=flavor_name, product_description="Linux/UNIX (Amazon VPC)",next_token=next_token)
+                history = self.ec2_connection.get_spot_price_history(start_time=start.strftime("%Y-%m-%dT%H:%M:%S.%fZ"), end_time=end.strftime("%Y-%m-%dT%H:%M:%S.%fZ"), instance_type=flavor_name, product_description="Linux/UNIX",next_token=next_token)
                 prices = prices + [price.price for price in history]
                 next_token = history.next_token
                 count += 1
@@ -430,8 +458,8 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
             print msg
             logging.info(msg)
     
-            print "Waiting 240s for instances."
-            time.sleep(240)
+            print "Waiting 60s for instances."
+            time.sleep(60)
             
             count = 0
             while len(reservation.instances) < number_nodes and count < 24:
@@ -482,8 +510,9 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
         
             
             
-        print "Waiting 60 seconds for external networking"
-        time.sleep(60)
+        #print "Waiting 60 seconds for external networking"
+        time.sleep(10)
+        
         return external_addresses
         
     ##

@@ -73,8 +73,8 @@ class OFSNovaConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManag
         # hard code this in for now.
         #self.nova_network_name = 'flat'
         #self.nova_network_id = '42f48524-45d3-41fa-aee4-4e5ecf762f79'
-        self.nova_network_name = 'OrangeFS'
-        self.nova_network_id = 'efdc9f8f-2b90-421b-b041-aedc1aadce16' 
+        #self.nova_network_name = 'OrangeFS'
+        #self.nova_network_id = 'efdc9f8f-2b90-421b-b041-aedc1aadce16' 
      
     
         if cloud_config_file is not None:
@@ -110,21 +110,30 @@ class OFSNovaConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManag
             if "export OS_AUTH_URL" in line:
                 # check for AUTH_URL
                 
-                (export,variable,self.nova_auth_url) = re.split(" |=",line.rstrip())
+                (variable,self.nova_auth_url) = re.split("=",line.rstrip())
                 
 
             elif "export OS_TENANT_ID" in line:
 
-                (export,variable,self.nova_tenant_id) = re.split(" |=",line.rstrip())
+                (variable,self.nova_tenant_id) = re.split("=",line.rstrip())
             
             elif "export OS_TENANT_NAME" in line:
 
-                (export,variable,self.nova_tenant_name) = re.split(" |=",line.rstrip())
+                (variable,self.nova_tenant_name) = re.split("=",line.rstrip())
                 self.nova_tenant_name=self.nova_tenant_name.rstrip("\"").lstrip("\"")
 
             elif "export OS_USERNAME" in line:
 
-                (export,variable,self.nova_username) = re.split(" |=",line.rstrip())
+                (variable,self.nova_username) = re.split("=",line.rstrip())
+                self.nova_username=self.nova_username.rstrip("\"").lstrip("\"")
+                
+            elif "export OS_NETWORK_NAME" in line:
+                (variable,self.nova_network_name) = re.split("=",line.rstrip())
+                self.nova_network_name=self.nova_network_name.rstrip("\"").lstrip("\"")
+            
+            elif "export OS_NETWORK_ID" in line:
+                (variable,self.nova_network_id) = re.split("=",line.rstrip())
+                self.nova_network_id=self.nova_network_id.rstrip("\"").lstrip("\"")
 
     ##
     #
@@ -152,9 +161,9 @@ class OFSNovaConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManag
 
     def connect(self,debug=0):
         
-        logging.info("AUTH_URL=%s NOVA_USERNAME=%s NOVA_PASSWORD=%s NOVA_TENANT_NAME=%s " % (self.nova_auth_url, self.nova_username, self.nova_password, self.nova_tenant_name))
-        self.keystoneapi = keystoneclient.v2_0.Client(username=self.nova_username, password=self.nova_password, tenant_name=self.nova_tenant_name, auth_url=self.nova_auth_url)
-        self.novaapi = novaclient.Client("2",self.nova_username, self.nova_password, self.nova_tenant_name, self.nova_auth_url, no_cache=True)
+        logging.info("AUTH_URL=%s NOVA_USERNAME=%s NOVA_PASSWORD=%s NOVA_TENANT_NAME=%s NOVA_TENANT_ID=%s" % (self.nova_auth_url, self.nova_username, self.nova_password, self.nova_tenant_name, self.nova_tenant_id))
+        self.keystoneapi = keystoneclient.v2_0.Client(username=self.nova_username, password=self.nova_password, tenant_id=self.nova_tenant_id, auth_url=self.nova_auth_url)
+        self.novaapi = novaclient.Client(version="2",username=self.nova_username, api_key=self.nova_password, tenant_id=self.nova_tenant_id, auth_url=self.nova_auth_url, no_cache=True)
         self.glance_endpoint = self.keystoneapi.service_catalog.get_endpoints("image")["image"][0]["publicURL"]
         self.glance_endpoint = self.glance_endpoint.replace("/v1","")
         self.glanceapi = glanceclient.Client('1',endpoint=self.glance_endpoint,token=self.keystoneapi.auth_token)
@@ -247,7 +256,6 @@ class OFSNovaConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManag
     # @param number_nodes  Number of nodes to create
     # @param image_name Image to run. (e.g. "cloud-ubuntu-12.04")
     # @param flavor_name Image "flavor" (e.g. "m1.medium")
-    # @param subnet_id Id of subnet instance should run on 
     #
     # @return    A list of new instances.
     #        
@@ -281,8 +289,11 @@ class OFSNovaConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManag
         #print image.__dict__
         new_instances = []
 
+        print "Security groups are: "
+        print security_group_ids
+        # put the network ID in the openstackrc.sh file, don't pass it in as a parameter.
         for index in range(0,number_nodes):
-            instance = self.novaapi.servers.create("ofsnode-%03d%s"%(index+1,instance_suffix), image.id, flavor.id, key_name=self.cloud_instance_key, nics = [ { "net-id" : self.nova_network_id } ])
+            instance = self.novaapi.servers.create("ofsnode-%03d%s"%(index+1,instance_suffix), image.id, flavor.id, key_name=self.cloud_instance_key, security_groups=security_group_ids, nics = [ { "net-id" : self.nova_network_id } ])
             msg = "Created new Cloud instance %s " % instance.name
             logging.info(msg)
             print msg
@@ -431,13 +442,13 @@ class OFSNovaConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManag
     #    @returns list of new nodes.
 
 
-    
-    def createNewCloudNodes(self,number_nodes,image_name,flavor_name,local_master,associateip=False,domain=None,cloud_subnet=None, instance_suffix="",security_group_ids=None,spot_instance_bid=None):
+
+    def createNewCloudNodes(self,number_nodes,image_name,flavor_name,local_master,associateip=False,domain=None,cloud_subnet=None,instance_suffix="",image_id=None,security_group_ids=None,spot_instance_bid=None):
         
         # This function creates number nodes on the cloud system. 
         # It returns a list of nodes
         
-        new_instances = self.createNewCloudInstances(number_nodes,image_name,flavor_name,cloud_subnet,instance_suffix,security_group_ids)
+        new_instances = self.createNewCloudInstances(number_nodes,image_name,flavor_name,cloud_subnet,instance_suffix,None,security_group_ids)
         # new instances should have a 60 second delay to make sure everything is running.
 
         ip_addresses = []

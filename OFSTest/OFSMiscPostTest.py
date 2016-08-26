@@ -113,4 +113,7 @@ def server_log(testing_node,output=[]):
     return 0
 
 
-tests = [ checkSHM, dmesg, server_log ]
+tests = [ checkSHM, 
+         dmesg, 
+         #server_log 
+         ]

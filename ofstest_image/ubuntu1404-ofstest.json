@@ -20,16 +20,23 @@
     "username": "{{user `os_username`}}",
     "password": "{{user `os_password`}}",
     "use_floating_ip": true,
-    "floating_ip_pool": "public",
-    "security_groups": [ "default" ],
-    "region": "RegionOne",
+    "floating_ip_pool": "{{user `os_floating_ip_pool`}}",
+    "security_groups": [ "OrangeFS Testing" ],
+    "region": "{{user `os_region`}}",
     "tenant_id": "{{user `os_tenant_id`}}",
     "ssh_username": "ubuntu",
     "networks" : [ "{{user `os_network_id`}}" ],
     "ssh_pty" : true,
     "ssh_timeout": "3m"
    }],
-  "provisioners": [ 
+    "provisioners": [ 
+    	
+    {
+  "type": "shell",
+  "inline": [
+    "while [ ! -f /var/lib/cloud/instance/boot-finished ]; do echo 'Waiting for cloud-init...'; sleep 1; done"
+	  ]
+	},
   
   {
     "type": "shell",
@@ -39,19 +46,33 @@
 	  "sudo add-apt-repository -y ppa:saltstack/salt",
 	  "sudo apt-get update",
 	  "sudo apt-get -y install salt-master salt-minion salt-syndic salt-ssh wget perl gcc",
+      "sudo apt-get -y dist-upgrade",
 	  "sudo chmod -R a+w /opt",
-	  "mkdir -p /opt/mpi"
-	  
+	  "mkdir -p /opt/mpi",
+      "sudo /sbin/reboot"
 
     ]
   },
 
   {
     "type": "salt-masterless",
+    "pause_before": "90s",
     "bootstrap_args": "",
     "local_state_tree": "./salt",
     "minion_config": "./salt/masterMinionConfig",
     "skip_bootstrap": true
+   },
+  {
+    "type": "shell",
+    "pause_before": "10s",
+    "inline": [
+      "sudo chown -R ubuntu:ubuntu /opt",
+      "sudo /sbin/modprobe -v fuse",
+      "sudo chmod a+x /bin/fusermount",
+      "sudo chmod a+r /etc/fuse.conf"
+
+    ]
   }
+
   ]
 }

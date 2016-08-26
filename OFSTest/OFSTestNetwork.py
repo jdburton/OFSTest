@@ -239,6 +239,16 @@ class OFSTestNetwork(object):
         
         # return the list of newly created nodes.
         
+        rc = self.checkExternalConnectivity()
+        count = 0
+        while rc != 0 and count < 300:
+            count += 10
+            print "Waiting %ds of 300s for connectivity to new nodes" % count 
+            time.sleep(10)
+            rc = self.checkExternalConnectivity()
+            
+            
+        
         return new_ofs_test_nodes
     
 
@@ -397,9 +407,9 @@ class OFSTestNetwork(object):
             node.created_openmpihosts = "/home/%s/openmpihosts" % node.current_user
             node.created_mpichhosts = "/home/%s/mpichhosts" % node.current_user
             for n2 in node_list:
-                # limit slots to 8 per node.
-                mpi_slots = 8
-                if n2.number_cores < 8:
+                # limit slots to 4 per node.
+                mpi_slots = 4
+                if n2.number_cores < 4:
                     mpi_slots = n2.number_cores
                     
                 node.number_mpi_slots += mpi_slots
@@ -434,8 +444,17 @@ class OFSTestNetwork(object):
         # Run updateNode on the nodes simultaneously. 
         self.runSimultaneousCommands(node_list=node_list,node_function=OFSTestNode.OFSTestNode.updateNode,args=[custom_kernel,kernel_git_location,kernel_git_branch])
         # Wait for reboot
-        print "Waiting 180 seconds for nodes to reboot"
-        time.sleep(180)
+        print "Waiting 60s for nodes to reboot"
+        time.sleep(60)
+        
+        rc = self.checkExternalConnectivity()
+        count = 0
+        while rc != 0 and count < 300:
+            count += 10
+            print "Waiting %ds of 300s for connectivity to new nodes" % count 
+            time.sleep(10)
+            rc = self.checkExternalConnectivity()
+        
         print "Nodes rebooted."
         # workaround for strange cuer1 issue where hostname changes on reboot.
         for node in node_list:
@@ -1597,3 +1616,9 @@ class OFSTestNetwork(object):
        
         
         return failed
+    
+    def checkExternalConnectivity(self):
+        rc = 0
+        for node in self.network_nodes:
+            rc += self.local_master.runSingleCommand("ping -c 1 %s" % node.ext_ip_address )
+        return rc

@@ -323,6 +323,8 @@ class OFSTestConfig(object):
         # Run the kernel module vfs tests?
         self.run_vfs_tests = False # Web Interface: user
         
+        self.run_vfs_benchmarks = False # Web Interface: user
+        
         ## @var run_fuse_tests
         # Run the fuse vfs tests?
         self.run_fuse_tests = False # Web Interface: user
@@ -331,6 +333,8 @@ class OFSTestConfig(object):
         # Run OrangeFS ROM-IO tests.
         self.run_mpi_tests = False # Web Interface: user
         
+        self.run_mpi_benchmarks = False # Web Interface: user
+        
         ## @var run_hadoop_tests
         # Run OrangeFS Hadoop tests
         self.run_hadoop_tests = False # Web Interface: user
@@ -338,8 +342,7 @@ class OFSTestConfig(object):
         ## @var cloud_subnet
         # cloud subnet ID for primary network interface
         #self.cloud_subnet=None
-        #TODO: Remove hardcoded definition. 
-        self.cloud_subnet="03de6c88-231c-4c2c-9bfd-3c2d17604a82"
+        self.cloud_subnet=None
         
         self.cloud_type = 'EC2' # Web Interface: auto
         self.nova_password_file=None # Web Interface: auto
@@ -578,6 +581,10 @@ class OFSTestConfig(object):
         if temp != None:
             self.run_vfs_tests = temp
         
+        temp = d.get('run_vfs_benchmarks')
+        if temp != None:
+            self.run_vfs_benchmarks = temp
+        
         temp = d.get('run_sysint_tests')
         if temp != None:
             self.run_sysint_tests = temp
@@ -585,6 +592,10 @@ class OFSTestConfig(object):
         temp = d.get('run_mpi_tests')
         if temp != None:
             self.run_mpi_tests = temp
+        
+        temp = d.get('run_mpi_benchmarks')
+        if temp != None:
+            self.run_mpi_benchmarks = temp
         
         temp = d.get('run_usrint_tests')
         if temp != None:
