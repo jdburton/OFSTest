@@ -233,6 +233,8 @@ class OFSTestNode(object):
         self.heidelberg_installation_location = ""
         self.stadler_installation_location = ""
         self.mpiiotest_installation_location = ""
+        self.mpi_tile_io_installation_location = ""
+        self.npb_mpi_installation_location = ""
         
         
         ## @var mpi_nfs_directory
@@ -1201,6 +1203,46 @@ class OFSTestNode(object):
         
         self.heidelberg_installation_location = build_location+"/heidelberg-IO"
 
+        #mpi-tile-io
+
+        rc = self.runSingleCommand("wget --quiet %s/mpi-tile-io-omnibond.tar.gz" % self.url_base)
+
+        if rc != 0:
+            print "Warning: Could not download mpi-tile-io"
+        
+        
+        rc = self.runSingleCommand("tar -zxf mpi-tile-io-omnibond.tar.gz")
+        if rc != 0:
+            print "Warning: Could not untar mpi-tile-io"
+        
+        rc = self.changeDirectory(build_location+"/mpi-tile-io") 
+        
+        rc = self.runSingleCommand("make" % self.openmpi_installation_location)
+        if rc != 0:
+            print "Warning: Could not make simul"
+            
+        self.mpi_tile_io_installation_location = build_location+"/mpi-tile-io"
+
+        #NPB
+
+        rc = self.runSingleCommand("wget --quiet %s/NPB3.3.1-omnibond.tar.gz" % self.url_base)
+
+        if rc != 0:
+            print "Warning: Could not download NPB3.3.1"
+        
+        
+        rc = self.runSingleCommand("tar -zxf NPB3.3.1-omnibond.tar.gz")
+        if rc != 0:
+            print "Warning: Could not untar NPB3.3.1"
+        
+        rc = self.changeDirectory(build_location+"/NPB3.3.1/NPB3.3-MPI") 
+        
+        rc = self.runSingleCommand("make bt NPROCS=4 CLASS=C SUBTYPE=FULL" % self.openmpi_installation_location)
+        if rc != 0:
+            print "Warning: Could not make NPB3.3.1"
+            
+        self.npb_mpi_installation_location = build_location+"/NPB3.3.1/NPB3.3-MPI"
+
 
 #    Will be automatically built with other OrangeFS tests.
 #         rc = self.runSingleCommand("mkdir -p %s/mpi-io-test" % build_location)
@@ -1981,6 +2023,8 @@ class OFSTestNode(object):
         destination_node.heidelberg_installation_location = self.heidelberg_installation_location
         destination_node.mpiiotest_installation_location = self.mpiiotest_installation_location
         destination_node.stadler_installation_location = self.stadler_installation_location
+        destination_node.mpi_tile_io_installation_location = self.mpi_tile_io_installation_location
+        destination_node.npb_mpi_installation_location = self.npb_mpi_installation_location
         destination_node.created_openmpihosts = self.created_openmpihosts
 
         
@@ -1989,58 +2033,70 @@ class OFSTestNode(object):
             rc = self.copyToRemoteNode(self.openmpi_source_location+"/", destination_node, self.openmpi_source_location, True)
             
         
-        if rc == 0:
-            rc = destination_node.runSingleCommand("mkdir -p " + destination_node.openmpi_installation_location)
+        rc = destination_node.runSingleCommand("mkdir -p " + destination_node.openmpi_installation_location)
+        
         if rc == 0:
             rc = self.copyToRemoteNode(self.openmpi_installation_location+"/", destination_node, self.openmpi_installation_location, True)
         
-        if rc == 0:
-            rc = destination_node.runSingleCommand("mkdir -p \\`dirname %s\\`" % destination_node.openmpi_installation_location)
+        rc = destination_node.runSingleCommand("mkdir -p \\`dirname %s\\`" % destination_node.openmpi_installation_location)
             
         if rc == 0:
             rc = self.copyToRemoteNode(self.created_openmpihosts, destination_node, self.created_openmpihosts, False)
             
 
-        if rc == 0:
-            rc = destination_node.runSingleCommand("mkdir -p " + destination_node.ior_installation_location)
+        rc = destination_node.runSingleCommand("mkdir -p " + destination_node.ior_installation_location)
             
         if rc == 0:
             rc = self.copyToRemoteNode(self.ior_installation_location+"/", destination_node, self.ior_installation_location, True)
         
-        if rc == 0:
-            rc = destination_node.runSingleCommand("mkdir -p " + destination_node.mdtest_installation_location)
+        rc = destination_node.runSingleCommand("mkdir -p " + destination_node.mdtest_installation_location)
             
         if rc == 0:
             rc = self.copyToRemoteNode(self.mdtest_installation_location+"/", destination_node, self.mdtest_installation_location, True)
         
-        if rc == 0:
-            rc = destination_node.runSingleCommand("mkdir -p " + destination_node.simul_installation_location)
+        rc = destination_node.runSingleCommand("mkdir -p " + destination_node.simul_installation_location)
             
         if rc == 0:
             rc = self.copyToRemoteNode(self.simul_installation_location+"/", destination_node, self.simul_installation_location, True)
         
         
-        if rc == 0:
-            rc = destination_node.runSingleCommand("mkdir -p " + destination_node.miranda_io_installation_location)
+        rc = destination_node.runSingleCommand("mkdir -p " + destination_node.miranda_io_installation_location)
             
         if rc == 0:
             rc = self.copyToRemoteNode(self.miranda_io_installation_location+"/", destination_node, self.miranda_io_installation_location, True)
         
-        if rc == 0:
-            rc = destination_node.runSingleCommand("mkdir -p " + destination_node.heidelberg_installation_location)
+        rc = destination_node.runSingleCommand("mkdir -p " + destination_node.heidelberg_installation_location)
             
         if rc == 0:
             rc = self.copyToRemoteNode(self.heidelberg_installation_location+"/", destination_node, self.heidelberg_installation_location, True)
         
 
-        if rc == 0:
-            rc = destination_node.runSingleCommand("mkdir -p " + destination_node.stadler_installation_location)
+        
+        rc = destination_node.runSingleCommand("mkdir -p " + destination_node.stadler_installation_location)
             
         if rc == 0:
             rc = self.copyToRemoteNode(self.stadler_installation_location+"/", destination_node, self.stadler_installation_location, True)
         
         
+        rc = destination_node.runSingleCommand("mkdir -p " + destination_node.stadler_installation_location)
+            
+        if rc == 0:
+            rc = self.copyToRemoteNode(self.stadler_installation_location+"/", destination_node, self.stadler_installation_location, True)
         
+        rc = destination_node.runSingleCommand("mkdir -p " + destination_node.stadler_installation_location)
+            
+        if rc == 0:
+            rc = self.copyToRemoteNode(self.stadler_installation_location+"/", destination_node, self.stadler_installation_location, True)
+        
+        rc = destination_node.runSingleCommand("mkdir -p " + destination_node.mpi_tile_io_installation_location)
+            
+        if rc == 0:
+            rc = self.copyToRemoteNode(self.mpi_tile_io_installation_location+"/", destination_node, self.mpi_tile_io_installation_location, True)
+        
+        rc = destination_node.runSingleCommand("mkdir -p " + destination_node.npb_mpi_installation_location)
+            
+        if rc == 0:
+            rc = self.copyToRemoteNode(self.npb_mpi_installation_location+"/", destination_node, self.npb_mpi_installation_location, True)
         
         
         

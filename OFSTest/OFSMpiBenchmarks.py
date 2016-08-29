@@ -422,8 +422,84 @@ def mpi_unbalanced_test(testing_node,output=[]):
     
     return rc
 
+##
+#
+# @fn mpi_tile_io(testing_node,output=[]):
+#
+# @brief This is the mpi_tile_io test test.
+# @param testing_node OFSTestNode on which tests are run.
+# @param output Array that holds output from commands. Passed by reference. 
+#   
+# @return 0 Test ran successfully
+# @return Not 0 Test failed
+#
+#
+
+def mpi_tile_io(testing_node,output=[]):
+
+    #/opt/mpi/openmpi-1.6.5/ompi/mca/io/romio/romio/test
+    
+    rc = testing_node.changeDirectory("%s" % testing_node.ofs_mount_point)
+    np = testing_node.number_mpi_slots
+    testing_node.runSingleCommand("mkdir -p %s/mpi_tile_io" % testing_node.ofs_mount_point)
+    
+    tiles_y = 1
+    if (int(np) > 1):
+        tiles_y =  int(np)/2
+    
+    time.sleep(5)
+    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/mpi-tile-io --nr_tiles_x 2 --nr_tiles_y %d --sz_tile_x 1000 --sz_tile_y 1000 --sz_element 2048 --filename %s/mpi-tile-io/tilefile --collective" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.mpi_tile_io_installation_location,tiles_y,testing_node.ofs_mount_point),output)
+    
+    time.sleep(30)
+    #TODO: Compare actual results with expected.
+    print output[1]
+    print output[2]
+
+    
+    return rc
 
 
+##
+#
+# @fn npb_mpi(testing_node,output=[]):
+#
+# @brief This is the mpi part of the NPB test.
+# @param testing_node OFSTestNode on which tests are run.
+# @param output Array that holds output from commands. Passed by reference. 
+#   
+# @return 0 Test ran successfully
+# @return Not 0 Test failed
+#
+#
+
+def npb_mpi(testing_node,output=[]):
+
+    #/opt/mpi/openmpi-1.6.5/ompi/mca/io/romio/romio/test
+    
+    rc = testing_node.changeDirectory("%s" % testing_node.ofs_mount_point)
+    np = testing_node.number_mpi_slots
+    testing_node.runSingleCommand("mkdir -p %s/npb_mpi" % testing_node.ofs_mount_point)
+    testing_node.runSingleCommand("cp %s/BT/inputbt.data.sample %s/npb_mpi/inputbt.data" % (testing_node.nbp_mpi_installation_location,testing_node.ofs_mount_point))
+    
+    sq_np = 1
+    if (int(np) >= 4):
+        sq_np = 4
+    if (int(np) >= 9):
+        sq_np = 9
+    if (int(np) >= 16):
+        sq_np = 16
+     
+    
+    time.sleep(5)
+    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %d --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/bin/bt.C.4.mpi_io_full" % (testing_node.openmpi_installation_location,sq_np,testing_node.created_openmpihosts,testing_node.nbp_mpi_installation_location),output)
+    
+    time.sleep(30)
+    #TODO: Compare actual results with expected.
+    print output[1]
+    print output[2]
+
+    
+    return rc
 
 
 tests = [
@@ -431,11 +507,14 @@ tests = [
          mpi_md_test,
          multi_md_test,
          multi_md_test_size_sweep,
-         mpi_unbalanced_test, 
+         mpi_unbalanced_test,
+
          IOR_single_posix,
          IOR_single_mpiio,
          IOR_posix,
-         IOR_mpiio       
+         IOR_mpiio,
+         npb_mpi,
+         mpi_tile_io       
          
           ]
 
