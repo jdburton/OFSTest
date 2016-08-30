@@ -2187,6 +2187,7 @@ class OFSTestNode(object):
         
         # Add each ofs host to the string of hosts.
         number_metadata_servers_configured = 0
+        number_data_servers_configured = 0
                
         for ofs_host in ofs_hosts_v:
             if number_metadata_servers_configured < number_metadata_servers:
