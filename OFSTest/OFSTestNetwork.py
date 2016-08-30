@@ -716,12 +716,12 @@ class OFSTestNetwork(object):
 
  
        
-    def configureOFSServer(self,ofs_fs_name,master_node=None,node_list=None,ofs_data_location="",ofs_metadata_location="",pvfs2genconfig_opts="",security=None,number_metadata_servers=1,dedicated_client=False,servers_per_node=1):
+    def configureOFSServer(self,ofs_fs_name,master_node=None,node_list=None,ofs_data_location="",ofs_metadata_location="",pvfs2genconfig_opts="",security=None,number_metadata_servers=1,dedicated_client=False,servers_per_node=1,number_data_servers=None):
         if node_list is None:
             node_list = self.network_nodes
         if master_node is None:
             master_node = node_list[0]
-        return master_node.configureOFSServer(ofs_hosts_v=node_list,ofs_fs_name=ofs_fs_name,ofs_data_location=ofs_data_location,ofs_metadata_location=ofs_metadata_location,configuration_options=pvfs2genconfig_opts,security=security,number_metadata_servers=number_metadata_servers,dedicated_client=dedicated_client,servers_per_node=servers_per_node)
+        return master_node.configureOFSServer(ofs_hosts_v=node_list,ofs_fs_name=ofs_fs_name,ofs_data_location=ofs_data_location,ofs_metadata_location=ofs_metadata_location,configuration_options=pvfs2genconfig_opts,security=security,number_metadata_servers=number_metadata_servers,dedicated_client=dedicated_client,servers_per_node=servers_per_node,number_data_servers=number_data_servers)
 
    
     ##    

@@ -2155,9 +2155,11 @@ class OFSTestNode(object):
       
     
        
-    def configureOFSServer(self,ofs_hosts_v,ofs_fs_name,configuration_options="",ofs_source_location="",ofs_data_location="",ofs_metadata_location="",ofs_conf_file=None,security=None,number_metadata_servers=1,dedicated_client=False,servers_per_node=1):
+    def configureOFSServer(self,ofs_hosts_v,ofs_fs_name,configuration_options="",ofs_source_location="",ofs_data_location="",ofs_metadata_location="",ofs_conf_file=None,security=None,number_metadata_servers=1,dedicated_client=False,servers_per_node=1,number_data_servers=None):
         
-            
+        if number_data_servers is None:
+            number_data_servers = len(ofs_hosts_v)
+                
         self.ofs_fs_name=ofs_fs_name
         
         self.changeDirectory(self.ofs_installation_location)
@@ -2175,7 +2177,10 @@ class OFSTestNode(object):
         # sanity check
         if (number_metadata_servers > len(ofs_hosts_v)):
             number_metadata_servers = len(ofs_hosts_v)
-        
+
+        # sanity check
+        if (number_data_servers > len(ofs_hosts_v)):
+            number_data_servers = len(ofs_hosts_v)        
         # ofs_hosts is a list of ofs hosts separated by white space.
         ofs_host_str = ""
         metadata_host_str = ""
@@ -2187,15 +2192,17 @@ class OFSTestNode(object):
             if number_metadata_servers_configured < number_metadata_servers:
                 metadata_host_str = metadata_host_str+ofs_host.hostname + ":%d," % self.ofs_tcp_port
                 number_metadata_servers_configured+=1
-            else:   
-                
+        
+        for ofs_host in reversed(ofs_hosts_v):
+            if number_data_servers_configured < number_data_servers:
                 ofs_host_port_str = ""
                 current_port = self.ofs_tcp_port
                 for i in range(0,servers_per_node):
                     ofs_host_port_str = "%s%s:%d," % (ofs_host_port_str,ofs_host.hostname,current_port)
                     current_port += 1
-                    
+                        
                 ofs_host_str = ofs_host_str+ofs_host_port_str
+            
         # sanity check.
         if ofs_host_str == "":
             ofs_host_str = metadata_host_str

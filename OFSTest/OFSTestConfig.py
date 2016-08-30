@@ -356,6 +356,7 @@ class OFSTestConfig(object):
         
         self.dedicated_metadata_server = False
         self.number_metadata_servers = 1
+        self.number_data_servers = None
         self.ofs_metadata_location = ""
         self.ofs_data_location = ""
         self.restart_ofs = False
@@ -813,6 +814,10 @@ class OFSTestConfig(object):
         temp = d.get('number_metadata_servers')
         if temp != None:
             self.number_metadata_servers = temp
+
+        temp = d.get('number_data_servers')
+        if temp != None:
+            self.number_data_servers = temp
 
         temp = d.get('dedicated_client')
         if temp != None:
