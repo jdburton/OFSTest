@@ -380,7 +380,7 @@ class OFSTestMain(object):
                                                  security=self.config.ofs_security_mode,
                                                  ofs_data_location = self.config.ofs_data_location,
                                                  ofs_metadata_location = self.config.ofs_metadata_location,
-                                                 dedicated_metadata_server=self.config.dedicated_metadata_server,
+                                                 number_metadata_servers=self.config.number_metadata_servers,
                                                  dedicated_client=self.config.dedicated_client,
                                                  servers_per_node=self.config.servers_per_node
                                                  )

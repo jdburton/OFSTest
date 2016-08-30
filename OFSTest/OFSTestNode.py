@@ -2155,7 +2155,7 @@ class OFSTestNode(object):
       
     
        
-    def configureOFSServer(self,ofs_hosts_v,ofs_fs_name,configuration_options="",ofs_source_location="",ofs_data_location="",ofs_metadata_location="",ofs_conf_file=None,security=None,dedicated_metadata_server=False,dedicated_client=False,servers_per_node=1):
+    def configureOFSServer(self,ofs_hosts_v,ofs_fs_name,configuration_options="",ofs_source_location="",ofs_data_location="",ofs_metadata_location="",ofs_conf_file=None,security=None,number_metadata_servers=1,dedicated_client=False,servers_per_node=1):
         
             
         self.ofs_fs_name=ofs_fs_name
@@ -2172,17 +2172,21 @@ class OFSTestNode(object):
         else:
             self.ofs_metadata_location = ofs_metadata_location
             
-           
+        # sanity check
+        if (number_metadata_servers > len(ofs_hosts_v)):
+            number_metadata_servers = len(ofs_hosts_v)
+        
         # ofs_hosts is a list of ofs hosts separated by white space.
         ofs_host_str = ""
         metadata_host_str = ""
         
         # Add each ofs host to the string of hosts.
-        
+        number_metadata_servers_configured = 0
                
         for ofs_host in ofs_hosts_v:
-            if dedicated_metadata_server == True and metadata_host_str == "":
-                metadata_host_str = ofs_host.hostname + ":%d" % self.ofs_tcp_port
+            if number_metadata_servers_configured < number_metadata_servers:
+                metadata_host_str = metadata_host_str+ofs_host.hostname + ":%d," % self.ofs_tcp_port
+                number_metadata_servers_configured+=1
             else:   
                 
                 ofs_host_port_str = ""
@@ -2196,12 +2200,11 @@ class OFSTestNode(object):
         if ofs_host_str == "":
             ofs_host_str = metadata_host_str
             
-        if dedicated_metadata_server == False:
-            metadata_host_str = ofs_host_str
-            
         
         #strip the trailing comma
         ofs_host_str = ofs_host_str.rstrip(',')
+        #strip the trailing comma
+        metadata_host_str = metadata_host_str.rstrip(',')
 
         #implement the following command
         '''
