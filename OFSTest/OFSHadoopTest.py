@@ -209,11 +209,11 @@ def mrbench(testing_node,output=[]):
 
 
 
-tests = [ wordcount,
+tests = [ 
+#wordcount,
 TestDFSIO_write,
 TestDFSIO_read,
 TestDFSIO_clean,
-mrbench
-#,
-#terasort_full
+mrbench,
+terasort_full
  ]
