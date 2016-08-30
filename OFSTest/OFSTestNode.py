@@ -1217,9 +1217,9 @@ class OFSTestNode(object):
         
         rc = self.changeDirectory(build_location+"/mpi-tile-io") 
         
-        rc = self.runSingleCommand("make" % self.openmpi_installation_location)
+        rc = self.runSingleCommand("make")
         if rc != 0:
-            print "Warning: Could not make simul"
+            print "Warning: Could not make mpi-tile-io"
             
         self.mpi_tile_io_installation_location = build_location+"/mpi-tile-io"
 
@@ -1237,7 +1237,7 @@ class OFSTestNode(object):
         
         rc = self.changeDirectory(build_location+"/NPB3.3.1/NPB3.3-MPI") 
         
-        rc = self.runSingleCommand("make bt NPROCS=4 CLASS=C SUBTYPE=FULL" % self.openmpi_installation_location)
+        rc = self.runSingleCommand("make bt NPROCS=4 CLASS=C SUBTYPE=FULL")
         if rc != 0:
             print "Warning: Could not make NPB3.3.1"
             
