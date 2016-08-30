@@ -53,20 +53,26 @@ def wordcount(testing_node,output=[]):
     testing_node.runSingleCommand("%s/bin/hadoop dfs -mkdir -p /user/%s/gutenberg" % (testing_node.hadoop_location,testing_node.current_user))
     
     # get the gutenberg files
-    rc = testing_node.runSingleCommand("wget http://www.gutenberg.org/files/5000/5000-8.txt 2>&1 > gutenberg.log")
+    #rc = testing_node.runSingleCommand("wget http://www.gutenberg.org/files/5000/5000-8.txt 2>&1 > gutenberg.log")
+    rc = testing_node.runSingleCommand("wget %s/5000-8.txt 2>&1 > gutenberg.log" % testing_node.url_base)
     if (rc != 0):
         testing_node.runSingleCommand("cat gutenberg.log")
-    rc = testing_node.runSingleCommand("wget http://www.gutenberg.org/files/20417/20417.txt 2>&1 > gutenberg.log")
+    #rc = testing_node.runSingleCommand("wget http://www.gutenberg.org/files/20417/20417.txt 2>&1 > gutenberg.log")
+    rc = testing_node.runSingleCommand("wget %s/20417.txt 2>&1 > gutenberg.log" % testing_node.url_base)
     if (rc != 0):
         testing_node.runSingleCommand("cat gutenberg.log")
-    rc = testing_node.runSingleCommand("wget http://www.gutenberg.org/files/4300/4300.txt 2>&1 > gutenberg.log")
+    #rc = testing_node.runSingleCommand("wget http://www.gutenberg.org/files/4300/4300.txt 2>&1 > gutenberg.log")
+    rc = testing_node.runSingleCommand("wget %s/4300.txt 2>&1 > gutenberg.log" % testing_node.url_base)
     if (rc != 0):
         testing_node.runSingleCommand("cat gutenberg.log")
     
     testing_node.runSingleCommand("%s/bin/hadoop dfs -copyFromLocal /home/%s/gutenberg/* /user/%s/gutenberg" % (testing_node.hadoop_location,testing_node.current_user,testing_node.current_user))
     
+    testing_node.runSingleCommand("wget %s/gutenberg.wc.txt" % testing_node.url_base)
+    testing_node.runSingleCommand("cat gutenberg.wc.txt")
     rc = testing_node.runSingleCommand("%s/bin/hadoop jar %s  wordcount /user/%s/gutenberg /user/%s/gutenberg-output" % (testing_node.hadoop_location,testing_node.hadoop_examples_location,testing_node.current_user,testing_node.current_user),output)
     # TODO: Compare acutal results with expected.
+    
     return rc
 
 ##
@@ -145,13 +151,13 @@ def terasort_full(testing_node,output=[]):
     # generate 5G of data. Not much, but good enough to kick the tires.
     gensize = 50000000 
      
-    rc = testing_node.runSingleCommand("%s/bin/hadoop jar %s  teragen %d /user/%s/terasort1G-input" % (testing_node.hadoop_location,testing_node.hadoop_examples_location,gensize,testing_node.current_user),output)
+    rc = testing_node.runSingleCommand("%s/bin/hadoop jar %s  teragen %d /user/%s/terasort5G-input" % (testing_node.hadoop_location,testing_node.hadoop_examples_location,gensize,testing_node.current_user),output)
     if rc != 0:
         return rc    
-    rc = testing_node.runSingleCommand("%s/bin/hadoop jar %s  terasort /user/%s/terasort1G-input /user/%s/terasort1G-output" % (testing_node.hadoop_location,testing_node.hadoop_examples_location,testing_node.current_user,testing_node.current_user),output)
+    rc = testing_node.runSingleCommand("%s/bin/hadoop jar %s  terasort /user/%s/terasort5G-input /user/%s/terasort5G-output" % (testing_node.hadoop_location,testing_node.hadoop_examples_location,testing_node.current_user,testing_node.current_user),output)
     if rc != 0:
         return rc    
-    rc = testing_node.runSingleCommand("%s/bin/hadoop jar %s  teravalidate /user/%s/terasort1G-output /user/%s/terasort1G-validate" % (testing_node.hadoop_location,testing_node.hadoop_examples_location,testing_node.current_user,testing_node.current_user),output)
+    rc = testing_node.runSingleCommand("%s/bin/hadoop jar %s  teravalidate /user/%s/terasort5G-output /user/%s/terasort5G-validate" % (testing_node.hadoop_location,testing_node.hadoop_examples_location,testing_node.current_user,testing_node.current_user),output)
 
     return rc      
 ##
