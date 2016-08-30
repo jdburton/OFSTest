@@ -1204,6 +1204,7 @@ class OFSTestNode(object):
         self.heidelberg_installation_location = build_location+"/heidelberg-IO"
 
         #mpi-tile-io
+        rc = self.changeDirectory(build_location)
 
         rc = self.runSingleCommand("wget --quiet %s/mpi-tile-io-omnibond.tar.gz" % self.url_base)
 
@@ -1224,6 +1225,7 @@ class OFSTestNode(object):
         self.mpi_tile_io_installation_location = build_location+"/mpi-tile-io"
 
         #NPB
+        rc = self.changeDirectory(build_location)
 
         rc = self.runSingleCommand("wget --quiet %s/NPB3.3.1-omnibond.tar.gz" % self.url_base)
 
