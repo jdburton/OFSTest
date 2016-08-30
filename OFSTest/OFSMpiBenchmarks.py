@@ -448,7 +448,7 @@ def mpi_tile_io(testing_node,output=[]):
         tiles_y =  int(np)/2
     
     time.sleep(5)
-    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/mpi-tile-io --nr_tiles_x 2 --nr_tiles_y %d --sz_tile_x 1000 --sz_tile_y 1000 --sz_element 2048 --filename %s/mpi-tile-io/tilefile --collective" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.mpi_tile_io_installation_location,tiles_y,testing_node.ofs_mount_point),output)
+    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/mpi-tile-io --nr_tiles_x 2 --nr_tiles_y %d --sz_tile_x 1000 --sz_tile_y 1000 --sz_element 2048 --filename %s/mpi_tile_io/tilefile --collective" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.mpi_tile_io_installation_location,tiles_y,testing_node.ofs_mount_point),output)
     
     time.sleep(30)
     #TODO: Compare actual results with expected.
@@ -479,7 +479,7 @@ def npb_mpi(testing_node,output=[]):
     rc = testing_node.changeDirectory("%s" % testing_node.ofs_mount_point)
     np = testing_node.number_mpi_slots
     testing_node.runSingleCommand("mkdir -p %s/npb_mpi" % testing_node.ofs_mount_point)
-    testing_node.runSingleCommand("cp %s/BT/inputbt.data.sample %s/npb_mpi/inputbt.data" % (testing_node.nbp_mpi_installation_location,testing_node.ofs_mount_point))
+    testing_node.runSingleCommand("cp %s/BT/inputbt.data.sample %s/npb_mpi/inputbt.data" % (testing_node.npb_mpi_installation_location,testing_node.ofs_mount_point))
     
     sq_np = 1
     if (int(np) >= 4):
@@ -491,7 +491,7 @@ def npb_mpi(testing_node,output=[]):
      
     
     time.sleep(5)
-    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %d --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/bin/bt.C.4.mpi_io_full" % (testing_node.openmpi_installation_location,sq_np,testing_node.created_openmpihosts,testing_node.nbp_mpi_installation_location),output)
+    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %d --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/bin/bt.C.4.mpi_io_full" % (testing_node.openmpi_installation_location,sq_np,testing_node.created_openmpihosts,testing_node.npb_mpi_installation_location),output)
     
     time.sleep(30)
     #TODO: Compare actual results with expected.
