@@ -203,7 +203,7 @@ def mdtest(testing_node,output=[]):
     rc = testing_node.changeDirectory(testing_node.mdtest_installation_location)
     np = testing_node.number_mpi_slots
     
-    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/mdtest  -n 8192 -w 4194304 -i 1 -d %s/mdtest" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.mdtest_installation_location,testing_node.ofs_mount_point),output)
+    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --map-by node --mca btl_tcp_if_include eth0 %s/mdtest  -n 256 -w 4194304 -i 1 -d %s/mdtest" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.mdtest_installation_location,testing_node.ofs_mount_point),output)
     
     #TODO: Compare actual results with expected.
     time.sleep(30)
