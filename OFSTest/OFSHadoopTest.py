@@ -210,7 +210,8 @@ def mrbench(testing_node,output=[]):
 
 
 tests = [ 
-wordcount,
+
+#wordcount,
 TestDFSIO_write,
 TestDFSIO_read,
 TestDFSIO_clean,

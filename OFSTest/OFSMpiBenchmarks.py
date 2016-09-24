@@ -443,6 +443,7 @@ def mpi_tile_io(testing_node,output=[]):
     rc = testing_node.changeDirectory("%s" % testing_node.ofs_mount_point)
     np = testing_node.number_mpi_slots
     testing_node.runSingleCommand("mkdir -p %s/mpi_tile_io" % testing_node.ofs_mount_point)
+    testing_node.runSingleCommand("touch %s/mpi_tile_io/tilefile" % testing_node.ofs_mount_point)
     
     tiles_y = 1
     if (int(np) > 1):
