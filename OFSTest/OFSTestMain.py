@@ -919,7 +919,7 @@ class OFSTestMain(object):
     def doPostTest(self):
     
         try:
-            if self.config.cloud_delete_after_test or self.config.spot_instance_bid.lower() == "auto" or float(self.config.spot_instance_bid):
+            if self.config.cloud_delete_after_test:
                 print "Test complete. Deleting all cloud nodes."
                 self.terminateAllCloudNodes()
         
