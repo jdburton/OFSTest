@@ -2,7 +2,7 @@
   "variables": {
     "aws_access_key": "{{env `AWS_ACCESS_KEY`}}",
     "aws_secret_key": "{{env `AWS_SECRET_KEY`}}",
-    "aws_source_ami": "{{env `AWS_SOURCE_AMI_UBUNTU_1404`}}",
+    "aws_source_ami": "{{env `AWS_SOURCE_AMI_CENTOS_7`}}",
     "aws_region": "{{env `AWS_REGION`}}",
     "aws_vpc": "{{env `AWS_VPC`}}",
     "aws_subnet": "{{env `AWS_SUBNET`}}",
@@ -15,15 +15,17 @@
     "secret_key": "{{user `aws_secret_key`}}",
     "source_ami": "{{user `aws_source_ami`}}",
     "instance_type": "m4.large",
+    "spot_price" : "auto",
+    "spot_price_auto_product" : "Linux/UNIX (Amazon VPC)",
     "region": "{{user `aws_region`}}",
-    "ami_name": "cloud-ubuntu-14.04-ofstest-new",
+    "ami_name": "cloud-centos7-ml-ofstest-new",
     "vpc_id": "{{user `aws_vpc`}}",
     "subnet_id": "{{user `aws_subnet`}}",
     "security_group_id": "{{user `aws_security_group`}}",
     "associate_public_ip_address": true,
-    "ssh_username": "ubuntu",
-    "ssh_pty": true,
     "ebs_optimized": true,
+    "ssh_username": "centos",
+    "ssh_pty": "true",
     "launch_block_device_mappings": [
       {
         "device_name": "/dev/sda1",
@@ -34,46 +36,52 @@
     ],
     "run_tags": { "Name": "Packer Builder for {{user `user`}}" }
   }],
-    "provisioners": [ 
-      {
-  "type": "shell",
-  "inline": [
-    "while [ ! -f /var/lib/cloud/instance/boot-finished ]; do echo 'Waiting for cloud-init...'; sleep 1; done"
-	  ]
-	},
-  {
-    "type": "shell",
-    "inline": [
-      "set -x",
-	  "sudo apt-get update",
-	  "sudo add-apt-repository -y ppa:saltstack/salt",
-	  "sudo apt-get update",
-	  "sudo apt-get -y install salt-master salt-minion salt-syndic salt-ssh wget perl gcc",
-      "sudo apt-get -y dist-upgrade",
-	  "sudo chmod -R a+w /opt",
-	  "mkdir -p /opt/mpi",
-      "sudo /sbin/reboot"
+  "provisioners": [
 
-    ]
+  {
+    "type": "file",
+    "source": "./etc/epel-release-7-5.noarch.rpm",
+    "destination": "/tmp/epel-release-7-5.noarch.rpm"
   },
-
-  {
-    "type": "salt-masterless",
-    "pause_before": "90s",
-    "bootstrap_args": "",
-    "local_state_tree": "./salt",
-    "minion_config": "./salt/masterMinionConfig",
-    "skip_bootstrap": true
-   },
   {
     "type": "shell",
     "pause_before": "10s",
     "inline": [
-      "sudo chown -R ubuntu:ubuntu /opt",
+      "set -x",
+      "sudo sed -i -e 's/^Defaults.*requiretty/# Defaults requiretty/g' /etc/sudoers",
+      "sudo rpm -Uvh /tmp/epel-release-7-5.noarch.rpm && sudo rm /tmp/epel-release-7-5.noarch.rpm",
+      "sudo rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org",
+      "sudo rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-2.el7.elrepo.noarch.rpm",
+      "sudo yum -y install wget kernel-devel gcc salt-master salt-minion salt-syndic",
+      "sudo yum -y update kernel-devel kernel",
+	  "sudo chmod -R a+w /opt",
+	  "mkdir -p /opt/mpi",
+      "sudo mkdir -p /var/log/journal",
+      "sudo systemd-tmpfiles --create --prefix /var/log/journal",
+      "sudo yum remove -y kernel-tools kernel-tools-libs",
+      "sudo yum install -y --enablerepo=elrepo-kernel kernel-ml kernel-ml-devel kernel-ml-tools kernel-ml-tools-libs",
+      "sudo grub2-set-default 0",
+      "sudo grub2-mkconfig -o /boot/grub2/grub.cfg",    
+      "sudo /sbin/reboot"
+
+    ]
+  },
+  {
+    "type": "salt-masterless",
+    "pause_before": "60s",
+    "bootstrap_args": "",
+    "local_state_tree": "./salt",
+    "minion_config": "./salt/masterMinionConfig",
+    "skip_bootstrap": true
+  },
+  {
+    "type": "shell",
+    "pause_before": "10s",
+    "inline": [
+      "sudo chown -R centos:centos /opt",
       "sudo /sbin/modprobe -v fuse",
       "sudo chmod a+x /bin/fusermount",
       "sudo chmod a+r /etc/fuse.conf"
-
     ]
   }
 

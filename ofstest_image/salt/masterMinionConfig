@@ -1,7 +1,7 @@
 master: 127.0.0.1
 id: saltMasterMinion
 file_client: local
-use_master_when_local: true
+use_master_when_local: false
 state_auto_order: true
 file_roots:
   base:

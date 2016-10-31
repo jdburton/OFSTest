@@ -14,7 +14,9 @@
     "access_key": "{{user `aws_access_key`}}",
     "secret_key": "{{user `aws_secret_key`}}",
     "source_ami": "{{user `aws_source_ami`}}",
-    "instance_type": "t2.medium",
+    "instance_type": "m4.large",
+    "spot_price" : "auto",
+    "spot_price_auto_product" : "SUSE Linux (Amazon VPC)",
     "region": "{{user `aws_region`}}",
     "ami_name": "cloud-sles12-ofstest-new",
     "vpc_id": "{{user `aws_vpc`}}",
@@ -23,11 +25,12 @@
     "associate_public_ip_address": true,
     "ssh_username": "ec2-user",
     "ssh_pty": "true",
+    "ebs_optimized": true,
     "launch_block_device_mappings": [
       {
         "device_name": "/dev/sda1",
         "delete_on_termination": true,
-        "volume_size": 32,
+        "volume_size": 100,
         "volume_type": "gp2"
       }
     ],
@@ -47,6 +50,7 @@
       "sudo zypper --non-interactive  install gcc salt salt-minion salt-master salt-syndic salt-ssh python-singledispatch",
       "sudo systemctl enable salt-master.service",
       "sudo systemctl enable salt-minion.service",
+      "sudo systemctl disable SuSEfirewall2 SuSEfirewall2_init",
       "sudo chmod -R a+w /opt",
       "sudo chmod -R a+w /srv",
       "#sudo ln -s /etc/HOSTNAME /etc/hostname",
@@ -61,11 +65,10 @@
       "type": "shell",
       "pause_before": "10s",
       "inline": [
+        "set -x",
         "sudo bash -c 'echo 0 > /selinux/enforce'",
-        "sudo salt-key -F master",
-        "sudo salt-call --local key.finger",
-        "sudo salt-key -L",
-      	"sudo salt-key -y -A",
+        "sudo systemctl restart salt-master.service",
+        "sudo systemctl restart salt-minion.service",
       	"sudo chmod -R a+w /etc/salt",
         "sudo chmod -R a+w /var/log/salt",
         "sudo chmod -R a+w /var/cache/salt"
