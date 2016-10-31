@@ -377,11 +377,15 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
             count = 0
             set_max = 0
             prices = []
+
+            product_description = "Linux/UNIX (Amazon VPC)"
             
-            
+            if "sles" in image_name: 
+                product_description = "SUSE Linux (Amazon VPC)"
+                
             
             while count < 30:
-                history = self.ec2_connection.get_spot_price_history(start_time=start.strftime("%Y-%m-%dT%H:%M:%S.%fZ"), end_time=end.strftime("%Y-%m-%dT%H:%M:%S.%fZ"), instance_type=flavor_name, product_description="Linux/UNIX",next_token=next_token)
+                history = self.ec2_connection.get_spot_price_history(start_time=start.strftime("%Y-%m-%dT%H:%M:%S.%fZ"), end_time=end.strftime("%Y-%m-%dT%H:%M:%S.%fZ"), instance_type=flavor_name, product_description=product_description,next_token=next_token)
                 prices = prices + [price.price for price in history]
                 next_token = history.next_token
                 count += 1
