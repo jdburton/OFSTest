@@ -212,7 +212,6 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
         
 
         logging.info("EC2 region is %r" % self.ec2_region)
-        logging.info("ec2.connection.EC2Connection(aws_access_key_id=%s,aws_secret_access_key=%s,is_secure=self.ec2_is_secure,port=%r,debug=%r,region=%s,path=%r)" % (self.ec2_access_key,self.ec2_secret_key,self.ec2_port,debug,self.ec2_region,self.ec2_path))
         
         self.ec2_connection = ec2.connection.EC2Connection(aws_access_key_id=self.ec2_access_key,aws_secret_access_key=self.ec2_secret_key,is_secure=self.ec2_is_secure,port=self.ec2_port
         ,debug=debug,region=self.ec2_region,path=self.ec2_path)
@@ -401,15 +400,9 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
             mean = np.mean(prices)
             max_bid = mean + 2*std_dev
             
-
-            #Bid 125% of current price, unless it is above the maximum bid.
-            current_price_bid = current_price * 1.25                
-            if current_price_bid <= max_bid:
-                calculated_bid = current_price_bid 
-                print "Automatic bid %r is 125%% of current %s instance price" % (calculated_bid, current_price)
-            else: 
-                calculated_bid = max_bid
-                print "Maximum automatic bid %r is 2 std_dev over mean of %r spot prices over %d days" % (calculated_bid,n,days_back)
+            # Bid 2 standard deviations over the mean. 
+            calculated_bid = max_bid
+            print "Maximum automatic bid %r is 2 std_dev over mean of %r spot prices over %d days" % (calculated_bid,n,days_back)
             
             #print "n = %r, now = %r, Mean = %r, std_dev = %r, bid (2 stdev) = %r, bid (2.5 stdev) = %r, bid (3 stddev) = %r" % (n,now,mean,std_dev,mean+(2*std_dev),mean+(2.5*std_dev),mean+(3*std_dev))
             spot_instance_bid = str(calculated_bid)
@@ -423,7 +416,8 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
         # If we have a valid bid, use spot instances.
         try:
             float(spot_instance_bid)
-            # TODO: Add support for spot instances
+            # TODO: Add support for placement groups
+            
             requests = self.ec2_connection.request_spot_instances(price=spot_instance_bid,image_id=image.id,count=number_nodes, key_name=self.cloud_instance_key, user_data=None, instance_type=flavor_name, subnet_id=subnet_id, security_group_ids=security_group_ids)
             
             msg = "Requesting %d new %s %s spot requests from AMI %s at %s per node-hour." % (number_nodes,flavor_name,image_name,image_id,spot_instance_bid)
