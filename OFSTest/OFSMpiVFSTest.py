@@ -207,7 +207,7 @@ def mpi_active_delete(testing_node,output=[]):
     
     rc = testing_node.changeDirectory(testing_node.ofs_mount_point)
     testing_node.runSingleCommand("mkdir -p %s/active-delete" % testing_node.ofs_mount_point)
-    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --prefix %s --map-by node %s/test/mpi-active-delete -i 20 -d %s/active-delete" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
+    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --prefix %s --map-by node %s/test/mpi-active-delete -i 20 -d %s/active-delete" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.openmpi_installation_location,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
     
     #TODO: Compare actual results with expected.
     time.sleep(30)
