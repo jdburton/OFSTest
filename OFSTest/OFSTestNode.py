@@ -306,7 +306,7 @@ class OFSTestNode(object):
     # @param self The object pointer
     
 
-    def currentNodeInformation(self):
+    def currentNodeInformation(self,host_prefix="ofsnode"):
         
         self.distro = ""
 
@@ -399,7 +399,7 @@ class OFSTestNode(object):
         # That's a better solution than what Openstack gives us. So why not? 
         if self.is_cloud:
             
-            suse_host = "ofsnode-%03d" % (self.node_number)
+            suse_host = "%s-%03d" % (host_prefix,self.node_number)
             msg = "Renaming %s based node to %s" % (self.distro,suse_host)
             print msg
             logging.info(msg)

@@ -372,6 +372,7 @@ class OFSTestConfig(object):
         self.ofs_database = "lmdb"
         
         self.spot_instance_bid = None
+        self.host_prefix = "ofsnode"
     ##
     #
     # @fn setConfig(self,kwargs={}):
@@ -850,4 +851,8 @@ class OFSTestConfig(object):
         temp = d.get("spot_instance_bid")
         if temp != None:
             self.spot_instance_bid = temp
+        
+        temp = d.get('host_prefix')
+        if temp != None:
+            self.host_prefix = temp
                 

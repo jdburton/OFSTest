@@ -370,14 +370,14 @@ class OFSTestNetwork(object):
     #
 
         
-    def updateCloudNodes(self,node_list=None, custom_kernel=False, kernel_git_location=None, kernel_git_branch=None):
+    def updateCloudNodes(self,node_list=None, custom_kernel=False, kernel_git_location=None, kernel_git_branch=None,host_prefix="ofsnode"):
         # This only updates the Cloud controlled nodes
          
         if node_list is None:
             node_list = self.network_nodes
         
         cloud_nodes = [node for node in self.network_nodes if node.is_cloud == True]
-        self.updateNodes(cloud_nodes,custom_kernel,kernel_git_location,kernel_git_branch)   
+        self.updateNodes(cloud_nodes,custom_kernel,kernel_git_location,kernel_git_branch,host_prefix)   
 
 
     ##
@@ -437,7 +437,7 @@ class OFSTestNetwork(object):
     #    @param self The object pointer
     #    @param node_list List of nodes to update
      
-    def updateNodes(self,node_list=None, custom_kernel=False, kernel_git_location=None, kernel_git_branch=None):
+    def updateNodes(self,node_list=None, custom_kernel=False, kernel_git_location=None, kernel_git_branch=None,host_prefix="ofsnode"):
         if node_list is None:
             node_list = self.network_nodes
             
@@ -460,7 +460,7 @@ class OFSTestNetwork(object):
         for node in node_list:
             # node information may have changed during reboot.
             old_hostname = node.hostname
-            node.currentNodeInformation()
+            node.currentNodeInformation(host_prefix)
             tmp_hostname = node.runSingleCommandBacktick("hostname")
             if tmp_hostname != old_hostname:
                 logging.info( "Hostname changed from %s to %s! Resetting to %s" % (old_hostname,tmp_hostname,old_hostname))
