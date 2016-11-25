@@ -444,8 +444,8 @@ class OFSTestNetwork(object):
         # Run updateNode on the nodes simultaneously. 
         self.runSimultaneousCommands(node_list=node_list,node_function=OFSTestNode.OFSTestNode.updateNode,args=[custom_kernel,kernel_git_location,kernel_git_branch])
         # Wait for reboot
-        print "Waiting 60s for nodes to reboot"
-        time.sleep(60)
+        print "Waiting 180s for nodes to reboot"
+        time.sleep(180)
         
         rc = self.checkExternalConnectivity()
         count = 0
