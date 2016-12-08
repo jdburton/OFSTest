@@ -29,7 +29,7 @@
     "ssh_pty" : true,
     "ssh_timeout": "3m"
    }],
-  "provisioners": [
+   "provisioners": [
 
   {
     "type": "file",
@@ -74,4 +74,3 @@
 
   ]
 }
-   

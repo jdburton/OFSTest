@@ -14,20 +14,23 @@
     "access_key": "{{user `aws_access_key`}}",
     "secret_key": "{{user `aws_secret_key`}}",
     "source_ami": "{{user `aws_source_ami`}}",
-    "instance_type": "m3.large",
+    "instance_type": "m4.large",
+    "spot_price" : "auto",
+    "spot_price_auto_product" : "SUSE Linux (Amazon VPC)",
     "region": "{{user `aws_region`}}",
-    "ami_name": "{{user `user`}}-packer-sles-11-sp4-{{timestamp}}",
+    "ami_name": "cloud-sles11-ofstest-new",
     "vpc_id": "{{user `aws_vpc`}}",
     "subnet_id": "{{user `aws_subnet`}}",
     "security_group_id": "{{user `aws_security_group`}}",
     "associate_public_ip_address": true,
     "ssh_username": "ec2-user",
     "ssh_pty": "true",
+    "ebs_optimized": true,
     "launch_block_device_mappings": [
       {
         "device_name": "/dev/sda1",
         "delete_on_termination": true,
-        "volume_size": 32
+        "volume_size": 100
       }
     ],
     "run_tags": { "Name": "Packer sles11 Builder for {{user `user`}}" }
@@ -38,14 +41,18 @@
     "type": "shell",
     "inline": [
       "set -x",
-      "#sudo zypper --non-interactive up",
-      "sudo zypper --non-interactive --gpg-auto-import-keys  addrepo http://download.opensuse.org/repositories/devel:languages:python/SLE_11_SP3/devel:languages:python.repo",
+	  "sudo zypper --non-interactive --gpg-auto-import-keys  addrepo http://mirrors.vbi.vt.edu/linux/opensuse/repositories/devel:/languages:/python/SLE_11_SP3/devel:languages:python.repo",
+      "#sudo zypper --non-interactive --gpg-auto-import-keys  addrepo http://download.opensuse.org/repositories/devel:/languages:/python/SLE_11_SP4/devel:languages:python.repo",
+      "sudo zypper --non-interactive --gpg-auto-import-keys  addrepo http://download.opensuse.org/repositories/systemsmanagement:/saltstack/SLE_11_SP4/systemsmanagement:saltstack.repo",
       "sudo zypper --non-interactive --gpg-auto-import-keys  refresh",
-      "sudo zypper  --non-interactive dup --from http://download.opensuse.org/repositories/devel:/languages:/python/SLE_11_SP3/",
-      "sudo zypper --non-interactive install python-pip",
-      "sudo pip install salt",
-
-      "#sudo zypper --non-interactive  install python-dmidecode salt salt-minion salt-master salt-syndic salt-ssh",
+      "sudo zypper  --non-interactive dup --from http://mirrors.vbi.vt.edu/linux/opensuse/repositories/devel:/languages:/python/SLE_11_SP3/",
+      "#sudo zypper  --non-interactive dup --from http://download.opensuse.org/repositories/devel:/languages:/python/SLE_11_SP4/",
+      "sudo zypper  --non-interactive dup --from http://download.opensuse.org/repositories/systemsmanagement:/saltstack/SLE_11_SP4/",
+      "sudo zypper --non-interactive up",
+      "sudo zypper --non-interactive  install gcc salt salt-minion salt-master salt-syndic salt-ssh python-singledispatch",
+      "sudo chkconfig SuSEfirewall2_setup off",
+      "sudo chkconfig salt-master on",
+      "sudo chkconfig salt-minion on",
       "sudo chmod -R a+w /opt",
       "sudo chmod -R a+w /srv",
       "sudo ln -s /etc/HOSTNAME /etc/hostname",
@@ -62,6 +69,20 @@
     "local_state_tree": "./salt",
     "minion_config": "./salt/masterMinionConfig",
     "skip_bootstrap": true
-  }
+  },
+    {
+      "type": "shell",
+      "pause_before": "10s",
+      "inline": [
+        "sudo bash -c 'echo 0 > /selinux/enforce'",
+        "sudo cp /boot/config-`uname -r` /usr/src/linux-`uname -r | sed s/-[\\d].*//`/.config",
+        "cd /usr/src/linux-`uname -r | sed s/-[\\d].*//`; sudo make oldconfig && sudo make modules_prepare && sudo make prepare",
+        "sudo ln -s /lib/modules/`uname -r`/build/Module.symvers /lib/modules/`uname -r`/source",
+        "sudo /sbin/modprobe -v fuse",
+        "sudo chmod -R a+w /opt",
+        "ls -l /home/ec2-user",
+        "sudo chown -R ec2-user /opt"
+      ]
+    }
   ]
 }

@@ -15,6 +15,8 @@
     "secret_key": "{{user `aws_secret_key`}}",
     "source_ami": "{{user `aws_source_ami`}}",
     "instance_type": "m4.large",
+    "spot_price" : "auto",
+    "spot_price_auto_product" : "Linux/UNIX (Amazon VPC)",
     "region": "{{user `aws_region`}}",
     "ami_name": "cloud-ubuntu-16.04-ofstest-new",
     "vpc_id": "{{user `aws_vpc`}}",

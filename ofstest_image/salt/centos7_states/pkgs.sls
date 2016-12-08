@@ -46,6 +46,7 @@ orangefs_depends:
       - apr-devel
       - httpd-devel
       - pam-devel
+      - xfsprogs-devel
 
 orangefs_hadoop_depends:
   pkg.installed:

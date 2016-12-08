@@ -14,16 +14,18 @@
     "access_key": "{{user `aws_access_key`}}",
     "secret_key": "{{user `aws_secret_key`}}",
     "source_ami": "{{user `aws_source_ami`}}",
-    "instance_type": "t2.medium",
+    "instance_type": "m4.large",
+    "spot_price" : "auto",
+    "spot_price_auto_product" : "SUSE Linux (Amazon VPC)",
     "region": "{{user `aws_region`}}",
-    "ami_name": "cloud-opensuse-42.1-ofstest-new",
+    "ami_name": "cloud-sles11-ofstest-new",
     "vpc_id": "{{user `aws_vpc`}}",
     "subnet_id": "{{user `aws_subnet`}}",
     "security_group_id": "{{user `aws_security_group`}}",
     "associate_public_ip_address": true,
     "ssh_username": "root",
     "ssh_pty": "true",
-    "enhanced_networking": true,
+    "ebs_optimized": true,
     "launch_block_device_mappings": [
       {
         "device_name": "/dev/sda1",
@@ -40,8 +42,9 @@
       "pause_before": "10s",
       "inline": [
         "sudo zypper --non-interactive install gcc salt salt-cloud salt-minion salt-master salt-syndic salt-ssh",
-        "sudo salt-call --local grains.items",
+		"useradd -g users -p `date | md5sum` -d /home/ec2-user -m ec2-user"
         "sudo cat /etc/passwd",
+        "sudo cat /etc/sudoers",
         "mkdir -p /opt/mpi",
         "sudo chmod -R a+w /opt",
         "sudo /sbin/reboot"
