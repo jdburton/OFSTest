@@ -39,20 +39,14 @@
   "provisioners": [
 
   {
-    "type": "file",
-    "source": "./etc/epel-release-7-5.noarch.rpm",
-    "destination": "/tmp/epel-release-7-5.noarch.rpm"
-  },
-  {
     "type": "shell",
     "pause_before": "10s",
     "inline": [
       "set -x",
       "sudo sed -i -e 's/^Defaults.*requiretty/# Defaults requiretty/g' /etc/sudoers",
-      "sudo rpm -Uvh /tmp/epel-release-7-5.noarch.rpm && sudo rm /tmp/epel-release-7-5.noarch.rpm",
       "sudo rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org",
       "sudo rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-2.el7.elrepo.noarch.rpm",
-      "sudo yum -y install wget gcc salt-master salt-minion salt-syndic",
+      "sudo yum -y install wget epel-release gcc salt-master salt-minion salt-syndic",
       "sudo yum -y update",
 	  "sudo chmod -R a+w /opt",
 	  "mkdir -p /opt/mpi",

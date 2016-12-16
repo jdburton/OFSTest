@@ -15,6 +15,6 @@ cd /opt/orangefs_src
 gcc --version
 ./configure --with-db-backend=bdb --prefix=/opt/orangefs --with-db=/opt/db4 --enable-strict --enable-shared --enable-fuse && \
 
-make && \
+make -j$(nproc) && \
 make install
 
