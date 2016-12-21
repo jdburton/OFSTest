@@ -130,16 +130,20 @@ class OFSTestMain(object):
 
     # if the configuration says that we need to create new Cloud nodes, 
         # do it.
+        rc = 0
         if self.config.number_new_cloud_nodes > 0:
-            self.setupNewCloudCluster()
+            rc = self.setupNewCloudCluster()
         # If config.node_ip_addresses > 0, then we are dealing with existing 
         # nodes. Add them to the virtual cluster.
         elif len(self.config.node_ip_addresses) > 0:
-            self.setupExistingCluster()
+            rc = self.setupExistingCluster()
         
         else:
             print "Cannot create test cluster. %d new cloud nodes and %d existing nodes specified" % (self.config.number_new_cloud_nodes,len(self.config.node_ip_addresses))
+            rc = -999
         
+        if rc is not None and rc != 0:
+            return rc
         
         # TODO: Make this smart enough to return success or failure.
         
@@ -269,13 +273,17 @@ class OFSTestMain(object):
         print ""
         print "==================================================================="
         print "Updating New Nodes (This may take awhile...)"
-        self.ofs_network.updateCloudNodes(custom_kernel=self.config.custom_kernel,kernel_git_location=self.config.kernel_git_location, kernel_git_branch=self.config.kernel_git_branch,host_prefix=self.config.host_prefix)
+        rc = self.ofs_network.updateCloudNodes(custom_kernel=self.config.custom_kernel,kernel_git_location=self.config.kernel_git_location, kernel_git_branch=self.config.kernel_git_branch,host_prefix=self.config.host_prefix)
  
+        #TODO: Add useful return codes for all function calls.
+        if rc != 0: 
+            return rc
  
         print "===========================================================" 
         print "Installing required OrangeFS software from "+ self.config.url_base
         self.ofs_network.setUrlBase(self.config.url_base)
-       
+ 
+        return 0
 
 #                 # Install software required to compile and run OFS and all tests.
 #         print ""
@@ -315,6 +323,8 @@ class OFSTestMain(object):
         print "Installing required OrangeFS software from "+ self.config.url_base
         self.ofs_network.setUrlBase(self.config.url_base)
 
+        #TODO: Make this return something useful.
+        return 0
 
     ##
     # @fn setupOFS(self):      

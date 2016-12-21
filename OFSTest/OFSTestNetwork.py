@@ -377,7 +377,7 @@ class OFSTestNetwork(object):
             node_list = self.network_nodes
         
         cloud_nodes = [node for node in self.network_nodes if node.is_cloud == True]
-        self.updateNodes(cloud_nodes,custom_kernel,kernel_git_location,kernel_git_branch,host_prefix)   
+        return self.updateNodes(cloud_nodes,custom_kernel,kernel_git_location,kernel_git_branch,host_prefix)   
 
 
     ##
@@ -455,6 +455,9 @@ class OFSTestNetwork(object):
             time.sleep(10)
             rc = self.checkExternalConnectivity()
         
+        if rc != 0:
+            return rc
+        
         print "Nodes rebooted."
         # workaround for strange cuer1 issue where hostname changes on reboot.
         for node in node_list:
@@ -465,7 +468,8 @@ class OFSTestNetwork(object):
             if tmp_hostname != old_hostname:
                 logging.info( "Hostname changed from %s to %s! Resetting to %s" % (old_hostname,tmp_hostname,old_hostname))
                 node.runSingleCommandAsRoot("hostname %s" % old_hostname)
-                
+        
+        return 0
     
     ##
     # @fn installRequiredSoftware(self,node_list=None):
