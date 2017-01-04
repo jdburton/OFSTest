@@ -423,7 +423,8 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
             
             msg = "Requesting %d new %s %s spot requests from AMI %s at %s per node-hour." % (number_nodes,flavor_name,image_name,image_id,spot_instance_bid)
             print msg
-            logging.info(msg)        
+            logging.info(msg)   
+            time.sleep(10)     
             fulfilled_requests = [r for r in requests if r.instance_id is not None]
 
             print "Waiting up to 1 hour for spot requests"
@@ -450,12 +451,13 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
                 reservations = self.ec2_connection.get_all_reservations(instance_ids=spot_instance_ids)
                 count += 1
                 time.sleep(5)
+                print reservations
                 
             new_instances = [spot_res.instances[0] for spot_res in reservations]
             
             print spot_instance_ids
             
-            print reservations
+            
             
             print new_instances
             
