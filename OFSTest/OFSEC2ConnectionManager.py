@@ -446,11 +446,11 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
             reservations = self.ec2_connection.get_all_reservations(instance_ids=spot_instance_ids)
             new_instances = [spot_res.instances[0] for spot_res in reservations]
             
-            pprint(spot_instance_ids.__dict__)
+            print spot_instance_ids
             
-            pprint(reservations.__dict__)
+            print reservations
             
-            pprint(new_instances.__dict__)
+            print new_instances
             
 
         # If the bid is invalid, then use standard instances
