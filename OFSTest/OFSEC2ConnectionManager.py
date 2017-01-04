@@ -424,7 +424,6 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
             msg = "Requesting %d new %s %s spot requests from AMI %s at %s per node-hour." % (number_nodes,flavor_name,image_name,image_id,spot_instance_bid)
             print msg
             logging.info(msg)        
-            
             fulfilled_requests = [r for r in requests if r.instance_id is not None]
 
             print "Waiting up to 1 hour for spot requests"
@@ -446,6 +445,13 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
             spot_instance_ids = [r.instance_id for r in fulfilled_requests]
             reservations = self.ec2_connection.get_all_reservations(instance_ids=spot_instance_ids)
             new_instances = [spot_res.instances[0] for spot_res in reservations]
+            
+            pprint(spot_instance_ids.__dict__)
+            
+            pprint(reservations.__dict__)
+            
+            pprint(new_instances.__dict__)
+            
 
         # If the bid is invalid, then use standard instances
         except ValueError:
