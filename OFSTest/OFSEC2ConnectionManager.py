@@ -443,7 +443,14 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
                 return new_instances
             
             spot_instance_ids = [r.instance_id for r in fulfilled_requests]
-            reservations = self.ec2_connection.get_all_reservations(instance_ids=spot_instance_ids)
+            
+            reservations = []
+            count = 0
+            while len(reservations) < number_nodes  and count < 360:
+                reservations = self.ec2_connection.get_all_reservations(instance_ids=spot_instance_ids)
+                count += 1
+                time.sleep(5)
+                
             new_instances = [spot_res.instances[0] for spot_res in reservations]
             
             print spot_instance_ids
