@@ -415,7 +415,7 @@ class OFSTestNetwork(object):
                 node.number_mpi_slots += mpi_slots
                 # can we ping the node?
                 #print "Pinging %s from local node" % n2.hostname
-                rc = node.runSingleCommand("ping -c 1 %s" % n2.hostname)
+                rc = node.runSingleCommandAsRoot("ping -c 1 %s" % n2.hostname)
                 # if not, add to the /etc/hosts file
                 if rc != 0:
                     logging.info("Could not ping %s at %s from %s. Manually adding to /etc/hosts" % (n2.hostname,n2.ip_address,node.hostname))
@@ -1610,7 +1610,7 @@ class OFSTestNetwork(object):
         failed = 0
         for srcnode in self.network_nodes:
             for destnode in self.network_nodes:
-                rc = srcnode.runSingleCommand("ping -c 1 %s" % destnode.hostname)
+                rc = srcnode.runSingleCommandAsRoot("ping -c 1 %s" % destnode.hostname)
                 if rc != 0:
                     print "Could not ping %s from %s." % (destnode.hostname,srcnode.hostname)
                     failed = failed + 1
@@ -1624,5 +1624,5 @@ class OFSTestNetwork(object):
     def checkExternalConnectivity(self):
         rc = 0
         for node in self.network_nodes:
-            rc += self.local_master.runSingleCommand("ping -c 1 %s" % node.ext_ip_address )
+            rc += self.local_master.runSingleCommandAsRoot("ping -c 1 %s" % node.ext_ip_address )
         return rc
