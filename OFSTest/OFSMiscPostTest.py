@@ -109,11 +109,11 @@ def dmesg(testing_node,output=[]):
 
 def server_log(testing_node,output=[]):
  
-    rc = testing_node.runSingleCommand("ls -l /opt/orangefs; cat %s/pvfs2-server-%s.log*" % (testing_node.ofs_installation_location,testing_node.ofs_branch),output)
+    rc = testing_node.runSingleCommand("cat `ls %s/pvfs2-server*log*`" % (testing_node.ofs_installation_location,testing_node.ofs_branch),output)
     return 0
 
 
 tests = [ checkSHM, 
          dmesg, 
-         #server_log 
+         server_log 
          ]
