@@ -109,7 +109,7 @@ def dmesg(testing_node,output=[]):
 
 def server_log(testing_node,output=[]):
  
-    rc = testing_node.runSingleCommand("cat `ls %s/pvfs2-server*log*`" % (testing_node.ofs_installation_location,testing_node.ofs_branch),output)
+    rc = testing_node.runSingleCommand("cat `ls %s/pvfs2-server*log*`" % testing_node.ofs_installation_location,output)
     return 0
 
 
