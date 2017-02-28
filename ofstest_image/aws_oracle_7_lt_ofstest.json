@@ -49,17 +49,23 @@
     "inline": [
       "set -x",
       "sudo sed -i -e 's/^Defaults.*requiretty/# Defaults requiretty/g' /etc/sudoers",
-      "sudo rpm -Uvh /tmp/epel-release-7-5.noarch.rpm && sudo rm /tmp/epel-release-7-5.noarch.rpm",
-      "ps -ef | grep yum",
       "echo 'yum is updating. ignore these errors'",
-      "sudo yum -y install wget kernel-uek-devel gcc salt-master salt-minion salt-syndic",
-      "sudo yum -y update kernel-uek-devel kernel-uek kernel-uek-headers",
-      
+      "sleep 120",
+      "sudo yum -y install wget epel-release",      
+      "sudo yum -y install gcc salt-master salt-minion salt-syndic",
+      "sudo rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org",
+      "sudo rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-2.el7.elrepo.noarch.rpm",
+      "sudo yum-config-manager --enable elrepo*",
+      "sudo yum install -y --enablerepo=elrepo-kernel kernel-lt kernel-lt-devel kernel-lt-tools kernel-lt-tools-libs",
+      "sudo yum -y update",
+      "sudo yum -y install gcc salt-master salt-minion salt-syndic",
 	  "sudo chmod -R a+w /opt",
 	  "mkdir -p /opt/mpi",
       "sudo mkdir -p /var/log/journal",
       "sudo systemd-tmpfiles --create --prefix /var/log/journal",
-          
+      "sudo yum remove -y kernel-tools kernel-tools-libs kernel-uek-devel kernel-uek",
+      "sudo grub2-set-default 0",
+      "sudo grub2-mkconfig -o /boot/grub2/grub.cfg",    
       "sudo /sbin/reboot"
 
     ]
