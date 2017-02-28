@@ -42,6 +42,7 @@
 	  "sudo chmod -R a+w /opt",
 	  "mkdir -p /opt/mpi",
       "sudo mkdir -p /var/log/journal",
+      "sudo mkdir -p /etc/salt",
       "sudo systemd-tmpfiles --create --prefix /var/log/journal",
       "sudo /sbin/reboot"
 

@@ -18,7 +18,7 @@
     "spot_price" : "auto",
     "spot_price_auto_product" : "SUSE Linux (Amazon VPC)",
     "region": "{{user `aws_region`}}",
-    "ami_name": "cloud-sles11-ofstest-new",
+    "ami_name": "cloud-opensuse421-ofstest-new",
     "vpc_id": "{{user `aws_vpc`}}",
     "subnet_id": "{{user `aws_subnet`}}",
     "security_group_id": "{{user `aws_security_group`}}",
@@ -41,8 +41,10 @@
       "type": "shell",
       "pause_before": "10s",
       "inline": [
-        "sudo zypper --non-interactive install gcc salt salt-cloud salt-minion salt-master salt-syndic salt-ssh",
-		"useradd -g users -p `date | md5sum` -d /home/ec2-user -m ec2-user"
+      	"sudo zypper --non-interactive update",
+      	"sudo zypper --non-interactive install gcc gcc-c++ gcc-fortran make autoconf automake python-devel",
+        "sudo zypper --non-interactive install salt salt-cloud salt-minion salt-master salt-syndic salt-ssh",
+		"useradd -m -g users -d /home/ec2-user ec2-user",
         "sudo cat /etc/passwd",
         "sudo cat /etc/sudoers",
         "mkdir -p /opt/mpi",
@@ -68,11 +70,8 @@
         "sudo cp /boot/config-`uname -r` /usr/src/linux-`uname -r | sed s/-[\\d].*//`/.config",
         "cd /usr/src/linux-`uname -r | sed s/-[\\d].*//`; sudo make oldconfig && sudo make modules_prepare && sudo make prepare",
         "sudo ln -s /lib/modules/`uname -r`/build/Module.symvers /lib/modules/`uname -r`/source",
-        "sudo /sbin/modprobe -v fuse",
-        "sudo chmod a+x /bin/fusermount",
-        "sudo chmod a+r /etc/fuse.conf",
         "sudo chmod -R a+w /opt",
-        "sudo chown -R ec2-user:ec2-user /opt"
+        "sudo chown -R ec2-user:users /opt"
       ]
     }
   ]

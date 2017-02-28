@@ -35,7 +35,6 @@ orangefs_depends:
           - libacl-devel
           - libaio-devel
           - libattr-devel
-          - libgit2-21
           - libgit2-devel
           - libldap-2_4-2
           - libopenssl-devel

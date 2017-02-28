@@ -2,7 +2,7 @@
   "variables": {
     "aws_access_key": "{{env `AWS_ACCESS_KEY`}}",
     "aws_secret_key": "{{env `AWS_SECRET_KEY`}}",
-    "aws_source_ami": "{{env `AWS_SOURCE_AMI_CENTOS_7`}}",
+    "aws_source_ami": "{{env `AWS_SOURCE_AMI_FEDORA_25`}}",
     "aws_region": "{{env `AWS_REGION`}}",
     "aws_vpc": "{{env `AWS_VPC`}}",
     "aws_subnet": "{{env `AWS_SUBNET`}}",
@@ -18,20 +18,19 @@
     "spot_price" : "auto",
     "spot_price_auto_product" : "Linux/UNIX (Amazon VPC)",
     "region": "{{user `aws_region`}}",
-    "ami_name": "cloud-centos7-ofstest-new",
+    "ami_name": "cloud-fedora25-ofstest-new",
     "vpc_id": "{{user `aws_vpc`}}",
     "subnet_id": "{{user `aws_subnet`}}",
     "security_group_id": "{{user `aws_security_group`}}",
     "associate_public_ip_address": true,
+    "ssh_username": "fedora",
     "ebs_optimized": true,
-    "ssh_username": "centos",
-    "ssh_pty": "true",
+    "ssh_pty": true,
     "launch_block_device_mappings": [
       {
         "device_name": "/dev/sda1",
         "delete_on_termination": true,
-        "volume_size": 100,
-        "volume_type": "gp2"
+        "volume_size": 100
       }
     ],
     "run_tags": { "Name": "Packer Builder for {{user `user`}}" }
@@ -40,17 +39,25 @@
 
   {
     "type": "shell",
-    "pause_before": "10s",
+    "pause_before": "30s",
     "inline": [
       "set -x",
       "sudo sed -i -e 's/^Defaults.*requiretty/# Defaults requiretty/g' /etc/sudoers",
-      "sudo yum -y install wget epel-release kernel-devel gcc salt-master salt-minion salt-syndic",
-      "sudo yum -y update kernel-devel kernel",
+	  "sudo dnf -y install wget salt-master salt-minion salt-syndic",
 	  "sudo chmod -R a+w /opt",
 	  "mkdir -p /opt/mpi",
       "sudo mkdir -p /var/log/journal",
       "sudo systemd-tmpfiles --create --prefix /var/log/journal",
       "sudo /sbin/reboot"
+
+    ]
+  },
+  {
+    "type": "shell",
+    "pause_before": "10s",
+    "inline": [
+      "sudo chown -R fedora:fedora /tmp",
+      "sudo chown -R fedora:fedora /opt"
 
     ]
   },
@@ -61,17 +68,19 @@
     "local_state_tree": "./salt",
     "minion_config": "./salt/masterMinionConfig",
     "skip_bootstrap": true
+
   },
   {
     "type": "shell",
     "pause_before": "10s",
     "inline": [
-      "sudo chown -R centos:centos /opt",
+      "sudo chown -R fedora:fedora /opt",
       "sudo /sbin/modprobe -v fuse",
       "sudo chmod a+x /bin/fusermount",
       "sudo chmod a+r /etc/fuse.conf"
     ]
   }
+
 
   ]
 }
