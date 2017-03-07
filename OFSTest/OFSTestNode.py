@@ -2488,7 +2488,7 @@ class OFSTestNode(object):
         
 
         # change the protection on the logfile to 644
-        self.runSingleCommandAsRoot('echo "clientcore,clientcore_timing,msgpair,server,client" | sudo tee /proc/sys/pvfs2/client-debug'  % (self.ofs_installation_location,self.ofs_branch))
+        self.runSingleCommandAsRoot('echo "clientcore,clientcore_timing,msgpair,server,client" | sudo tee /proc/sys/pvfs2/client-debug')
         
         return 0
         
