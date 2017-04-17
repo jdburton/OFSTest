@@ -543,10 +543,10 @@ def xfstests(testing_node,output=[]):
     rc = testing_node.runSingleCommand("git clone git://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git")
     
     rc = testing_node.changeDirectory("/home/%s/xfstests-dev" % testing_node.current_user)
-    rc = testing_node.runSingleCommand("cp %s/test/automated/vfs-tests.d/xfstests-pvfs2.diff ./xfstests-pvfs2.diff" % testing_node.ofs_source_location)
-    if rc != 0:
-        testing_node.runSingleCommand("wget --quiet http://orangefs.org/svn/orangefs/trunk/test/automated/vfs-tests.d/xfstests-pvfs2.diff")
-    rc = testing_node.runSingleCommand("patch -p1 < xfstests-pvfs2.diff")
+#     rc = testing_node.runSingleCommand("cp %s/test/automated/vfs-tests.d/xfstests-pvfs2.diff ./xfstests-pvfs2.diff" % testing_node.ofs_source_location)
+#     if rc != 0:
+#         testing_node.runSingleCommand("wget --quiet http://orangefs.org/svn/orangefs/trunk/test/automated/vfs-tests.d/xfstests-pvfs2.diff")
+#     rc = testing_node.runSingleCommand("patch -p1 < xfstests-pvfs2.diff")
     rc = testing_node.runSingleCommand("make")
     #rc = testing_node.runSingleCommand("wget --quiet %s/xfstests-exclude.list" % testing_node.url_base)
     rc = testing_node.runSingleCommand("cp %s/test/automated/vfs-tests.d/xfstests-exclude.list ./xfstests-exclude.list" % testing_node.ofs_source_location)
