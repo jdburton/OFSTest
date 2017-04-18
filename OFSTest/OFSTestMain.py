@@ -613,6 +613,17 @@ class OFSTestMain(object):
                         
             if self.config.run_vfs_benchmarks == True:
                 import OFSVFSBenchmarks
+                # Make sure filesystem is mounted or we will get false positives.
+                rc = head_node.checkMount()
+                if rc != 0:
+                    # OrangeFS must be mounted to run kmod tests.
+                    # unmount, just in case.
+                    self.ofs_network.unmountOFSFilesystemAllNodes();
+                    # mount, not with fuse.
+                    self.ofs_network.mountOFSFilesystemAllNodes(mount_fuse=False)
+                
+                rc = head_node.checkMount()
+                
                 if rc == 0:
                     # print section header in output file.
                     self.writeOutputHeader(filename,"VFS Benchmarks (%s)" % mount_type)
