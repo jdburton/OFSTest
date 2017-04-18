@@ -46,7 +46,7 @@ orangefs_depends:
       - httpd-devel
       - pam-devel
       - xfsprogs-devel
-
+      
 orangefs_hadoop_depends:
   pkg.installed:
     - skip_suggestions: True

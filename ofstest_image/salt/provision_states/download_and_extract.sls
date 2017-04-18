@@ -1,7 +1,7 @@
 db4_de:
   cmd.script:
     - source: salt://utils/de.sh
-    - args: "https://s3.amazonaws.com/cloudycluster/ami_src_depends/db-4.8.30.tar.gz /usr/src/"
+    - args: "http://download.oracle.com/berkeley-db/db-4.8.30.tar.gz /usr/src/"
     - creates: /usr/src/db-4.8.30/
   file.directory:
     - name: /usr/src/db-4.8.30/

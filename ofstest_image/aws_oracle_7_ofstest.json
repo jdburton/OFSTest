@@ -48,20 +48,23 @@
     "pause_before": "10s",
     "inline": [
       "set -x",
+      "echo 'yum is updating. ignore these errors'",
+      "sleep 180",
       "sudo sed -i -e 's/^Defaults.*requiretty/# Defaults requiretty/g' /etc/sudoers",
       "sudo rpm -Uvh /tmp/epel-release-7-5.noarch.rpm && sudo rm /tmp/epel-release-7-5.noarch.rpm",
       "ps -ef | grep yum",
-      "echo 'yum is updating. ignore these errors'",
+      "sudo yum install -y yum-utils",
+      "sudo yum-config-manager --enable ol7_UEKR4",
+      "sudo yum-config-manager --enable ol7_optional_latest",
+      "sudo yum-config-manager --enable ol7_addons",
+	  "sudo yum -y update",
       "sudo yum -y install wget kernel-uek-devel gcc salt-master salt-minion salt-syndic",
       "sudo yum -y update kernel-uek-devel kernel-uek kernel-uek-headers",
-      
 	  "sudo chmod -R a+w /opt",
 	  "mkdir -p /opt/mpi",
       "sudo mkdir -p /var/log/journal",
       "sudo systemd-tmpfiles --create --prefix /var/log/journal",
-          
       "sudo /sbin/reboot"
-
     ]
   },
   {

@@ -46,25 +46,36 @@
       "sudo sed -i -e 's/^Defaults.*requiretty/# Defaults requiretty/g' /etc/sudoers",
       "sudo rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org",
       "sudo rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-2.el7.elrepo.noarch.rpm",
-      "sudo yum-config-manager --enable elrepo*",
-      "sudo yum -y install wget epel-release",      
-      "sudo yum -y update",
+      "sudo yum -y install wget epel-release",
       "sudo yum -y install gcc salt-master salt-minion salt-syndic",
+      "sudo yum-config-manager --enable elrepo*",
+      "sudo yum remove -y kernel kernel-tools kernel-tools-libs",
+      "sudo yum install -y --enablerepo=elrepo-extras --enablerepo=elrepo --enablerepo=elrepo-kernel kernel-lt kernel-lt-devel kernel-lt-tools kernel-lt-tools-libs ",
+      "cat /etc/redhat-release",
+      "sudo yum -y clean all",
+      "sudo yum -y update",
 	  "sudo chmod -R a+w /opt",
 	  "mkdir -p /opt/mpi",
       "sudo mkdir -p /var/log/journal",
       "sudo systemd-tmpfiles --create --prefix /var/log/journal",
-      "sudo yum remove -y kernel-tools kernel-tools-libs",
-      "sudo yum install -y --enablerepo=elrepo-kernel kernel-lt kernel-lt-devel kernel-lt-tools kernel-lt-tools-libs",
+      "cat /etc/redhat-release",
       "sudo grub2-set-default 0",
       "sudo grub2-mkconfig -o /boot/grub2/grub.cfg",    
       "sudo /sbin/reboot"
 
     ]
   },
+    {
+    "type": "shell",
+    "pause_before": "60s",
+    "inline": [
+      "uname -r"	
+    ]
+  },
+  
   {
     "type": "salt-masterless",
-    "pause_before": "60s",
+    "pause_before": "10s",
     "bootstrap_args": "",
     "local_state_tree": "./salt",
     "minion_config": "./salt/masterMinionConfig",
@@ -74,10 +85,11 @@
     "type": "shell",
     "pause_before": "10s",
     "inline": [
+      "uname -r",	
       "sudo chown -R centos:centos /opt",
       "sudo /sbin/modprobe -v fuse",
       "sudo chmod a+x /bin/fusermount",
-      "sudo chmod a+r /etc/fuse.conf"
+      "sudo chmod a+r /etc/fuse.conf" 
     ]
   }
 
