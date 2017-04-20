@@ -303,7 +303,7 @@ def ltp(testing_node,output=[]):
     LTP_PREFIX = "/opt/ltp"
     LTP_URL = "https://github.com/linux-test-project/ltp/archive"
     
-    
+    loop_dev = "/dev/loop0"
     rc = 0
     vfs_type = "kmod"
     # check for fuse
@@ -364,7 +364,7 @@ def ltp(testing_node,output=[]):
     testing_node.runSingleCommand("umask 0")
     loop_dev = testing_node.runSingleCommandBacktick("losetup -f") 
     testing_node.runSingleCommandAsRoot("dd if=/dev/zero of=/tmp/test.img bs=1kB count=20480 >/dev/null 2>&1")
-    testing_node.runSingleCommandAsRoot("losetup %s /tmp/test.img",loop_dev)
+    testing_node.runSingleCommandAsRoot("losetup %s /tmp/test.img" % loop_dev)
     
     
     
