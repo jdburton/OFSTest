@@ -85,7 +85,7 @@ os.chdir(output_dir)
 
 # initialize the network
 rc = test_driver.initNetwork()
-if rc == 0:
+if rc == 0 and test_driver.config.ofs_config_file is not None:
     # initialize the network
     rc = test_driver.checkOFS()
 
