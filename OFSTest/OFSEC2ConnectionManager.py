@@ -366,7 +366,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
         reservation = None
         new_instances = []
 
-#         try:
+        
         if spot_instance_bid.lower() == "auto":
             
             days_back = 14
@@ -376,81 +376,83 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
             count = 0
             set_max = 0
             prices = []
+            fallback2standard = False
 
             product_description = "Linux/UNIX (Amazon VPC)"
             
             if "sles" in image_name: 
                 product_description = "SUSE Linux (Amazon VPC)"
                 
-            
-            while count < 30:
-                history = self.ec2_connection.get_spot_price_history(start_time=start.strftime("%Y-%m-%dT%H:%M:%S.%fZ"), end_time=end.strftime("%Y-%m-%dT%H:%M:%S.%fZ"), instance_type=flavor_name, product_description=product_description,next_token=next_token)
-                prices = prices + [price.price for price in history]
-                next_token = history.next_token
-                count += 1
-                # if we are at the end of the set, the number of records returned will be less than 1000.
-                if len(history) < 1000:
-                    break
-                    
-            n = len(prices)
-            current_price = max(prices[:3])
-            print "Current price for %s instances is %r per instance-hour" % (flavor_name,current_price)
-
-            std_dev = np.std(prices)
-            mean = np.mean(prices)
-            max_bid = mean + 2*std_dev
-            
-            # Bid 2 standard deviations over the mean. 
-            calculated_bid = max_bid
-            print "Maximum automatic bid %r is 2 std_dev over mean of %r spot prices over %d days" % (calculated_bid,n,days_back)
-            
-            #print "n = %r, now = %r, Mean = %r, std_dev = %r, bid (2 stdev) = %r, bid (2.5 stdev) = %r, bid (3 stddev) = %r" % (n,now,mean,std_dev,mean+(2*std_dev),mean+(2.5*std_dev),mean+(3*std_dev))
-            spot_instance_bid = str(calculated_bid)
-                                                    
-#         except:
-#             e = sys.exc_info()
-#             print e
-#             print "Automatic bidding failed. Falling back to on-demand pricing."
-
-            
-        # If we have a valid bid, use spot instances.
-        try:
-            float(spot_instance_bid)
-            # TODO: Add support for placement groups
-            
-            requests = self.ec2_connection.request_spot_instances(price=spot_instance_bid,image_id=image.id,count=number_nodes, key_name=self.cloud_instance_key, user_data=None, instance_type=flavor_name, subnet_id=subnet_id, security_group_ids=security_group_ids)
-        
-            
-            msg = "Requesting %d new %s %s spot requests from AMI %s at %s per node-hour." % (number_nodes,flavor_name,image_name,image_id,spot_instance_bid)
-            print msg
-            logging.info(msg)   
-            time.sleep(10)     
-            fulfilled_requests = [r for r in requests if r.instance_id is not None]
-
-            print "Waiting up to 1 hour for spot requests"
-            count = 0
-            while len(fulfilled_requests) < number_nodes and count < 360:
-                time.sleep(10)
-                requests = self.ec2_connection.get_all_spot_instance_requests(request_ids=[r.id for r in requests])
-                fulfilled_requests = [r for r in requests if r.instance_id is not None]
-                count += 1
-                print "%d of %d requests filled in %d seconds" % (len(fulfilled_requests),number_nodes,count*10)
+        try:    
+                while count < 30:
+                    history = self.ec2_connection.get_spot_price_history(start_time=start.strftime("%Y-%m-%dT%H:%M:%S.%fZ"), end_time=end.strftime("%Y-%m-%dT%H:%M:%S.%fZ"), instance_type=flavor_name, product_description=product_description,next_token=next_token)
+                    prices = prices + [price.price for price in history]
+                    next_token = history.next_token
+                    count += 1
+                    # if we are at the end of the set, the number of records returned will be less than 1000.
+                    if len(history) < 1000:
+                        break
+                        
+                n = len(prices)
+                current_price = max(prices[:3])
+                print "Current price for %s instances is %r per instance-hour" % (flavor_name,current_price)
+    
+                std_dev = np.std(prices)
+                mean = np.mean(prices)
+                max_bid = mean + 2*std_dev
                 
-            
-            if count == 360:
-                print "Spot request was not fulfilled in 1 hour. Cancelling request."
-                self.ec2_connection.cancel_spot_instance_requests(request_ids=[r.id for r in requests])
-                # Should be an empty list.
-                return new_instances
-            
-            spot_instance_ids = [r.instance_id for r in fulfilled_requests]
-            
-            
-            new_instances = self.ec2_connection.get_only_instances(instance_ids=spot_instance_ids)
-            
-
-        # If the bid is invalid, then use standard instances
+                # Bid 2 standard deviations over the mean. 
+                calculated_bid = max_bid
+                print "Maximum automatic bid %r is 2 std_dev over mean of %r spot prices over %d days" % (calculated_bid,n,days_back)
+                
+                #print "n = %r, now = %r, Mean = %r, std_dev = %r, bid (2 stdev) = %r, bid (2.5 stdev) = %r, bid (3 stddev) = %r" % (n,now,mean,std_dev,mean+(2*std_dev),mean+(2.5*std_dev),mean+(3*std_dev))
+                spot_instance_bid = str(calculated_bid)
+                                                        
         except ValueError:
+            fallback2standard = True
+
+        if not fallback2standard:    
+            # If we have a valid bid, use spot instances.
+            try:
+                float(spot_instance_bid)
+                # TODO: Add support for placement groups
+                
+                requests = self.ec2_connection.request_spot_instances(price=spot_instance_bid,image_id=image.id,count=number_nodes, key_name=self.cloud_instance_key, user_data=None, instance_type=flavor_name, subnet_id=subnet_id, security_group_ids=security_group_ids)
+            
+                
+                msg = "Requesting %d new %s %s spot requests from AMI %s at %s per node-hour." % (number_nodes,flavor_name,image_name,image_id,spot_instance_bid)
+                print msg
+                logging.info(msg)   
+                time.sleep(10)     
+                fulfilled_requests = [r for r in requests if r.instance_id is not None]
+    
+                print "Waiting up to 1 hour for spot requests"
+                count = 0
+                while len(fulfilled_requests) < number_nodes and count < 360:
+                    time.sleep(10)
+                    requests = self.ec2_connection.get_all_spot_instance_requests(request_ids=[r.id for r in requests])
+                    fulfilled_requests = [r for r in requests if r.instance_id is not None]
+                    count += 1
+                    print "%d of %d requests filled in %d seconds" % (len(fulfilled_requests),number_nodes,count*10)
+                    
+                
+                if count == 360:
+                    print "Spot request was not fulfilled in 1 hour. Cancelling request."
+                    self.ec2_connection.cancel_spot_instance_requests(request_ids=[r.id for r in requests])
+                    # Should be an empty list.
+                    return new_instances
+                
+                spot_instance_ids = [r.instance_id for r in fulfilled_requests]
+                
+                
+                new_instances = self.ec2_connection.get_only_instances(instance_ids=spot_instance_ids)
+                
+    
+            # If the bid is invalid, then use standard instances
+            except ValueError:
+                fallback2standard = True
+        
+        if fallback2standard:
 
             reservation = self.ec2_connection.run_instances(image_id=image.id,min_count=number_nodes, max_count=number_nodes, key_name=self.cloud_instance_key, user_data=None, instance_type=flavor_name, subnet_id=subnet_id, security_group_ids=security_group_ids)
 
