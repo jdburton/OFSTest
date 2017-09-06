@@ -1099,6 +1099,8 @@ class OFSTestNetwork(object):
         if security_node is None:
             security_node = node_list[0]
         
+        print "generateOFSCertificates(ldap_server_uri = %s, ldap_admin = %s, ldap_admin_password = %s, ldap_container = %s)" % (ldap_server_uri,ldap_admin,ldap_admin_password,ldap_container)
+        
         # Do we need to setup ldap? 
         if ldap_server_uri is None or ldap_admin is None or ldap_admin_password is None or ldap_container is None:
             rc = security_node.setupLDAP()
