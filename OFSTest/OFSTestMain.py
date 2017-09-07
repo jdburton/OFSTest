@@ -374,7 +374,7 @@ class OFSTestMain(object):
 
 
         # Cert based security must be done before copy. Key based must be done after copy. 
-        if self.config.ofs_security_mode is None:
+        if self.config.ofs_security_mode is not None:
             if self.config.ofs_security_mode.lower() == "cert":
                 print ""
                 print "==================================================================="
