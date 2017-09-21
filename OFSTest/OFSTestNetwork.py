@@ -1115,6 +1115,7 @@ class OFSTestNetwork(object):
         
             self.createUserCerts(node_list=node_list,security_node=security_node)
             self.createUserCerts(user="nobody",node_list=node_list,security_node=security_node)
+            self.createUserCerts(user="daemon",node_list=node_list,security_node=security_node)
             self.createUserCerts(user="bin",node_list=node_list,security_node=security_node)
             self.createUserCerts(user="root",node_list=node_list,security_node=security_node)
 
