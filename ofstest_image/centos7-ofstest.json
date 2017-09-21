@@ -10,6 +10,7 @@
     "os_region": "{{env `OS_REGION`}}",
     "os_network_id": "{{env `OS_NETWORK_ID`}}",
     "os_floating_ip_pool": "{{env `OS_FLOATING_IP_POOL`}}",
+    "os_user_domain_name": "{{env `OS_USER_DOMAIN_NAME`}}",
     "user": "admin"
 },
   "builders": [{
@@ -20,16 +21,19 @@
     "username": "{{user `os_username`}}",
     "password": "{{user `os_password`}}",
     "use_floating_ip": true,
+    "ssh_keypair_name": "jburto2",
+    "ssh_private_key_file": "/Users/jburton/omnistack/jburto2.pem",
     "floating_ip_pool": "{{user `os_floating_ip_pool`}}",
     "security_groups": [ "default" ],
     "region": "RegionOne",
     "tenant_id": "{{user `os_tenant_id`}}",
     "ssh_username": "centos",
     "networks" : [ "{{user `os_network_id`}}" ],
+    "domain_name": "{{user `os_user_domain_name`}}",
     "ssh_pty" : true,
     "ssh_timeout": "3m"
    }],
-   "provisioners": [
+    "provisioners": [
 
   {
     "type": "shell",
@@ -37,12 +41,12 @@
     "inline": [
       "set -x",
       "sudo sed -i -e 's/^Defaults.*requiretty/# Defaults requiretty/g' /etc/sudoers",
-      "sudo yum -y install wget epel-release kernel-devel gcc salt-master salt-minion salt-syndic",
+      "sudo yum -y install gcc wget epel-release kernel-devel",
+      "sudo yum -y install salt-master salt-minion salt-syndic",
       "sudo yum -y update kernel-devel kernel",
 	  "sudo chmod -R a+w /opt",
 	  "mkdir -p /opt/mpi",
       "sudo mkdir -p /var/log/journal",
-      "sudo mkdir -p /etc/salt",
       "sudo systemd-tmpfiles --create --prefix /var/log/journal",
       "sudo /sbin/reboot"
 
@@ -69,3 +73,4 @@
 
   ]
 }
+

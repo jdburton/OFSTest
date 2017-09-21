@@ -2708,10 +2708,16 @@ class OFSTestNode(object):
         
         if user not in homedir: 
             homedir = "/home/" + user 
+  
         
         self.runSingleCommandAsRoot('mkdir -p %s' % homedir)
         
-        self.runSingleCommandAsRoot('chown %s:%s pvfs2-cert*.pem' % (user,user))
+        rc = self.runSingleCommandAsRoot('chown %s:%s pvfs2-cert*.pem' % (user,user))
+        if rc != 0:
+            gid = self.runSingleCommandBacktick('grep ^%s /etc/passwd | cut -d: -f4' % user)
+            self.runSingleCommandAsRoot('chown %s:%s pvfs2-cert*.pem' % (user,gid))
+            
+        
         self.runSingleCommandAsRoot('chmod 600 pvfs2-cert*.pem')
         rc = self.runSingleCommandAsRoot('mv -f pvfs2-cert.pem %s/.pvfs2-cert.pem' % homedir)
         if rc != 0:

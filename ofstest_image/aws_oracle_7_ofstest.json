@@ -48,6 +48,7 @@
     "pause_before": "10s",
     "inline": [
       "set -x",
+      "df -h",
       "echo 'yum is updating. ignore these errors'",
       "sleep 180",
       "sudo sed -i -e 's/^Defaults.*requiretty/# Defaults requiretty/g' /etc/sudoers",
@@ -79,6 +80,7 @@
     "type": "shell",
     "pause_before": "10s",
     "inline": [
+      "df -h",
       "sudo chown -R ec2-user:ec2-user /opt",
       "sudo /sbin/modprobe -v fuse",
       "sudo chmod a+x /bin/fusermount",
