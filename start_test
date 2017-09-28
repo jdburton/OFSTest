@@ -23,7 +23,7 @@ def mkdir_p(path):
 config_file = None
 output_dir = "."
 #print sys.argv
-optlist, args = getopt.getopt(sys.argv[1:], 'htfc:d:')
+optlist, args = getopt.getopt(sys.argv[1:], 'htcf:d:')
 #print optlist
 #print args
 cleanup = False
