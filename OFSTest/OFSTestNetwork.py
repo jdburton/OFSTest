@@ -256,7 +256,7 @@ class OFSTestNetwork(object):
     
     def logNewCloudNodes(self,new_ofs_test_nodes):
         
-        output = open(self.logfile,"+w")
+        output = open(self.logfile,"w")
         for node in new_ofs_test_nodes:
             output.write(node.ip_address+"\n")
         output.close()
