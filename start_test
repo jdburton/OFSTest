@@ -23,9 +23,10 @@ def mkdir_p(path):
 config_file = None
 output_dir = "."
 #print sys.argv
-optlist, args = getopt.getopt(sys.argv[1:], 'htf:d:c:')
+optlist, args = getopt.getopt(sys.argv[1:], 'htfc:d:')
 #print optlist
 #print args
+cleanup = False
 
 for o, a  in optlist:
 
@@ -38,6 +39,9 @@ for o, a  in optlist:
         exit()
     if o == "-t":
         terminate_servers = True
+    if o == "-c":
+        cleanup = True
+    
 
 # Convert arguments to a dictionary
 #argd = dict([my_arg.split('=') for my_arg in args])
@@ -81,7 +85,9 @@ if test_driver.config.instance_suffix == "" and output_dir != ".":
 os.chdir(output_dir)
 #exit()
 
-
+if cleanup is True and terminate_servers is True:
+    rc = test_driver.cleanupCloudCluster()
+    exit(rc)
 
 # initialize the network
 rc = test_driver.initNetwork()

@@ -50,6 +50,7 @@ class OFSTestNetwork(object):
         self.openmpi_version = ""
         self.number_mpi_slots = 1
         self.number_mpi_hosts = 1
+        self.logfile="cloudnodes.lst"
 
         #self.network_nodes['127.0.0.1']=self.local_master
    
@@ -232,6 +233,7 @@ class OFSTestNetwork(object):
         # It returns a list of nodes
         new_ofs_test_nodes = self.cloud_connection_manager.createNewCloudNodes(number_nodes,image_name,machine_type,self.local_master,associateip,domain,cloud_subnet,instance_suffix,image_id,security_group_ids,spot_instance_bid)
         
+        self.logNewCloudNodes(new_ofs_test_nodes)
                 
         # Add the node to the created nodes list.
         for new_node in new_ofs_test_nodes:
@@ -250,6 +252,14 @@ class OFSTestNetwork(object):
             
         
         return new_ofs_test_nodes
+    
+    
+    def logNewCloudNodes(self,new_ofs_test_nodes):
+        
+        output = open(self.logfile,"+w")
+        for node in new_ofs_test_nodes:
+            output.write(node.ip_address+"\n")
+        output.close()
     
 
 ##
@@ -325,15 +335,50 @@ class OFSTestNetwork(object):
             logging.exception("Node at %s is not controlled by the cloud manager." % remote_node.ip_address)
             return
         
-        rc = self.cloud_connection_manager.terminateCloudInstance(remote_node.ip_address)
+        failures = 0
+        rc = self.terminateCloudInstance(remote_node.ip_address)
         
         # if the node was terminated, remove it from the list.
         if rc == 0:
             self.network_nodes = [ x for x in self.network_nodes if x.ip_address != remote_node.ip_address]
         else:
             logging.exception( "Could not delete node at %s, error code %d" % (remote_node.ip_address,rc))
+            failures += 1
             
+        return failures
+    
+    ##      
+    # @fn terminateCloudInstance(self, remote_node)
+    #
+    # Terminate the remote instance associated with the ip_address
+    #
+    #    @param self The object pointer
+    #    @param ip_address of instance to be terminated.
+
+
+    def terminateCloudInstance(self,ip_address):
+        
+        rc = self.cloud_connection_manager.terminateCloudInstance(remote_node.ip_address)
+                
+ 
         return rc
+
+    def terminateAllInstancesFromList(self, logfile=None):
+        if logfile is None:
+            logfile = self.logfile
+        list = self.getInstanceList(logfile)
+        
+        if list is None:
+            return 0
+        
+        errors = 0
+        for ip_address in list:
+            rc = self.terminateCloudInstance(ip_address)
+            if rc != 0:
+                logging.exception("Could not terminate instance at %s" % ip_address)
+                errors += 1
+
+        return errors
 
     ##      
     # @fn stopCloudNode(self, remote_node)
@@ -1014,10 +1059,13 @@ class OFSTestNetwork(object):
     def terminateAllCloudNodes(self, node_list=None):
         if node_list is None:
             node_list = self.network_nodes
+        rc = 0
         for node in node_list:
             if node.is_cloud == True:
-                self.terminateCloudNode(node)
-
+                rc += self.terminateCloudNode(node)
+        if rc == 0:
+            if os.path.exists(self.logfile):
+                os.remove(self.logfile)
    
        ##    
     #    @fn stopAllCloudNodes(self,node_list=None):
@@ -1629,3 +1677,14 @@ class OFSTestNetwork(object):
         for node in self.network_nodes:
             rc += self.local_master.runSingleCommandAsRoot("ping -c 1 %s" % node.ext_ip_address )
         return rc
+    
+    def getInstanceList(self,logfile=None):
+        
+        if logfile is None:
+            logfile = self.logfile
+        nodes = []
+        if os.path.exists(logfile):
+            input = open(logfile,"r")
+            for line in input:
+                nodes.append(line.rstrip())
+        return nodes

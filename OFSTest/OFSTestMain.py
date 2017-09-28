@@ -951,3 +951,15 @@ class OFSTestMain(object):
                 self.restartOFS()
             else:
                 self.stopAllCloudNodes()
+                
+    
+    def cleanupCloudCluster(self,logfile=None):
+    
+        # First, if we're using Cloud/Openstack, open the connection
+        print "===========================================================" 
+        print "Connecting to EC2/OpenStack cloud using information from " + self.config.cloud_config
+        #print "%s,%s,%s,%s,%s" % (self.config.cloud_config,self.config.cloud_key_name,self.config.ssh_key_filepath,self.config.cloud_type,self.config.nova_password_file)
+        self.ofs_network.addCloudConnection(self.config.cloud_config,self.config.cloud_key_name,self.config.ssh_key_filepath,self.config.cloud_type,self.config.nova_password_file,self.config.cloud_region)
+
+        self.ofs_network.terminateAllInstancesFromList(logfile)
+        
