@@ -27,6 +27,7 @@ optlist, args = getopt.getopt(sys.argv[1:], 'htcf:d:')
 #print optlist
 #print args
 cleanup = False
+terminate_servers = False
 
 for o, a  in optlist:
 

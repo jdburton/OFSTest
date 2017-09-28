@@ -358,7 +358,7 @@ class OFSTestNetwork(object):
 
     def terminateCloudInstance(self,ip_address):
         
-        rc = self.cloud_connection_manager.terminateCloudInstance(remote_node.ip_address)
+        rc = self.cloud_connection_manager.terminateCloudInstance(ip_address)
                 
  
         return rc
