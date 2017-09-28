@@ -86,7 +86,7 @@ if test_driver.config.instance_suffix == "" and output_dir != ".":
 os.chdir(output_dir)
 #exit()
 
-if cleanup is True and terminate_servers is True:
+if cleanup is True:
     rc = test_driver.cleanupCloudCluster()
     exit(rc)
 

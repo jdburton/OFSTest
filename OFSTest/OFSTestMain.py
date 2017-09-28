@@ -954,6 +954,10 @@ class OFSTestMain(object):
                 
     
     def cleanupCloudCluster(self,logfile=None):
+        
+        if not self.config.cloud_delete_after_test:
+            print "cloud_delete_after_test is False. Instances will not be deleted."
+            return 0
     
         # First, if we're using Cloud/Openstack, open the connection
         print "===========================================================" 
@@ -961,5 +965,6 @@ class OFSTestMain(object):
         #print "%s,%s,%s,%s,%s" % (self.config.cloud_config,self.config.cloud_key_name,self.config.ssh_key_filepath,self.config.cloud_type,self.config.nova_password_file)
         self.ofs_network.addCloudConnection(self.config.cloud_config,self.config.cloud_key_name,self.config.ssh_key_filepath,self.config.cloud_type,self.config.nova_password_file,self.config.cloud_region)
 
-        self.ofs_network.terminateAllInstancesFromList(logfile)
+        rc = self.ofs_network.terminateAllInstancesFromList(logfile)
         
+        return rc
