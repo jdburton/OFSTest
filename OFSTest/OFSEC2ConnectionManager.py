@@ -384,29 +384,29 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
                 product_description = "SUSE Linux (Amazon VPC)"
                 
         try:    
-                while count < 30:
-                    history = self.ec2_connection.get_spot_price_history(start_time=start.strftime("%Y-%m-%dT%H:%M:%S.%fZ"), end_time=end.strftime("%Y-%m-%dT%H:%M:%S.%fZ"), instance_type=flavor_name, product_description=product_description,next_token=next_token)
-                    prices = prices + [price.price for price in history]
-                    next_token = history.next_token
-                    count += 1
-                    # if we are at the end of the set, the number of records returned will be less than 1000.
-                    if len(history) < 1000:
-                        break
-                        
-                n = len(prices)
-                current_price = max(prices[:3])
-                print "Current price for %s instances is %r per instance-hour" % (flavor_name,current_price)
-    
-                std_dev = np.std(prices)
-                mean = np.mean(prices)
-                max_bid = mean + 2*std_dev
-                
-                # Bid 2 standard deviations over the mean. 
-                calculated_bid = max_bid
-                print "Maximum automatic bid %r is 2 std_dev over mean of %r spot prices over %d days" % (calculated_bid,n,days_back)
-                
-                #print "n = %r, now = %r, Mean = %r, std_dev = %r, bid (2 stdev) = %r, bid (2.5 stdev) = %r, bid (3 stddev) = %r" % (n,now,mean,std_dev,mean+(2*std_dev),mean+(2.5*std_dev),mean+(3*std_dev))
-                spot_instance_bid = str(calculated_bid)
+            while count < 30:
+                history = self.ec2_connection.get_spot_price_history(start_time=start.strftime("%Y-%m-%dT%H:%M:%S.%fZ"), end_time=end.strftime("%Y-%m-%dT%H:%M:%S.%fZ"), instance_type=flavor_name, product_description=product_description,next_token=next_token)
+                prices = prices + [price.price for price in history]
+                next_token = history.next_token
+                count += 1
+                # if we are at the end of the set, the number of records returned will be less than 1000.
+                if len(history) < 1000:
+                    break
+                    
+            n = len(prices)
+            current_price = max(prices[:3])
+            print "Current price for %s instances is %r per instance-hour" % (flavor_name,current_price)
+
+            std_dev = np.std(prices)
+            mean = np.mean(prices)
+            max_bid = mean + 2*std_dev
+            
+            # Bid 2 standard deviations over the mean. 
+            calculated_bid = max_bid
+            print "Maximum automatic bid %r is 2 std_dev over mean of %r spot prices over %d days" % (calculated_bid,n,days_back)
+            
+            #print "n = %r, now = %r, Mean = %r, std_dev = %r, bid (2 stdev) = %r, bid (2.5 stdev) = %r, bid (3 stddev) = %r" % (n,now,mean,std_dev,mean+(2*std_dev),mean+(2.5*std_dev),mean+(3*std_dev))
+            spot_instance_bid = str(calculated_bid)
                                                         
         except ValueError:
             fallback2standard = True
