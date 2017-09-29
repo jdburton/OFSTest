@@ -365,7 +365,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
         
         reservation = None
         new_instances = []
-
+        count = 0
         
         if spot_instance_bid.lower() == "auto":
             
@@ -373,7 +373,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
             start = datetime.now()-timedelta(days=days_back)
             end = datetime.now()
             next_token = None
-            count = 0
+            
             set_max = 0
             prices = []
             fallback2standard = False
