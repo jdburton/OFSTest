@@ -366,6 +366,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
         reservation = None
         new_instances = []
         count = 0
+        fallback2standard = False
         
         if spot_instance_bid.lower() == "auto":
             
