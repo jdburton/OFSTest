@@ -64,7 +64,7 @@ openmpi_de:
 hdf5_de:
   cmd.script:
     - source: salt://utils/de.sh
-    - args: "https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8.17/src/hdf5-1.8.17.tar.gz /usr/src/"
+    - args: "https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.17/src/hdf5-1.8.17.tar.gz /usr/src/"
     - creates: /opt/hdf5-1.8.17/
   file.directory:
     - name: /opt/hdf5-1.8.17/
