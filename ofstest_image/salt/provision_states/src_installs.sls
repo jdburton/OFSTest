@@ -26,7 +26,7 @@ orangefs_install:
 openmpi_install:
   cmd.script:
     - source: salt://src_installs/openmpi.sh
-    - creates: /opt/openmpi/
+    - creates: /opt/mpi/openmpi-1.8.8
 
 hdf5_install:
   cmd.script:
