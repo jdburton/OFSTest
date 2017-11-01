@@ -872,6 +872,13 @@ class OFSTestNode(object):
             # disable SELINUX
             self.runSingleCommandAsRoot("bash -c 'echo \\\"SELINUX=Disabled\\\" > /etc/selinux/config'")
             self.runSingleCommandAsRoot("yum install -y perl wget")
+            
+            
+            # boot into the lt or ml kernel if installed.
+            self.runSingleCommandAsRoot("if rpm -qa | grep kernel-lt; then sed -i s/DEFAULTKERNEL=kernel/DEFAULTKERNEL=kernel-lt/g /etc/sysconfig/kernel; fi")
+            self.runSingleCommandAsRoot("if rpm -qa | grep kernel-ml; then sed -i s/DEFAULTKERNEL=kernel/DEFAULTKERNEL=kernel-ml/g /etc/sysconfig/kernel; fi")
+            
+            
             self.runSingleCommandAsRoot("yum update --disableexcludes=main -y")
 
             
