@@ -2,7 +2,8 @@
 
 
 set -x
-cd /opt/mpi/openmpi-1.8.8
+mkdir -p /opt/mpi
+cd /usr/src/openmpi-1.8.8
 ./configure --prefix=/opt/mpi/openmpi-1.8.8 --enable-shared --with-pic \
   --with-io-romio-flags='--with-pvfs2=/opt/orangefs --with-file-system=pvfs2+nfs+ufs' \
   --with-tm=/opt/torque 

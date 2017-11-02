@@ -55,19 +55,19 @@ openmpi_de:
   cmd.script:
     - source: salt://utils/de.sh
 #    - args: "https://s3.amazonaws.com/cloudycluster/ami_src_depends/openmpi-1.8.4.tar.gz /usr/src/"
-#    - args: "http://devorange.clemson.edu/pvfs/openmpi-1.8.8-omnibond.tar.gz /opt/mpi/"
-    - args: "http://52.58.234.69/pvfs/openmpi-1.8.8-omnibond.tar.gz /opt/mpi/"
-    - creates: /opt/mpi/openmpi-1.8.8/
+#    - args: "http://devorange.clemson.edu/pvfs/openmpi-1.8.8-omnibond.tar.gz /usr/src/"
+    - args: "http://52.58.234.69/pvfs/openmpi-1.8.8-omnibond.tar.gz /usr/src/"
+    - creates: /usr/src/openmpi-1.8.8
   file.directory:
-    - name: /opt/mpi/openmpi-1.8.8/
+    - name: /usr/src/openmpi-1.8.8
 
 hdf5_de:
   cmd.script:
     - source: salt://utils/de.sh
     - args: "https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.17/src/hdf5-1.8.17.tar.gz /usr/src/"
-    - creates: /opt/hdf5-1.8.17/
+    - creates: /usr/src/hdf5-1.8.17/
   file.directory:
-    - name: /opt/hdf5-1.8.17/
+    - name: /usr/src/hdf5-1.8.17/
     - user: root
     - group: root
     - recurse:
