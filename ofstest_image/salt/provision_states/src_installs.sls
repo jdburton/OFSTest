@@ -31,7 +31,7 @@ openmpi_install:
 hdf5_install:
   cmd.script:
     - source: salt://src_installs/hdf5.sh
-    - creates: /opt/hdf5/
+    - creates: /opt/hdf5-1.8.17
 
 orangefs_test_install:
   cmd.script:
