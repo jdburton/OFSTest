@@ -875,6 +875,7 @@ class OFSTestNode(object):
             
             
             # boot into the lt or ml kernel if installed.
+            # TODO: This is bad. I know it. Do it the right way.
             self.runSingleCommandAsRoot("if rpm -qa | grep kernel-lt; then sed -i s/DEFAULTKERNEL=kernel/DEFAULTKERNEL=kernel-lt/g /etc/sysconfig/kernel; fi")
             self.runSingleCommandAsRoot("if rpm -qa | grep kernel-ml; then sed -i s/DEFAULTKERNEL=kernel/DEFAULTKERNEL=kernel-ml/g /etc/sysconfig/kernel; fi")
             
