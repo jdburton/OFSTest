@@ -338,7 +338,7 @@ def ltp(testing_node,output=[]):
         testing_node.changeDirectory(testing_node.ofs_extra_tests_location+"/ltp-"+LTP_ARCHIVE_VERSION)
         
         # Patch ltp for OrangeFS support
-        rc = testing_node.runSingleCommand("patch -p1 < %s/test/automated/vfs-tests.d/ltp-%s-zoo-path.patch" % (testing_node.ofs_source_location,LTP_ARCHIVE),output)
+        rc = testing_node.runSingleCommand("patch -p1 < %s/test/automated/vfs-tests.d/ltp-%s-zoo-path.patch" % (testing_node.ofs_source_location,LTP_ARCHIVE_VERSION),output)
         if rc != 0:
             
             return rc
