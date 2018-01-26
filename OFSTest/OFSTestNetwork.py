@@ -1167,7 +1167,6 @@ class OFSTestNetwork(object):
             self.createUserCerts(user="bin",node_list=node_list,security_node=security_node)
             self.createUserCerts(user="root",node_list=node_list,security_node=security_node)
 
-        
         return rc
 
         
@@ -1184,8 +1183,10 @@ class OFSTestNetwork(object):
             
         rc = security_node.createUserCerts(user);
         if rc == 0:
+            self.updateCertsUsers(user=user,destination_list=node_list)
             self.copyUserCertsToNodeList(user=user,destination_list=node_list) 
-
+            
+        
     
     ##    
     #    @fn copyUserCertsToNodeList(self,destination_list=None):
@@ -1200,8 +1201,22 @@ class OFSTestNetwork(object):
             destination_list = self.network_nodes;
         self.copyResourceToNodeList(node_function=OFSTestNode.OFSTestNode.copyUserCertsToNode, destination_list=destination_list, user=user )
 
+    ##    
+    #    @fn updateCertsUsers(self,destination_list=None):
+    #
+    #    Update users so they are compatible with certs mode.
+    #    
+    #    @param self The object pointer
+    #    @param destination_list List of nodes to copy OrangeFS to. OFS should already be at destination_list[0].
+        
+    def updateCertsUsers(self,user,destination_list=None):
+        if destination_list is None:
+            destination_list = self.network_nodes;
+        for node in destination_list:
+            node.runSingleCommandAsRoot('usermod -d /home/%s -s /bin/bash %s' % (user,user ))
+            node.runSingleCommandAsRoot('mkdir -p /home/%s ' % user)
+            
 
-   
     ##    
     #    @fn generateOFSServerKeys(self,node_list=None,security_node=None)
     #
