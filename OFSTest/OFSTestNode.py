@@ -868,7 +868,9 @@ class OFSTestNode(object):
         elif "suse" in self.distro.lower():
             self.runSingleCommandAsRoot("zypper --non-interactive update")
             
-        elif "centos" in self.distro.lower() or "scientific linux" in self.distro.lower() or "red hat" in self.distro.lower() or "fedora" in self.distro.lower():
+        #elif "oracle" in self.distro.lower() or "centos" in self.distro.lower() or "scientific linux" in self.distro.lower() or "red hat" in self.distro.lower() or "fedora" in self.distro.lower():
+        # Assume Red Hat based system as the default.
+        else:
             # disable SELINUX
             self.runSingleCommandAsRoot("bash -c 'echo \\\"SELINUX=Disabled\\\" > /etc/selinux/config'")
             self.runSingleCommandAsRoot("yum install -y perl wget")
