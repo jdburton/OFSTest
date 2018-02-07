@@ -125,11 +125,14 @@ def bonnie(testing_node,output=[]):
     # check to see if we have already compiled bonnie++
     if testing_node.runSingleCommand( "[ -f %s/bonnie++-1.03e/bonnie++ ]" % testing_node.ofs_extra_tests_location):
 
-        rc = testing_node.runSingleCommand("./configure",output)
+        rc = testing_node.runSingleCommand("./configure 2>&1> configure-bonnie.out",output)
         if rc != 0:
+            testing_node.runSingleCommand("cat configure-bonnie.out")
             return rc
-        rc = testing_node.runSingleCommand("make",output)
+        rc = testing_node.runSingleCommand("make 2>&1> make-bonnie.out",output)
+        
         if rc != 0:
+            testing_node.runSingleCommand("cat make-bonnie.out")
             return rc
         
     testing_node.changeDirectory(testing_node.ofs_mount_point)
@@ -175,15 +178,19 @@ def dbench(testing_node,output=[]):
     if testing_node.runSingleCommand( "[ -f %s/dbench-3.03/dbench ]" % testing_node.ofs_extra_tests_location):
 
         rc = testing_node.runSingleCommand("make clean",output)
-        rc = testing_node.runSingleCommand("./configure",output)
+        rc = testing_node.runSingleCommand("./configure 2>&1> configure-dbench.out",output)
 
+        if rc != 0:
+            testing_node.runSingleCommand("cat configure-dbench.out")
+            return rc
         # Patch dbench to add support for OrangeFS
         rc = testing_node.runSingleCommand("patch -p3 < %s/test/automated/vfs-tests.d/dbench.patch" % testing_node.ofs_source_location,output)
         if rc != 0:
             return rc
         
-        rc = testing_node.runSingleCommand("make",output)
+        rc = testing_node.runSingleCommand("make 2>&1> make-dbench.out",output)
         if rc != 0:
+            testing_node.runSingleCommand("cat make-dbench.out")
             return rc
 
     # Copy the loadfile to the OrangeFS 
@@ -277,8 +284,9 @@ def iozone(testing_node,output=[]):
         if rc != 0:
             return rc
         
-        rc = testing_node.runSingleCommand("make linux",output)
+        rc = testing_node.runSingleCommand("make linux 2>&1> make-iozone.out",output)
         if rc != 0:
+            testing_node.runSingleCommand("cat make-iozone.out")
             return rc
         
     tmp = []

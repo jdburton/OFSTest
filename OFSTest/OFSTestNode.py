@@ -861,20 +861,33 @@ class OFSTestNode(object):
     def updateNode(self,custom_kernel=False,kernel_git_location=None,kernel_git_branch=None):
         logging.info("Update Node. Distro is " + self.distro)
            
+        rc = 0
+        
         if "ubuntu" in self.distro.lower() or "mint" in self.distro.lower() or "debian" in self.distro.lower():
-            self.runSingleCommandAsRoot("DEBIAN_FRONTEND=noninteractive apt-get -y update")
-            self.runSingleCommandAsRoot("DEBIAN_FRONTEND=noninteractive apt-get -y dist-upgrade")
+            rc = self.runSingleCommandAsRoot("DEBIAN_FRONTEND=noninteractive apt-get -y update 2>&1> apt.out")
+            if rc != 0:
+                self.runSingleCommandAsRoot("cat apt.out")
+            
+            rc = self.runSingleCommandAsRoot("DEBIAN_FRONTEND=noninteractive apt-get -y dist-upgrade 2>&1>> apt.out")
+            
+            if rc != 0:
+                self.runSingleCommandAsRoot("cat apt.out")
             
         elif "suse" in self.distro.lower():
-            self.runSingleCommandAsRoot("zypper --non-interactive update")
+            rc = self.runSingleCommandAsRoot("zypper --non-interactive update 2>&1> zypper.out")
+            if rc != 0:
+                self.runSingleCommandAsRoot("cat zypper.out")
+
             
         #elif "oracle" in self.distro.lower() or "centos" in self.distro.lower() or "scientific linux" in self.distro.lower() or "red hat" in self.distro.lower() or "fedora" in self.distro.lower():
         # Assume Red Hat based system as the default.
         else:
             # disable SELINUX
             self.runSingleCommandAsRoot("bash -c 'echo \\\"SELINUX=Disabled\\\" > /etc/selinux/config'")
-            self.runSingleCommandAsRoot("yum install -y perl wget")
-            
+            rc = self.runSingleCommandAsRoot("yum install -y perl wget 2>&1> yum.out")
+        
+            if rc != 0:
+                self.runSingleCommandAsRoot("cat yum.out")
             
             # boot into the lt or ml kernel if installed.
             # TODO: This is bad. I know it. Do it the right way.
@@ -882,7 +895,9 @@ class OFSTestNode(object):
             self.runSingleCommandAsRoot("if rpm -qa | grep kernel-ml; then sed -i s/DEFAULTKERNEL=kernel/DEFAULTKERNEL=kernel-ml/g /etc/sysconfig/kernel; fi")
             
             
-            self.runSingleCommandAsRoot("yum update --disableexcludes=main -y")
+            self.runSingleCommandAsRoot("yum update --disableexcludes=main -y 2>&1> yum.out")
+            if rc != 0:
+                self.runSingleCommandAsRoot("cat yum.out")
 
             
 
@@ -1094,7 +1109,7 @@ class OFSTestNode(object):
     
             
             
-            configure = './configure --prefix %s --enable-shared --with-pic --with-io-romio-flags=\'--with-pvfs2=%s --with-file-system=pvfs2+nfs\' 2>&1 | tee openmpiconfig.log' % (self.openmpi_installation_location,self.ofs_installation_location)
+            configure = './configure --prefix %s --enable-shared --with-pic --with-io-romio-flags=\'--with-pvfs2=%s --with-file-system=pvfs2+nfs\' 2>&1> openmpiconfig.log' % (self.openmpi_installation_location,self.ofs_installation_location)
             
     
             logging.info( "Configuring %s" % self.openmpi_version)
@@ -1102,21 +1117,24 @@ class OFSTestNode(object):
             
             if rc != 0:
                 logging.exception( "Configure of %s failed. rc=%d" % (self.openmpi_version,rc))
+                self.runSingleCommand("cat openmpiconfig.log")
                 self.changeDirectory(tempdir)
                 return rc
             
             logging.info( "Making %s" % self.openmpi_version)
-            rc = self.runSingleCommand("make 2>&1 | tee openmpimake.log")
+            rc = self.runSingleCommand("make 2>&1> openmpimake.log")
             if rc != 0:
                 logging.exception( "Make of %s failed.")
+                self.runSingleCommand("cat openmpimake.log")
                 self.changeDirectory(tempdir)
                 return rc
                 
             self.changeDirectory(self.openmpi_source_location)
             logging.info("Installing %s" % self.openmpi_version)
-            rc = self.runSingleCommand("make install 2>&1 | tee openmpiinstall.log")
+            rc = self.runSingleCommand("make install 2>&1> openmpiinstall.log")
             if rc != 0:
                 logging.exception("Install of %s failed." % self.openmpi_version)
+                self.runSingleCommand("cat openmpiinstall.log")
                 self.changeDirectory(tempdir)
                 return rc
         
@@ -1124,9 +1142,10 @@ class OFSTestNode(object):
         self.setEnvironmentVariable("PATH","%s/bin:%s/bin:\$PATH" % (self.openmpi_installation_location,self.ofs_installation_location))
         self.saveEnvironment()
         self.changeDirectory("%s/ompi/mca/io/romio/romio/test" % self.openmpi_source_location)
-        rc = self.runSingleCommand("make 2>&1 | tee romio_test_make.log")
+        rc = self.runSingleCommand("make 2>&1> romio_test_make.log")
         if rc != 0:
             logging.exception( "Make of %s failed.")
+            self.runSingleCommand("cat romio_test_make.log")
             self.changeDirectory(tempdir)
     
         self.romio_runtests_pvfs2 = self.openmpi_source_location+"/ompi/mca/io/romio/romio/test/runtests.pvfs2"
@@ -1148,8 +1167,9 @@ class OFSTestNode(object):
             print "Warning: Could not untar mdtest"
             
               
-        rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; export MPI_CC='mpicc -Wall'; make" % self.openmpi_installation_location)
+        rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; export MPI_CC='mpicc -Wall'; make 2>&1> mdtest-make.out" % self.openmpi_installation_location)
         if rc != 0:
+            self.runSingleCommand("cat mdtest-make.out")
             print "Warning: Could not make mdtest"
             
         self.mdtest_installation_location = build_location+"/mdtest"
@@ -1170,12 +1190,13 @@ class OFSTestNode(object):
         
         rc = self.changeDirectory(build_location+"/simul-1.14") 
         
-        rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; export MPI_CC='mpicc -Wall'; make" % self.openmpi_installation_location)
+        rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; export MPI_CC='mpicc -Wall'; make 2>&1> simul-make.out" % self.openmpi_installation_location)
         if rc != 0:
             # remove inline due to changes in fedora 23    
             self.runSingleCommand("sed -i s/inline//g simul.c")
-            rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; export MPI_CC='mpicc -Wall'; make" % self.openmpi_installation_location)
+            rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; export MPI_CC='mpicc -Wall'; make 2>&1> simul-make.out" % self.openmpi_installation_location)
             if rc != 0:
+                self.runSingleCommand("cat simul-make.out")
                 print "Warning: Could not make simul"
             
         self.simul_installation_location = build_location+"/simul-1.14"
@@ -1228,8 +1249,9 @@ class OFSTestNode(object):
         
         rc = self.changeDirectory(build_location+"/mpi-tile-io") 
         
-        rc = self.runSingleCommand("make")
+        rc = self.runSingleCommand("make 2>&1> make-mpi-tile-io.out")
         if rc != 0:
+            self.runSingleCommand("cat make-mpi-tile-io.out")
             print "Warning: Could not make mpi-tile-io"
             
         self.mpi_tile_io_installation_location = build_location+"/mpi-tile-io"
@@ -1298,8 +1320,9 @@ class OFSTestNode(object):
         self.changeDirectory(build_location + "/IOR")
         rc = self.runSingleCommand("sed -i s,^'LDFLAGS.Linux =','LDFLAGS.Linux = -L%s/lib',g src/C/Makefile.config" % self.openmpi_installation_location)
         
-        rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; make mpiio" % self.openmpi_installation_location)
+        rc = self.runSingleCommand("export PATH=%s/bin:\$PATH; make mpiio 2>&1> make-ior.out" % self.openmpi_installation_location)
         if rc != 0:
+            self.runSingleCommand("cat make-ior.out")
             print "Warning: Could not make IOR"
             
         self.ior_installation_location = build_location+"/IOR"
@@ -1346,13 +1369,14 @@ class OFSTestNode(object):
             svn_options = "%s --username %s --password $SVN_PASS" % (svn_options, svnusername)
             svn_action = "co"
         
-        msg = "svn %s %s %s --trust-server-cert --non-interactive --no-auth-cache" % (svn_action,svnurl,svn_options)
+        msg = "svn %s %s %s --trust-server-cert --non-interactive --no-auth-cache 2>&1> svn.out" % (svn_action,svnurl,svn_options)
         print msg
         logging.info(msg)
         self.changeDirectory(dest_dir)
         rc = self.runSingleCommand(msg)
         if rc != 0:
             logging.exception( "Could not export from svn")
+            self.runSingleCommand("cat svn.out")
             return rc
         else:
             self.ofs_source_location = "%s/%s" % (dest_dir.rstrip('/'),self.ofs_branch)
@@ -1766,13 +1790,14 @@ class OFSTestNode(object):
             configure_opts = configure_opts+" --enable-security-cert"
         
         print "Configuring OrangeFS"
-        rc = self.runSingleCommand("./configure %s" % configure_opts, output)
+        rc = self.runSingleCommand("./configure %s 2>&1> configure-orangefs.out" % configure_opts, output)
         
         # did configure run correctly?
         if rc == 0:
             # set the OrangeFS installation location to the prefix.
             self.ofs_installation_location = ofs_prefix
         else:
+            self.runSingleCommand("cat configure-orangefs.out")
             logging.exception( "Configuration of OrangeFS at %s Failed!" % self.ofs_source_location)
             
         
@@ -1840,13 +1865,12 @@ class OFSTestNode(object):
         # Change directory to source location.
         self.changeDirectory(self.ofs_source_location)
         output = []
-        # Clean up first.
-        rc = self.runSingleCommand("make clean")
+ 
         # Make
-        rc = self.runSingleCommand("make "+make_options, output)
+        rc = self.runSingleCommand("make clean && make %s 2>&1> make-orangefs.out" % make_options, output)
         if rc != 0:
             logging.exception( "Build (make) of of OrangeFS at %s Failed!" % self.ofs_source_location)
-            
+            self.runSingleCommand("cat make-orangefs.out")
             return rc
         
         # Is the OrangeFS module already in the kernel?
@@ -1856,9 +1880,10 @@ class OFSTestNode(object):
             return rc;
         
         if self.build_kmod:
-            rc = self.runSingleCommand("make kmod",output)
+            rc = self.runSingleCommand("make kmod 2>&1> make-kmod.out",output)
             self.module_name = "pvfs2"
             if rc != 0:
+                self.runSingleCommand("cat make-kmod.out")
                 logging.exception( "Build (make) of of OrangeFS-kmod at %s Failed!" % self.ofs_source_location)
                 
             
@@ -1891,33 +1916,37 @@ class OFSTestNode(object):
         self.changeDirectory(self.ofs_source_location)
         output = []
         if install_as_root:
-            rc = self.runSingleCommandAsRoot("make install",output)
+            rc = self.runSingleCommandAsRoot("make install 2>&1> make-install.out",output)
         else:
-            rc = self.runSingleCommand("make install",output)
+            rc = self.runSingleCommand("make install 2>&1> make-install.out",output)
         
         if rc != 0:
             logging.exception("Could not install OrangeFS from %s to %s" % (self.ofs_source_location,self.ofs_installation_location))
+            self.runSingleCommandAsRoot("cat make-install.out")
             return rc
         
         if self.build_kmod:
-            rc = self.runSingleCommand("make kmod_install kmod_prefix=%s" % self.ofs_installation_location,output)
+            rc = self.runSingleCommand("make kmod_install kmod_prefix=%s 2>&1> make-kmod-install.out" % self.ofs_installation_location,output)
             if rc != 0:
+                self.runSingleCommandAsRoot("cat make-kmod-install.out")
                 logging.exception("Could not install OrangeFS from %s to %s" % (self.ofs_source_location,self.ofs_installation_location))
                 
         if self.enable_hadoop:
             if self.hadoop_version == 'hadoop-1.2.1':
                 self.changeDirectory("%s/src/client/hadoop/orangefs-hadoop1" % self.ofs_source_location)
-                rc = self.runSingleCommand("mvn -Dmaven.compiler.target=1.6 -Dmaven.compiler.source=1.6 -DskipTests clean package")
+                rc = self.runSingleCommand("mvn -Dmaven.compiler.target=1.6 -Dmaven.compiler.source=1.6 -DskipTests clean package 2>&1> build-hadoop.out")
                 if rc != 0:
+                    self.runSingleCommand("cat build-hadoop.out")
                     logging.exception("Could not build and install hadoop1 libraries" )
                 else:
                     self.runSingleCommand('cp target/orangefs-hadoop1-?.?.?.jar "%s/lib"' % self.ofs_installation_location)
                 self.restoreDirectory()
             else:
                 self.changeDirectory("%s/src/client/hadoop/orangefs-hadoop2" % self.ofs_source_location)
-                rc = self.runSingleCommand("mvn -Dmaven.compiler.target=1.7 -Dmaven.compiler.source=1.7 -DskipTests clean package")
+                rc = self.runSingleCommand("mvn -Dmaven.compiler.target=1.7 -Dmaven.compiler.source=1.7 -DskipTests clean package 2>&1> build-hadoop.out")
                 if rc != 0:
                     logging.exception("Could not build and install hadoop2 libraries" )
+                    self.runSingleCommand("cat build-hadoop.out")
                 else:
                     self.runSingleCommand('cp target/orangefs-hadoop2-?.?.?.jar "%s/lib"' % self.ofs_installation_location)
                 self.restoreDirectory()
@@ -1947,8 +1976,9 @@ class OFSTestNode(object):
         self.changeDirectory("%s/test" % self.ofs_source_location)
         #Turn off optimizations and turn on debug symbols.
         
-        rc = self.runSingleCommand("CFLAGS='-g -O0' ./configure %s"% configure_options)
+        rc = self.runSingleCommand("CFLAGS='-g -O0' ./configure %s 2>&1> configure-tests.out"% configure_options)
         if rc != 0:
+            self.runSingleCommand("cat configure-tests.out")
             logging.exception("Could not configure OrangeFS tests")
             return rc
         
@@ -1963,13 +1993,15 @@ class OFSTestNode(object):
         self.runSingleCommand("rm -rf %s/test/io/job" % self.ofs_source_location)
         self.runSingleCommand("rm -rf %s/test/io/trove" % self.ofs_source_location)
         
-        rc = self.runSingleCommand("make all")
+        rc = self.runSingleCommand("make all 2>&1> make-tests.out")
         if rc != 0:
+            self.runSingleCommand("cat make-tests.out")
             logging.exception( "Could not build (make) OrangeFS tests")
             return rc
    
-        rc = self.runSingleCommand("make install")
+        rc = self.runSingleCommand("make install 2>&1> install-tests.out")
         if rc != 0:
+            self.runSingleCommand("cat install-tests.out")
             logging.exception( "Could not install OrangeFS tests")
         return rc
     
