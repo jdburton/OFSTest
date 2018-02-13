@@ -42,7 +42,6 @@ orangefs_depends:
       - libaio-devel
       - kernel-devel
       - dkms
-      - python-pip
       - libxml2-devel
       - openldap-devel
       - apr-devel
@@ -73,7 +72,6 @@ other_depends:
     - pkgs:
       - unzip
       - boost-devel
-      - python-pip
       - time
       - nmap-ncat
       - environment-modules

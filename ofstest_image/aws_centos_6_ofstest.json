@@ -59,6 +59,8 @@
 
   {
     "type": "shell",
+    "expect_disconnect": true,
+    "pause_before": "10s",
     "inline": [
       "set -x",
       "sudo yum install -y cloud-init",

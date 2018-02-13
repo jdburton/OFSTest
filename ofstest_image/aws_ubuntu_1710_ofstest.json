@@ -2,7 +2,7 @@
   "variables": {
     "aws_access_key": "{{env `AWS_ACCESS_KEY`}}",
     "aws_secret_key": "{{env `AWS_SECRET_KEY`}}",
-    "aws_source_ami": "{{env `AWS_SOURCE_AMI_UBUNTU_1604`}}",
+    "aws_source_ami": "{{env `AWS_SOURCE_AMI_UBUNTU_1710`}}",
     "aws_region": "{{env `AWS_REGION`}}",
     "aws_vpc": "{{env `AWS_VPC`}}",
     "aws_subnet": "{{env `AWS_SUBNET`}}",
@@ -18,7 +18,7 @@
     "spot_price" : "auto",
     "spot_price_auto_product" : "Linux/UNIX (Amazon VPC)",
     "region": "{{user `aws_region`}}",
-    "ami_name": "cloud-ubuntu-16.04-ofstest-new",
+    "ami_name": "cloud-ubuntu-17.10-ofstest-new",
     "vpc_id": "{{user `aws_vpc`}}",
     "subnet_id": "{{user `aws_subnet`}}",
     "security_group_id": "{{user `aws_security_group`}}",
@@ -45,8 +45,8 @@
     "inline": [
       "set -x",
 	  "sudo apt-get update",
-	  "sudo apt-get -y install salt-master salt-minion salt-syndic salt-ssh wget perl",
-      "sudo DEBIAN_FRONTEND=noninteractive apt-get -y dist-upgrade",
+	  "sudo DEBIAN_FRONTEND=noninteractive apt-get -y dist-upgrade",
+	  "sudo apt-get -y install salt-master salt-minion salt-syndic salt-ssh wget perl linux-image-extra",
 	  "sudo chmod -R a+w /opt",
 	  "mkdir -p /opt/mpi",
       "sudo /sbin/reboot"
@@ -70,8 +70,8 @@
       "sudo chown -R ubuntu:ubuntu /opt",
       "sudo /sbin/modprobe -v fuse",
       "sudo chmod a+x /bin/fusermount",
-	  "sudo systemctl disable salt-minion.service",
-	  "sudo systemctl disable salt-master.service"      
+      "sudo systemctl disable salt-minion.service",
+	  "sudo systemctl disable salt-master.service"   
 
     ]
   }

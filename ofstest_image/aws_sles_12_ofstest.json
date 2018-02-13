@@ -41,6 +41,7 @@
   {
     "type": "shell",
     "pause_before": "120s",
+    "expect_disconnect": true,
     "inline": [
       "set -x",
       "ps -ef | grep zypp",
