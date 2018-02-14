@@ -778,6 +778,9 @@ class OFSTestMain(object):
                 import OFSMpiioTest
                 
                 for callable in OFSMpiioTest.tests:
+                    
+                    # unmount OrangeFS
+                    self.ofs_network.unmountOFSFilesystemAllNodes()
                     try:
                         rc = head_node.runOFSTest("mpiio", callable)
                         self.writeOutput(filename,callable,rc)
@@ -792,6 +795,9 @@ class OFSTestMain(object):
                 
             
             if self.config.run_mpi_benchmarks:
+                
+                self.ofs_network.mountOFSFilesystemAllNodes(mount_fuse=False)
+            
                 self.writeOutputHeader(filename,"MPI-Benchmarks")
                 
                 import OFSMpiBenchmarks
