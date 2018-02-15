@@ -1048,11 +1048,11 @@ class OFSTestNode(object):
         if build_location is None:
             build_location = install_location
         
-        
+        # fix this garbage.
         #self.openmpi_version = "openmpi-1.6.5"
         self.openmpi_version = "openmpi-1.8.8"
-        self.openmpi_installation_location = install_location+"/openmpi"
-        self.openmpi_source_location = "%s/%s" % (build_location,self.openmpi_version)
+        self.openmpi_installation_location = install_location+"/"+self.openmpi_version
+        self.openmpi_source_location = "/usr/src/%s" % self.openmpi_version
         tempdir = self.current_directory
 
         rc = self.runSingleCommand("[ -f %s/bin/orted ]" % self.openmpi_installation_location)
