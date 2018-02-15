@@ -17,7 +17,7 @@ base:
   #'G@os:openSUSE or P@os:openSUSE?Leap or G@os:openSUSE Leap':
   'os_family:Suse':
     - match: grain
-    - ofstest_opensuse
+    - ofstest_suse
 #  'G@os_family:Suse and not G@os:openSUSE and not P@os:openSUSE?Leap':
   #'G@os_family:Suse':
 #    - match: compound

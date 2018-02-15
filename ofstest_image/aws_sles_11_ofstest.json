@@ -18,7 +18,7 @@
     "spot_price" : "auto",
     "spot_price_auto_product" : "SUSE Linux (Amazon VPC)",
     "region": "{{user `aws_region`}}",
-    "ami_name": "cloud-sles11-ofstest-new",
+    "ami_name": "cloud-sles11-ofstest",
     "vpc_id": "{{user `aws_vpc`}}",
     "subnet_id": "{{user `aws_subnet`}}",
     "security_group_id": "{{user `aws_security_group`}}",
@@ -41,27 +41,37 @@
     "type": "shell",
     "inline": [
       "set -x",
-	  "sudo zypper --non-interactive --gpg-auto-import-keys  addrepo http://mirrors.vbi.vt.edu/linux/opensuse/repositories/devel:/languages:/python/SLE_11_SP3/devel:languages:python.repo",
-      "#sudo zypper --non-interactive --gpg-auto-import-keys  addrepo http://download.opensuse.org/repositories/devel:/languages:/python/SLE_11_SP4/devel:languages:python.repo",
-      "sudo zypper --non-interactive --gpg-auto-import-keys  addrepo http://download.opensuse.org/repositories/systemsmanagement:/saltstack/SLE_11_SP4/systemsmanagement:saltstack.repo",
+	  "sudo zypper --non-interactive up",
+	  "sudo zypper --non-interactive --gpg-auto-import-keys  addrepo http://repo.saltstack.com/opensuse/SLE_11_SP4/systemsmanagement:saltstack:products.repo",
       "sudo zypper --non-interactive --gpg-auto-import-keys  refresh",
-      "sudo zypper  --non-interactive dup --from http://mirrors.vbi.vt.edu/linux/opensuse/repositories/devel:/languages:/python/SLE_11_SP3/",
-      "#sudo zypper  --non-interactive dup --from http://download.opensuse.org/repositories/devel:/languages:/python/SLE_11_SP4/",
-      "sudo zypper  --non-interactive dup --from http://download.opensuse.org/repositories/systemsmanagement:/saltstack/SLE_11_SP4/",
-      "sudo zypper --non-interactive up",
-      "sudo zypper --non-interactive  install gcc salt salt-minion salt-master salt-syndic salt-ssh python-singledispatch",
-      "sudo chkconfig SuSEfirewall2_setup off",
-      "sudo chkconfig salt-master on",
-      "sudo chkconfig salt-minion on",
+      "sudo zypper --non-interactive  install gcc salt salt-minion salt-master salt-syndic salt-ssh",
+      "sudo /sbin/chkconfig SuSEfirewall2_init off",
+      "sudo /sbin/chkconfig SuSEfirewall2_setup off",
+      "sudo /sbin/chkconfig salt-master on",
+      "sudo /sbin/chkconfig salt-minion on",
       "sudo chmod -R a+w /opt",
       "sudo chmod -R a+w /srv",
       "sudo ln -s /etc/HOSTNAME /etc/hostname",
       "sudo sed -i 's/DHCLIENT_SET_HOSTNAME=\"yes\"/DH_CLIENT_SETHOSTNAME=\"no\"/' /etc/sysconfig/network/dhcp",
       "mkdir -p /opt/mpi",
-      "df -h"
+      "sudo /sbin/reboot"
 
     ]
   },
+      {
+      "type": "shell",
+      "pause_before": "10s",
+      "inline": [
+        "set -x",
+        "sudo bash -c 'echo 0 > /selinux/enforce'",
+        "sudo /etc/init.d/salt-master restart",
+        "sudo /etc/init.d/salt-minion restart",
+      	"sudo chmod -R a+w /etc/salt",
+        "sudo chmod -R a+w /var/log/salt",
+        "sudo chmod -R a+w /var/cache/salt"
+      	
+      ]
+    },
 
   {
     "type": "salt-masterless",

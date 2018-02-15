@@ -46,7 +46,7 @@
       "set -x",
       "sudo sed -i -e 's/^Defaults.*requiretty/# Defaults requiretty/g' /etc/sudoers",
       "sudo yum -y install wget epel-release kernel-devel gcc", 
-      "sudo yum -y salt-master salt-minion salt-syndic",
+      "sudo yum -y install salt-master salt-minion salt-syndic",
       "sudo yum -y update kernel-devel kernel",
 	  "sudo chmod -R a+w /opt",
 	  "mkdir -p /opt/mpi",

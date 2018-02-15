@@ -8,7 +8,7 @@ cd /usr/src/openmpi-1.8.8
   --with-io-romio-flags='--with-pvfs2=/opt/orangefs --with-file-system=pvfs2+nfs+ufs' 
 make -j$(nproc) 
 make install
-export PATH=$PATH:/opt/mpi/openmpi/bin
+export PATH=$PATH:/opt/mpi/openmpi-1.8.8/bin
 if which mpicc
 then
   cd /opt/mpi/openmpi-1.8.8/ompi/mca/io/romio/romio/test/

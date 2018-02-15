@@ -46,7 +46,7 @@
       "set -x",
 	  "sudo apt-get update",
 	  "sudo DEBIAN_FRONTEND=noninteractive apt-get -y dist-upgrade",
-	  "sudo apt-get -y install salt-master salt-minion salt-syndic salt-ssh wget perl linux-image-extra",
+	  "sudo apt-get -y install salt-master salt-minion salt-syndic salt-ssh wget perl linux-image-extra-virtual",
 	  "sudo chmod -R a+w /opt",
 	  "mkdir -p /opt/mpi",
       "sudo /sbin/reboot"
