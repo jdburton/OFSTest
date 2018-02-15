@@ -219,8 +219,8 @@ class OFSTestNode(object):
         ## @var created_openmpihosts
         # Created openmpihosts file
         
-        self.openmpi_installation_location = "/opt/mpi/openmpi"
-        self.openmpi_source_location = "/opt/mpi/openmpi-1.8.8"
+        self.openmpi_installation_location = "/opt/mpi/openmpi-1.8.8"
+        self.openmpi_source_location = "/usr/src/openmpi-1.8.8"
         self.openmpi_version = ""
         self.created_openmpihosts = None  
         self.number_cores = 1
