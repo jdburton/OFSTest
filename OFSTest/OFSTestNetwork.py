@@ -1538,6 +1538,9 @@ class OFSTestNetwork(object):
         self.openmpi_version = build_node.openmpi_version
         
         build_node.changeDirectory(self.mpi_nfs_directory)
+        
+        for node in self.network_nodes:
+            node.runSingleCommandAsRoot("chmod -R a+w "+ build_node.openmpi_source_location)
 
 
 #         # we created an openmpihost file earlier. Now copy it to the appropriate directory.
