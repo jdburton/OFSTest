@@ -1053,6 +1053,7 @@ class OFSTestNode(object):
         self.openmpi_version = "openmpi-1.8.8"
         self.openmpi_installation_location = install_location+"/"+self.openmpi_version
         self.openmpi_source_location = "/usr/src/%s" % self.openmpi_version
+        self.runSingleCommandAsRoot("chmod -R a+w "+self.openmpi_source_location)
         tempdir = self.current_directory
 
         rc = self.runSingleCommand("[ -f %s/bin/orted ]" % self.openmpi_installation_location)
