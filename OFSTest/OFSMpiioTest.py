@@ -142,7 +142,7 @@ def mpi_io_test(testing_node,output=[]):
     rc = testing_node.changeDirectory("%s" % testing_node.ofs_mount_point)
     np = testing_node.number_mpi_slots
     
-    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --prefix %s --map-by node %s/test/mpi-io-test pvfs2:%s/mpi-io-test -b $((1024*1024*32))" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.openmpi_installation_location,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
+    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --prefix %s --map-by node %s/test/mpi-io-test -f pvfs2:%s/mpi-io-test -b $((1024*1024*32))" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.openmpi_installation_location,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
     
     time.sleep(30)
     #TODO: Compare actual results with expected.
@@ -173,7 +173,7 @@ def mpi_io_test_collective(testing_node,output=[]):
     rc = testing_node.changeDirectory("%s" % testing_node.ofs_mount_point)
     np = testing_node.number_mpi_slots
     
-    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --prefix %s --map-by node %s/test/mpi-io-test pvfs2:%s/mpi-io-test-C -b $((1024*1024*32)) -C" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.openmpi_installation_location,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
+    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --prefix %s --map-by node %s/test/mpi-io-test -f pvfs2:%s/mpi-io-test-C -b $((1024*1024*32)) -C" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.openmpi_installation_location,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
     
     time.sleep(30)
 
