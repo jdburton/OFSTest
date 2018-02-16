@@ -1540,7 +1540,7 @@ class OFSTestNetwork(object):
         build_node.changeDirectory(self.mpi_nfs_directory)
         
         for node in self.network_nodes:
-            self.runSingleCommandAsRoot("chown -R  %s:%s %s", (node.current_user,node.current_group,node.openmpi_source_location))
+            self.runSingleCommandAsRoot("chown -R  %s:%s %s" % (node.current_user,node.current_group,node.openmpi_source_location))
 
 
 #         # we created an openmpihost file earlier. Now copy it to the appropriate directory.
