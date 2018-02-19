@@ -150,6 +150,10 @@ def terasort_full(testing_node,output=[]):
 
     # generate 5G of data. Not much, but good enough to kick the tires.
     gensize = 50000000 
+    
+    # Predelete input and output directories
+    rc = testing_node.runSingleCommand("%s/bin/hadoop fs -rm -r /user/%s/terasort5G-input" % (testing_node.hadoop_location,testing_node.current_user),output)
+    rc = testing_node.runSingleCommand("%s/bin/hadoop fs -rm -r /user/%s/terasort5G-output" % (testing_node.hadoop_location,testing_node.current_user),output)
      
     rc = testing_node.runSingleCommand("%s/bin/hadoop jar %s  teragen %d /user/%s/terasort5G-input" % (testing_node.hadoop_location,testing_node.hadoop_examples_location,gensize,testing_node.current_user),output)
     if rc != 0:
