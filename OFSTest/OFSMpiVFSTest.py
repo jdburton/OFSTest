@@ -79,8 +79,8 @@ def stadler_file_view_test(testing_network):
 def romio_testsuite(testing_node,output=[]):
 
     #/opt/mpi/openmpi-1.6.5/ompi/mca/io/romio/romio/test
-    testing_node.changeDirectory("/opt/mpi/%s/ompi/mca/io/romio/romio/test"  % testing_node.openmpi_version)
-    
+    testing_node.changeDirectory("%s/ompi/mca/io/romio/romio/test" % (testing_node.openmpi_source_location,testing_node.openmpi_version))
+        
     rc = 0
     print "%s -machinefile=%s -fname=%s/romioruntests" % (testing_node.romio_runtests_pvfs2,testing_node.created_openmpihosts,testing_node.ofs_mount_point)
     rc = testing_node.runSingleCommand("%s -machinefile=%s -fname=%s/romioruntests" % (testing_node.romio_runtests_pvfs2,testing_node.created_openmpihosts,testing_node.ofs_mount_point),output)
