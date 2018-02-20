@@ -1617,6 +1617,10 @@ class OFSTestNetwork(object):
 #             node.runSingleCommand("echo 'export JNI_LIBRARY_PATH=%s/lib' >> %s/conf/hadoop-env.sh" % (node.ofs_installation_location,node.hadoop_location))
 #             node.runSingleCommand("echo 'export HADOOP_CLASSPATH=\$JNI_LIBRARY_PATH/orangefs-hadoop1-2.9.0.jar:\$JNI_LIBRARY_PATH/ofs-jni-2.9.0.jar' >> %s/conf/hadoop-env.sh" % node.hadoop_location)
             
+            # update environment
+            node.runSingleCommandAsRoot('sed -i s,__HADOOP_VERSION__,%s,g /etc/profile.d/path_additions.sh' % node.hadoop_version)
+            node.runSingleCommandAsRoot('sed -i s,__HADOOP_VERSION__,%s,g /etc/profile.d/hadoop_env.sh' % node.hadoop_version)
+            
             node.runSingleCommand('sed -i s,/usr/lib/jvm/java-7-openjdk-amd64,%s,g %s/hadoop-env.sh' % (node.jdk6_location,hadoop_conf ))
             
             node.runSingleCommand('sed -i s,/opt/orangefs-trunk,%s,g %s/hadoop-env.sh' % (node.ofs_installation_location,hadoop_conf ))
@@ -1635,6 +1639,7 @@ class OFSTestNetwork(object):
             
             # point slave node to master
             node.runSingleCommand("echo '%s' > %s/masters" % (master_node.hostname,hadoop_conf))
+            
             
             
             
