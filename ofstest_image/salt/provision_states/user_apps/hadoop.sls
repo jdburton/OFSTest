@@ -49,6 +49,6 @@ hadoop_env:
   file.append:
     - name: /etc/profile.d/hadoop_env.sh
     - text:
-      - export HADOOP_PREFIX=/opt/
       - export HADOOP_VERSION=__HADOOP_VERSION__
+      - export HADOOP_PREFIX=/opt/$HADOOP_VERSION/
       - export HADOOP_CONF_DIR=/opt/$HADOOP_VERSION/etc/hadoop
