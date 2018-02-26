@@ -344,22 +344,22 @@ def ltp(testing_node,output=[]):
             
             return rc
         
-        rc = testing_node.runSingleCommand("make autotools 2>&1> ./make-autotools.out")
+        rc = testing_node.runSingleCommand("make autotools &> ./make-autotools.out")
         if rc != 0:
             testing_node.runSingleCommand("cat make-autotools.out")
             return rc
             
-        rc = testing_node.runSingleCommand("DEBUG_CFLAGS='-g' OPT_CFLAGS='-O0' ./configure --prefix=%s 2>&1> ./configure.out" % LTP_PREFIX,output)
+        rc = testing_node.runSingleCommand("DEBUG_CFLAGS='-g' OPT_CFLAGS='-O0' ./configure --prefix=%s &> ./configure.out" % LTP_PREFIX,output)
         if rc != 0:
             testing_node.runSingleCommand("cat configure.out")
             return rc
 
-        rc = testing_node.runSingleCommand('make all  2>&1> ./make-all.out',output)
+        rc = testing_node.runSingleCommand('make all  &> ./make-all.out',output)
         if rc != 0:
             testing_node.runSingleCommand("cat make-all.out")
             return rc
 
-        testing_node.runSingleCommand('make install 2>&1> ./make-install.out',output)
+        testing_node.runSingleCommand('make install &> ./make-install.out',output)
         if rc != 0:
             testing_node.runSingleCommand("cat make-install.out")
             return rc
@@ -561,7 +561,7 @@ def xfstests(testing_node,output=[]):
 #     if rc != 0:
 #         testing_node.runSingleCommand("wget --quiet http://orangefs.org/svn/orangefs/trunk/test/automated/vfs-tests.d/xfstests-pvfs2.diff")
 #     rc = testing_node.runSingleCommand("patch -p1 < xfstests-pvfs2.diff")
-    rc = testing_node.runSingleCommand("make 2>&1> make-xfstests.out")
+    rc = testing_node.runSingleCommand("make &> make-xfstests.out")
     if rc != 0:
         testing_node.runSingleCommand("cat make-xfstests.out")
         return rc

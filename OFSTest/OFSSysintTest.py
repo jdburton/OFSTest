@@ -104,7 +104,7 @@ def validate(testing_node,output=[]):
     return rc   
     
 def fs_dump(testing_node,output=[]):
-    rc = testing_node.runSingleCommand("%s/bin/pvfs2-fs-dump -m %s 2>&1> pvfs2-fs-dump.log" % (testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
+    rc = testing_node.runSingleCommand("%s/bin/pvfs2-fs-dump -m %s &> pvfs2-fs-dump.log" % (testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
     if rc != 0:
         testing_node.runSingleCommand("cat pvfs2-fs-dump.log")
     return rc
