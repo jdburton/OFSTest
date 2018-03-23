@@ -1442,6 +1442,7 @@ class OFSTestNetwork(object):
             ofs_fs_name,
             ofs_hostname_override = None,
             ofs_mount_point = None,
+            ofs_protocol=None,
             node_list = None
             ):
 
@@ -1484,6 +1485,9 @@ class OFSTestNetwork(object):
             
             if ofs_tcp_port != None:
                 node.ofs_tcp_port = ofs_tcp_port
+
+            if ofs_protocol != None:
+                node.ofs_protocol = ofs_protocol
             
             # Mount point. can be read from mount
             if ofs_mount_point != None:

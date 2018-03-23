@@ -421,7 +421,7 @@ def ltp(testing_node,output=[]):
 
 def mkdir_vfs(testing_node,output=[]):
 
-    options = "--hostname=%s --fs-name=%s --network-proto=tcp --port=%d --exe-path=%s/bin --print-results --verbose" % (testing_node.hostname,testing_node.ofs_fs_name,testing_node.ofs_tcp_port,testing_node.ofs_installation_location)
+    options = "--hostname=%s --fs-name=%s --network-proto=%s --port=%d --exe-path=%s/bin --print-results --verbose" % (testing_node.hostname,testing_node.ofs_fs_name,testing_node.ofs_protocol,testing_node.ofs_tcp_port,testing_node.ofs_installation_location)
     rc = testing_node.runSingleCommand("PATH=%s/bin:$PATH %s/test/test-mkdir --directory %s %s" % (testing_node.ofs_installation_location,testing_node.ofs_installation_location,testing_node.ofs_mount_point,options),output)
     return rc
 
@@ -458,7 +458,7 @@ def shelltest(testing_node,output=[]):
 # 
 def symlink_vfs(testing_node,output=[]):
 
-    options = "--hostname=%s --fs-name=%s --network-proto=tcp --port=%d --exe-path=%s/bin --print-results --verbose" % (testing_node.hostname,testing_node.ofs_fs_name,testing_node.ofs_tcp_port,testing_node.ofs_installation_location)
+    options = "--hostname=%s --fs-name=%s --network-proto=%s --port=%d --exe-path=%s/bin --print-results --verbose" % (testing_node.hostname,testing_node.ofs_fs_name,testing_node.ofs_protocol,testing_node.ofs_tcp_port,testing_node.ofs_installation_location)
     rc = testing_node.runSingleCommand("PATH=%s/bin:$PATH %s/test/test-symlink-perms --directory %s %s" % (testing_node.ofs_installation_location,testing_node.ofs_installation_location,testing_node.ofs_mount_point,options),output)
     return rc
 
@@ -570,7 +570,7 @@ def xfstests(testing_node,output=[]):
     rc = testing_node.runSingleCommand("cp %s/test/automated/vfs-tests.d/xfstests-exclude.list ./xfstests-exclude.list" % testing_node.ofs_source_location)
     if rc != 0:
         testing_node.runSingleCommand("http://orangefs.org/svn/orangefs/trunk/test/automated/vfs-tests.d/xfstests-exclude.list")
-    rc = testing_node.runSingleCommandAsRoot("TEST_DIR=%s TEST_DEV=tcp://%s:%d/%s ./check -pvfs2 -E xfstests-exclude.list" % (testing_node.ofs_mount_point,testing_node.hostname,testing_node.ofs_tcp_port,testing_node.ofs_fs_name),output)
+    rc = testing_node.runSingleCommandAsRoot("TEST_DIR=%s TEST_DEV=%s://%s:%d/%s ./check -pvfs2 -E xfstests-exclude.list" % (testing_node.ofs_mount_point,testing_node.ofs_protocol,testing_node.hostname,testing_node.ofs_tcp_port,testing_node.ofs_fs_name),output)
     print output[1]
     print output[2]
 

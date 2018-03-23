@@ -242,6 +242,10 @@ class OFSTestConfig(object):
         ## @var ofs_tcp_port
         # TCP port on which to run OrangeFS
         self.ofs_tcp_port = 3396 # Web Interface: auto
+
+        ## @var ofs_protocol
+        # Network protocol on which to run OrangeFS
+        self.ofs_protocol = "tcp" # Web Interface: auto
         
         ## @var ofs_mount_as_fuse
         # Mount filesystem using the fuse module instead of kernel module.
@@ -793,6 +797,10 @@ class OFSTestConfig(object):
         temp = d.get('ofs_tcp_port')
         if temp != None:
             self.ofs_tcp_port = temp
+        
+        temp = d.get('ofs_protocol')
+        if temp != None:
+            self.ofs_protocol = temp
                 
         temp = d.get('stop_on_failure')
         if temp != None:

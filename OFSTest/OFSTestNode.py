@@ -194,8 +194,13 @@ class OFSTestNode(object):
         self.build_kmod = False
         
         ## @var ofs_tcp_port
-        # default tcp port
+        # default tcp or ib port
         self.ofs_tcp_port = 3396
+        
+        ## @var ofs_protocol
+        # OrangeFS protocol (tcp or ib). Default tcp.
+        self.ofs_protocol = "tcp"
+        
         
         ## @var db4_dir
         # berkeley db4 location
@@ -2285,7 +2290,7 @@ class OFSTestNode(object):
             
         self.runSingleCommand("mkdir -p %s/etc" % self.ofs_installation_location)
         if configuration_options == "":
-            genconfig_str="%s/bin/pvfs2-genconfig %s/etc/orangefs.conf --protocol tcp --iospec=\"%s\" --metaspec=\"%s\" --storage=%s --metadata=%s %s --logfile=%s/pvfs2-server-%s.log --quiet" % (self.ofs_installation_location,self.ofs_installation_location,ofs_host_str,metadata_host_str,self.ofs_data_location,self.ofs_metadata_location,security_args,self.ofs_installation_location,self.ofs_branch)
+            genconfig_str="%s/bin/pvfs2-genconfig %s/etc/orangefs.conf --protocol %s --iospec=\"%s\" --metaspec=\"%s\" --storage=%s --metadata=%s %s --logfile=%s/pvfs2-server-%s.log --quiet" % (self.ofs_installation_location,self.ofs_installation_location,self.ofs_protocol,ofs_host_str,metadata_host_str,self.ofs_data_location,self.ofs_metadata_location,security_args,self.ofs_installation_location,self.ofs_branch)
         else:
             genconfig_str="%s/bin/pvfs2-genconfig %s/etc/orangefs.conf %s --quiet" % (self.ofs_installation_location,self.ofs_installation_location,configuration_options)
         
@@ -2360,7 +2365,7 @@ class OFSTestNode(object):
         self.ofs_mount_point = "/tmp/mount/orangefs"
         self.runSingleCommand("mkdir -p "+ self.ofs_mount_point)
         self.runSingleCommand("mkdir -p %s/etc" % self.ofs_installation_location)
-        self.runSingleCommand("echo \"tcp://%s:%d/%s %s pvfs2 defaults 0 0\" > %s/etc/orangefstab" % (self.hostname,self.ofs_tcp_port,self.ofs_fs_name,self.ofs_mount_point,self.ofs_installation_location))
+        self.runSingleCommand("echo \"%s://%s:%d/%s %s pvfs2 defaults 0 0\" > %s/etc/orangefstab" % (self.ofs_protocol,self.hostname,self.ofs_tcp_port,self.ofs_fs_name,self.ofs_mount_point,self.ofs_installation_location))
         self.runSingleCommandAsRoot("ln -s %s/etc/orangefstab /etc/pvfs2tab" % self.ofs_installation_location)
         self.setEnvironmentVariable("PVFS2TAB_FILE",self.ofs_installation_location + "/etc/orangefstab")
         self.setEnvironmentVariable("OFS_SRC_DIR",self.ofs_source_location)
@@ -2404,7 +2409,7 @@ class OFSTestNode(object):
         self.ofs_mount_point = "/tmp/mount/orangefs"
         self.runSingleCommand("mkdir -p "+ self.ofs_mount_point)
         self.runSingleCommand("mkdir -p %s/etc" % self.ofs_installation_location)
-        self.runSingleCommand("echo \"tcp://%s:%d/%s %s pvfs2 defaults 0 0\" > %s/etc/orangefstab" % (self.hostname,self.ofs_tcp_port,self.ofs_fs_name,self.ofs_mount_point,self.ofs_installation_location))
+        self.runSingleCommand("echo \"%s://%s:%d/%s %s pvfs2 defaults 0 0\" > %s/etc/orangefstab" % (self.ofs_protocol,self.hostname,self.ofs_tcp_port,self.ofs_fs_name,self.ofs_mount_point,self.ofs_installation_location))
         self.runSingleCommandAsRoot("ln -s %s/etc/orangefstab /etc/pvfs2tab" % self.ofs_installation_location)
         self.setEnvironmentVariable("OFS_MOUNTPOINT",self.ofs_mount_point)
 
@@ -2577,14 +2582,14 @@ class OFSTestNode(object):
         
         # mount with fuse
         if mount_fuse:
-            print "Mounting OrangeFS service at tcp://%s:%d/%s at mount_point %s via fuse" % (self.hostname,self.ofs_tcp_port,self.ofs_fs_name,self.ofs_mount_point)
-            self.runSingleCommand("%s/bin/pvfs2fuse %s -o fs_spec=tcp://%s:%d/%s -o nonempty" % (self.ofs_installation_location,self.ofs_mount_point,self.hostname,self.ofs_tcp_port,self.ofs_fs_name),output)
+            print "Mounting OrangeFS service at %s://%s:%d/%s at mount_point %s via fuse" % (self.ofs_protocol,self.hostname,self.ofs_tcp_port,self.ofs_fs_name,self.ofs_mount_point)
+            self.runSingleCommand("%s/bin/pvfs2fuse %s -o fs_spec=%s://%s:%d/%s -o nonempty" % (self.ofs_installation_location,self.ofs_mount_point,self.ofs_protocol,self.hostname,self.ofs_tcp_port,self.ofs_fs_name),output)
             #print output
             
         #mount with kmod
         else:
-            print "Mounting OrangeFS service at tcp://%s:%d/%s at mount_point %s" % (self.hostname,self.ofs_tcp_port,self.ofs_fs_name,self.ofs_mount_point)
-            self.runSingleCommandAsRoot("mount -t pvfs2 tcp://%s:%d/%s %s" % (self.hostname,self.ofs_tcp_port,self.ofs_fs_name,self.ofs_mount_point))
+            print "Mounting OrangeFS service at %s://%s:%d/%s at mount_point %s" % (self.ofs_protocol,self.hostname,self.ofs_tcp_port,self.ofs_fs_name,self.ofs_mount_point)
+            self.runSingleCommandAsRoot("mount -t pvfs2 %s://%s:%d/%s %s" % (self.ofs_protocol,self.hostname,self.ofs_tcp_port,self.ofs_fs_name,self.ofs_mount_point))
 
         
         print "Waiting 10 seconds for mount"            
