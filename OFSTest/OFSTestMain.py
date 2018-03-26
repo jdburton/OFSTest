@@ -190,7 +190,8 @@ class OFSTestMain(object):
             ofs_fs_name=self.config.ofs_fs_name,
             ofs_hostname_override=self.config.ofs_hostname_override,
             ofs_mount_point=self.config.ofs_mount_point,
-            ofs_protocol=self.config.ofs_protocol
+            ofs_protocol=self.config.ofs_protocol,
+            ofs_source_location=self.config.ofs_source_location
             )
         
         '''

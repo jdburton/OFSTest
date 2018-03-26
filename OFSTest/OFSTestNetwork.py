@@ -1443,6 +1443,7 @@ class OFSTestNetwork(object):
             ofs_hostname_override = None,
             ofs_mount_point = None,
             ofs_protocol=None,
+            ofs_source_location=None,
             node_list = None
             ):
 
@@ -1461,6 +1462,9 @@ class OFSTestNetwork(object):
             
             if ofs_installation_location != None:
                 node.ofs_installation_location = ofs_installation_location
+            
+            if ofs_source_location != None:
+                node.ofs_source_location = ofs_source_location
             
             if db4_prefix != None:
                 #rc = node.findDB4location
