@@ -1444,6 +1444,7 @@ class OFSTestNetwork(object):
             ofs_mount_point = None,
             ofs_protocol=None,
             ofs_source_location=None,
+            
             node_list = None
             ):
 
@@ -1496,6 +1497,9 @@ class OFSTestNetwork(object):
             # Mount point. can be read from mount
             if ofs_mount_point != None:
                 node.ofs_mount_point = ofs_mount_point
+            
+            if node.created_openmpihosts is None:
+                node.created_openmpihosts = "/home/%s/openmpihosts" % node.current_user
             
             # Hostname override. Needed to workaround an openstack problem.
             if len(ofs_hostname_override) > 0:
