@@ -1444,7 +1444,8 @@ class OFSTestNetwork(object):
             ofs_mount_point = None,
             ofs_protocol=None,
             ofs_source_location=None,
-            
+            openmpi_hosts_file=None,
+            number_mpi_slots=1,
             node_list = None
             ):
 
@@ -1499,8 +1500,13 @@ class OFSTestNetwork(object):
                 node.ofs_mount_point = ofs_mount_point
             
             if node.created_openmpihosts is None:
-                node.created_openmpihosts = "/home/%s/openmpihosts" % node.current_user
+                if openmpi_hosts_file is None:
+                    node.created_openmpihosts = "/home/%s/openmpihosts" % node.current_user
+                else:
+                    node.created_openmpihosts = openmpi_hosts_file
             
+            node.number_mpi_slots = number_mpi_slots
+                    
             # Hostname override. Needed to workaround an openstack problem.
             if len(ofs_hostname_override) > 0:
                 try:
@@ -1578,6 +1584,8 @@ class OFSTestNetwork(object):
         return rc
 
 
+  
+    
   
     ##
     # @fn   setupHadoop(self,hadoop_nodes=None,master_node=None):

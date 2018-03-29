@@ -377,6 +377,9 @@ class OFSTestConfig(object):
         
         self.spot_instance_bid = None
         self.host_prefix = "ofsnode"
+        self.openmpi_hosts_file = None
+        self.number_mpi_slots = 1
+        
     ##
     #
     # @fn setConfig(self,kwargs={}):
@@ -863,4 +866,12 @@ class OFSTestConfig(object):
         temp = d.get('host_prefix')
         if temp != None:
             self.host_prefix = temp
+        
+        temp = d.get('openmpi_hosts_file')
+        if temp != None:
+            self.openmpi_hosts_file = temp
+        
+        temp = d.get('number_mpi_slots')
+        if temp != None:
+            self.number_mpi_slots = temp
                 

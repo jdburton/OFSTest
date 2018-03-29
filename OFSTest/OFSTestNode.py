@@ -1157,6 +1157,16 @@ class OFSTestNode(object):
         self.romio_runtests_pvfs2 = self.openmpi_source_location+"/ompi/mca/io/romio/romio/test/runtests.pvfs2"
         self.runSingleCommand("chmod a+x "+self.romio_runtests_pvfs2)
         
+        self.configureOpenMPITests(install_location, build_location)
+    
+    
+    def configureOpenMPITests(self,install_location=None,build_location=None):
+        
+        if install_location is None:
+            install_location = "/opt/mpi"
+        
+        if build_location is None:
+            build_location = install_location   
         
         rc = self.runSingleCommand("mkdir -p %s/mdtest" % build_location)
         rc = self.changeDirectory(build_location+"/mdtest") 

@@ -191,6 +191,8 @@ class OFSTestMain(object):
             ofs_hostname_override=self.config.ofs_hostname_override,
             ofs_mount_point=self.config.ofs_mount_point,
             ofs_protocol=self.config.ofs_protocol,
+            openmpi_hosts_file=self.config.openmpi_hosts_file,
+            number_mpi_slots=self.config.number_mpi_slots,
             ofs_source_location=self.config.ofs_source_location
             )
         
