@@ -296,7 +296,8 @@ def ltp(testing_node,output=[]):
     
     LTP_ARCHIVE_VERSION = "ltp-full-20120903"
     #LTP_ARCHIVE_VERSION = "20170929"
-    LTP_ARCHIVE_VERSION = "20140422"
+    #LTP_ARCHIVE_VERSION = "20140422"
+    LTP_ARCHIVE_VERSION = "20180118"
         #LTP_ARCHIVE_TYPE = ".bz2"
     LTP_ARCHIVE_TYPE = ".tar.gz"
     LTP_ARCHIVE = "%s%s" % (LTP_ARCHIVE_VERSION,LTP_ARCHIVE_TYPE)
@@ -339,6 +340,7 @@ def ltp(testing_node,output=[]):
         testing_node.changeDirectory(testing_node.ofs_extra_tests_location+"/ltp-"+LTP_ARCHIVE_VERSION)
         
         # Patch ltp for OrangeFS support
+        
         rc = testing_node.runSingleCommand("patch -p1 < %s/test/automated/vfs-tests.d/ltp-%s-zoo-path.patch" % (testing_node.ofs_source_location,LTP_ARCHIVE_VERSION),output)
         if rc != 0:
             
