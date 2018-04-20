@@ -341,10 +341,10 @@ def ltp(testing_node,output=[]):
         
         # Patch ltp for OrangeFS support
         
-        rc = testing_node.runSingleCommand("patch -p1 < %s/test/automated/vfs-tests.d/ltp-%s-zoo-path.patch" % (testing_node.ofs_source_location,LTP_ARCHIVE_VERSION),output)
-        if rc != 0:
+        #rc = testing_node.runSingleCommand("patch -p1 < %s/test/automated/vfs-tests.d/ltp-%s-zoo-path.patch" % (testing_node.ofs_source_location,LTP_ARCHIVE_VERSION),output)
+        #if rc != 0:
             
-            return rc
+        #    return rc
         
         rc = testing_node.runSingleCommand("make autotools &> ./make-autotools.out")
         if rc != 0:
