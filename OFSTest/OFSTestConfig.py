@@ -379,6 +379,7 @@ class OFSTestConfig(object):
         self.host_prefix = "ofsnode"
         self.openmpi_hosts_file = None
         self.number_mpi_slots = 1
+        self.openmpi_version = None
         
     ##
     #
@@ -874,4 +875,8 @@ class OFSTestConfig(object):
         temp = d.get('number_mpi_slots')
         if temp != None:
             self.number_mpi_slots = temp
+            
+        temp = d.get('openmpi_version')
+        if temp != None:
+            self.openmpi_version = temp
                 

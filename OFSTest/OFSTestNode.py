@@ -224,9 +224,9 @@ class OFSTestNode(object):
         ## @var created_openmpihosts
         # Created openmpihosts file
         
-        self.openmpi_installation_location = "/opt/mpi/openmpi-1.8.8"
-        self.openmpi_source_location = "/usr/src/openmpi-1.8.8"
-        self.openmpi_version = ""
+        self.openmpi_installation_location = None
+        self.openmpi_source_location = None
+        self.openmpi_version = None
         self.created_openmpihosts = None  
         self.number_cores = 1
         self.number_mpi_slots = 1
@@ -1044,7 +1044,7 @@ class OFSTestNode(object):
     #
     
 
-    def configureOpenMPI(self,install_location=None,build_location=None):
+    def configureOpenMPI(self,install_location=None,build_location=None,openmpi_version=None):
         
         
         if install_location is None:
@@ -1055,7 +1055,11 @@ class OFSTestNode(object):
         
         # fix this garbage.
         #self.openmpi_version = "openmpi-1.6.5"
-        self.openmpi_version = "openmpi-1.8.8"
+        if openmpi_version is None:
+            self.openmpi_version = "openmpi-1.8.8"
+        else:
+            self.openmpi_version = openmpi_version
+            
         self.openmpi_installation_location = install_location+"/"+self.openmpi_version
         self.openmpi_source_location = "/usr/src/%s" % self.openmpi_version
         self.runSingleCommandAsRoot("chown -R  %s:%s %s" % (self.current_user,self.current_group,self.openmpi_source_location))

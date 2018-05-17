@@ -1533,7 +1533,7 @@ class OFSTestNetwork(object):
     
     
 
-    def configureOpenMPI(self,mpi_nfs_directory=None,build_node=None,mpi_local_directory=None,node_list=None):
+    def configureOpenMPI(self,mpi_nfs_directory=None,build_node=None,mpi_local_directory=None,openmpi_version=None,node_list=None):
         if node_list is None:
             node_list = self.network_nodes
         if build_node is None:
@@ -1551,9 +1551,9 @@ class OFSTestNetwork(object):
         
         # build mpi in the build location, but install it to the nfs directory
         # Also download and build IOR benchmark.
-        rc = build_node.configureOpenMPI(install_location=self.mpi_nfs_directory,build_location=mpi_local_directory)
+        rc = build_node.configureOpenMPI(install_location=self.mpi_nfs_directory,build_location=mpi_local_directory,openmpi_version=openmpi_version)
     
-        self.openmpi_version = build_node.openmpi_version
+        self.openmpi_version = openmpi_version
         
         build_node.changeDirectory(self.mpi_nfs_directory)
         

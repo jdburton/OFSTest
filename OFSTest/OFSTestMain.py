@@ -410,7 +410,7 @@ class OFSTestMain(object):
             print ""
             print "==================================================================="
             print "Install OpenMPI"
-            self.ofs_network.configureOpenMPI()
+            self.ofs_network.configureOpenMPI(openmpi_version=self.config.openmpi_version)
 
         
 
