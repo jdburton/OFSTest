@@ -256,6 +256,11 @@ class OFSNovaConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManag
     # @param number_nodes  Number of nodes to create
     # @param image_name Image to run. (e.g. "cloud-ubuntu-12.04")
     # @param flavor_name Image "flavor" (e.g. "m1.medium")
+    # @param subnet_id Id of subnet instance should run on
+    # @param instance_suffix
+    # @param image_id Id of image used for the new instances.
+    # @param security_group_ids List of security groups for the new instance.
+    # @param spot_instance_bid Required for inhertance. Ignored.
     #
     # @return    A list of new instances.
     #        
@@ -426,7 +431,7 @@ class OFSNovaConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManag
         pass  
         
    ##
-    # @fn createNewCloudNodes(number_nodes,image_name,machine_type,associateip=False,domain=None):
+    # @fn createNewCloudNodes(number_nodes,image_name,machine_type,associateip=False,cloud_subnet=None,instance_suffix="",image_id=None,security_group_ids=None,spot_instance_bid=None):
     #
     # Creates new cloud nodes and adds them to network_nodes list.
     #
@@ -437,7 +442,11 @@ class OFSNovaConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManag
     #    @param flavor_name  Cloud "flavor" of virtual node
     #    @param associateip  Associate to external ip?
     #    @param domain Domain to associate with external ip
-    #     @param cloud_subnet cloud subnet id for primary network interface.
+    #    @param cloud_subnet cloud subnet id for primary network interface.
+    #    @param instance_suffix
+    #    @param image_id Id of image used for the new instances.
+    #    @param security_group_ids List of security groups for the new instance.
+    #    @param spot_instance_bid Required for inhertance. Ignored.
     #
     #    @returns list of new nodes.
 

@@ -9,7 +9,12 @@
 # These variables in this class control the configuration of OFSTest. OFSTest can 
 # setup an instance of OrangeFS on any real or virtual cluster with 
 # passwordless ssh access for one user and passwordless sudo access for
-# that user. 
+# that user.
+# 
+#    To add a variable to the test configuration: 
+#
+#    1. Add the variable to the __init__ section.
+#    2. Parse the variable in the setConfigFromDict() method. Use existing variables as an example.
 #
 
 import pprint
@@ -18,7 +23,6 @@ from test.test_support import temp_cwd
 
 
 class OFSTestConfig(object):
-    
     
     
     def __init__(self):
@@ -357,27 +361,101 @@ class OFSTestConfig(object):
         # usually the same as the output directory.
         self.instance_suffix = "" # Web Interface: auto
         
+        ## @var dedicated_metadata_server
+        #
+        # Use a dedicated metadata server without a data service.
         
         self.dedicated_metadata_server = False
+        
+        
+        ## @var number_metadata_servers
+        #
+        # Number of servers running a metadata service
+        
         self.number_metadata_servers = 1
+        
+        ## @var number_data_servers
+        #
+        # Number of servers running a data service
+        
         self.number_data_servers = None
+
+        ## @var ofs_metadata_location
+        #
+        # Directory where orangefs metadata is stored on the metadata servers 
+        
         self.ofs_metadata_location = ""
+        
+        ## @var ofs_data_location
+        #
+        # Directory where orangefs data is stored on the data servers
         self.ofs_data_location = ""
+        
+
+        ## @var restart_ofs
+        #
+        # Restart OrangeFS after testing?
+        
         self.restart_ofs = False
+
+        ## @var ofs_dedicated_client
+        #
+        # Install OrangeFS client on a separate node, i.e. not one running a data or metadata service.
+        
         self.dedicated_client = False
+
+        ## @var servers_per_node
+        #
+        # Number of OrangeFS data servers per node.
+
         self.servers_per_node = 1
+
+        ## @var custom_kernel
+        #
+        # Compile and build a custom linux kernel.
         
         self.custom_kernel = False
-        self.kernel_git_location = None
-        self.kernel_git_branch = None
         
+        ## @var kernel_git_location
+        #
+        # url of the git repository from which the custom linux kernel should be downloaded.
+        self.kernel_git_location = None
+        
+        ## @var kernel_git_branch
+        #
+        # branch of the git repository from which the custom linux kernel that should be tested.
+        self.kernel_git_branch = None
+ 
+ 
+        ## @var url_base
+        #
+        # url of the location where auxilliary testing programs (e.g. ltp, iozone, bonnie++, etc.) can be downloaded. All auxillary programs should be in this directory.
         self.url_base = "http://devorange.clemson.edu/pvfs"
     
+        ## @var ofs_database
+        #
+        # database to use for OrangeFS metadata: bdb or lmdb.
         self.ofs_database = "lmdb"
         
+        ## @var spot_instance_bid
+        #
+        # Amount of spot instance bid. Set to "auto" for automatic bidding. Set to None for standard instance pricing. Ignored if not applicable.
         self.spot_instance_bid = None
+        
+        ## @var host_prefix
+        #
+        # All nodes will have this as the prefix of their hostname. 
+        # For example, if the host_prefix="ofs_node", then the hostnames will be ofsnode-001, ofsnode-002, etc.
         self.host_prefix = "ofsnode"
+ 
+        ## @var openmpi_hosts_file
+        #
+        # Location of the OpenMPI machinefile. 
         self.openmpi_hosts_file = None
+        
+        ## @var number_mpi_slots
+        #
+        # Number of OpenMPI slots per client node. 
         self.number_mpi_slots = 1
         
     ##
@@ -389,9 +467,6 @@ class OFSTestConfig(object):
     #
     # @param self The object pointer
     # @param kwargs Argument list with keywords.
-    
-    
-
     
     def setConfig(self,kwargs={}):
         pass
@@ -470,9 +545,29 @@ class OFSTestConfig(object):
     
     def setConfigFromDict(self,d={}):
         
+        # To add new variables, copy the following examples:
+        
+        # Get the value of the variable from the dictionary.
         temp = d.get('log_file')
+        # For scalar variables, simply save the "temp" value retrieved from the dictionary to the appropriate variable.
         if temp != None:
             self.log_file = temp
+
+        temp = d.get('node_ip_addresses')
+        if temp != None:
+            # For array variables, you will need to convert them from a space delimited string to a python array.
+            nodelist = temp.split(" ")
+            #print nodelist
+            for node in nodelist:
+                self.node_ip_addresses.append(node)
+
+        temp = d.get('node_ext_ip_addresses')
+        if temp != None:
+            nodelist = temp.split(" ")
+            #print nodelist
+            for node in nodelist:
+                self.node_ext_ip_addresses.append(node)
+
         
         temp = d.get('using_cloud')
         if temp != None:
@@ -517,24 +612,9 @@ class OFSTestConfig(object):
         if temp != None:
             self.cloud_delete_after_test = temp
         
-        temp = d.get('node_ip_addresses')
-        if temp != None:
-            nodelist = temp.split(" ")
-            #print nodelist
-            for node in nodelist:
-                self.node_ip_addresses.append(node)
-
-        temp = d.get('node_ext_ip_addresses')
-        if temp != None:
-            nodelist = temp.split(" ")
-            #print nodelist
-            for node in nodelist:
-                self.node_ext_ip_addresses.append(node)
-
         
         temp = d.get('node_usernames')
         if temp != None:
-            
             userlist = temp.split(" ")
             #print userlist
             for user in userlist:

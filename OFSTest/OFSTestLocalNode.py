@@ -39,7 +39,7 @@ class OFSTestLocalNode(OFSTestNode.OFSTestNode):
         # Local nodes are neither remote nor Cloud
         self.is_remote = False
         ## @var is_cloud
-        # Is this node an cloud node? Always false, even if it's true.
+        # Is this node a cloud node? Always false, even if it's true.
         self.is_cloud = False
         ## @var ip_address
         # set to local host
@@ -62,14 +62,10 @@ class OFSTestLocalNode(OFSTestNode.OFSTestNode):
     def currentNodeInformation(self):
         
         super(OFSTestLocalNode,self).currentNodeInformation()
+        # TODO: Convert from ifconfig to ip
         self.ext_ip_address = self.runSingleCommandBacktick("ifconfig  | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}'")
         
         
-        
-        
-        
-        
-
     #==========================================================================
     # 
     # Utility functions
@@ -189,7 +185,7 @@ class OFSTestLocalNode(OFSTestNode.OFSTestNode):
             remote_user = self.current_user
         elif remote_user == "root":
             logging.warn("I'm sorry, Dave, I'm afraid I can't do that.")
-            logging.warn("Really dumb idea to run commands as root with passwordless access on localhost. Easy way to mess up machine.") 
+            logging.warn("Don't run commands as root with passwordless access on localhost. Easy way to mess up machine.") 
             remote_user = self.current_user
         
         #start with the ssh command and open quote
@@ -229,7 +225,7 @@ class OFSTestLocalNode(OFSTestNode.OFSTestNode):
     def copyToRemoteNode(self, source, destination_node, destination, recursive=False):
         # This runs the copy command remotely 
         rflag = ""
-        # verify source file exists
+
         if recursive == True:
             rflag = "-a "
         else:

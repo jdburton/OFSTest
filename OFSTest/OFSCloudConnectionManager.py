@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 # @class OFSCloudConnectionManager
 #
 # @brief This class manages the Cloud connection. It has no awareness of OFSTestNodes or the OFSTestNetwork.
+# This class is an abstract class. The implementation for different cloud APIs (OpenStack Nova, Amazon EC2) should be written as subclasses. 
 #
 
 class OFSCloudConnectionManager(object):
@@ -156,7 +157,7 @@ class OFSCloudConnectionManager(object):
 
     ##
     #
-    # @fn createNewCloudInstances(self,number_nodes,image_system,instance_type): 
+    # @fn createNewCloudInstances(self,number_nodes,image_system,instance_type,subnet_id=None,instance_suffix="",image_id=None,security_group_ids=None,spot_instance_bid=None): 
     # Creates new Cloud instances and returns list of them.
     #
     # @param self The object pointer
@@ -164,6 +165,10 @@ class OFSCloudConnectionManager(object):
     # @param image_system Image to run. (e.g. "cloud-ubuntu-12.04")
     # @param instance_type Image "flavor" (e.g. "m1.medium")
 	# @param subnet_id Id of subnet instance should run on 
+    # @param instance_suffix
+    # @param image_id Id of image used for the new instances.
+    # @param security_group_ids List of security groups for the new instance.
+    # @param spot_instance_bid Maximum spot instance bid. Default is automatic bidding. Ignored if not applicable.
     #
     # @return	A list of new instances.
     #		
@@ -237,7 +242,7 @@ class OFSCloudConnectionManager(object):
         pass  
     
     ##
-    # @fn createNewCloudNodes(number_nodes,image_name,machine_type,associateip=False,domain=None):
+    # @fn createNewCloudNodes(number_nodes,image_name,machine_type,associateip=False,domain=None,,cloud_subnet=None,instance_suffix="",security_group_ids=None,spot_instance_bid=None):
     #
     # Creates new cloud nodes and adds them to network_nodes list.
     #
@@ -248,7 +253,10 @@ class OFSCloudConnectionManager(object):
     #    @param flavor_name  Cloud "flavor" of virtual node
     #    @param associateip  Associate to external ip?
     #    @param domain Domain to associate with external ip
-    #     @param cloud_subnet cloud subnet id for primary network interface.
+    #    @param cloud_subnet cloud subnet id for primary network interface.
+    #    @param instance_suffix
+    #    @param security_group_ids List of security group ids for this instance.
+    #    @param spot_instance_bid Maximum bid for spot instances. Default is automatic. Ignored if not applicable.
     #
     #    @returns list of new nodes.
 
