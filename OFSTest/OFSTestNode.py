@@ -210,7 +210,7 @@ class OFSTestNode(object):
         # berkeley db4 library location
         self.db4_lib_dir = self.db4_dir+"/lib"
         
-        
+        # MPICH variables. Not used.
         self.mpich2_installation_location = ""
         self.mpich2_source_location = ""
         self.mpich2_version = ""
@@ -294,11 +294,21 @@ class OFSTestNode(object):
         # LDAP container used for OrangeFS setup.
         self.ldap_container = None
         
+        ## @var url_base
+        # Location of the third party benchmark and testing programs
         self.url_base = "http://localhost"
-        
+ 
+        ## @var ofs_database
+        # Database to use for metadata storage (bdb or lmdb)       
         self.ofs_database="lmdb"
         
+        ## @var custom_kernel
+        #
+        # Download and build a custom Linux kernel.
         self.custom_kernel = False
+        
+        ## @var module_name
+        # Name of kernel module used to mount OrangeFS. (Linux <= 4.4: pvfs2; Linux >= 4.6: orangefs) 
         self.module_name = "pvfs2"
         
 
@@ -859,6 +869,10 @@ class OFSTestNode(object):
     #
     # This function updates the software on the node via the package management system
     # @param self The object pointer
+    # @param custom_kernel Build a custom linux kernel?
+    # @param kernel_git_location url of git repository from which the custom kernel will be built.
+    # @param kernel_git_branch url of git branch from which the custom kernel will be built.
+    # @param host_prefix prefix of the hostname of the created nodes.
     #
     
     
@@ -1159,6 +1173,16 @@ class OFSTestNode(object):
         
         self.configureOpenMPITests(install_location, build_location)
     
+    ##
+    # @fn configureOpenMPITests(self,install_location=None,build_location=None):
+    #
+    # This function installs OpenMPI tests
+    # @param self The object pointer
+    # @param install_location Location to install OpenMPI
+    # @param build_location Location to build OpenMPI
+    #
+    
+    #TODO: This should be part of image creation, not part of the tests
     
     def configureOpenMPITests(self,install_location=None,build_location=None):
         
@@ -1342,21 +1366,12 @@ class OFSTestNode(object):
             print "Warning: Could not make IOR"
             
         self.ior_installation_location = build_location+"/IOR"
-        
-        
-        
-    
-        
-        
-        
+              
         return 0
     
         
-    
-
-
     ##
-    # @fn copyOFSSourceFromSVN(self,svnurl,dest_dir,svnusername,svnpassword):
+    # @fn copyOFSSourceFromSVN(self,svnurl,dest_dir,svnusername,svnpassword,svn_options):
     #
     # This copies the source from an SVN branch
     # @param self The object pointer
@@ -1364,7 +1379,7 @@ class OFSTestNode(object):
     # @param dest_dir Destination directory on machine
     # @param svnusername svn username
     # @param svnpassword svn password
-    # @param svnoptions additional SVN options
+    # @param svn_options additional SVN options
     
 
 
@@ -2209,6 +2224,10 @@ class OFSTestNode(object):
     # @param ofs_data_location Location of OrangeFS storage
     # @param ofs_conf_file Configuration file name. Default is [OFS location]/etc/orangefs.conf
     # @param security OFS security level None,"Key","Cert"
+    #    @param number_metadata_servers Number of metadata servers on the network
+    #    @param dedicated_client Test on a dedicated client
+    #    @param servers_per_node Number of servers per node
+    #    @param number_data_servers Number of data servers on the network.
 
       
     
@@ -2331,11 +2350,12 @@ class OFSTestNode(object):
         
         return rc
     ##
-    # @fn startOFSServer(self,run_as_root=False):
+    # @fn startOFSServer(self,run_as_root=False,debug_mask="network,client,server"):
     #
     # This function starts the orangefs server
     # @param self The object pointer
     # @param run_as_root Run as root user
+    # @param debug_mask Debug mask for server
 
         
       

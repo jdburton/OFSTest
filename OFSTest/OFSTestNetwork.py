@@ -52,9 +52,6 @@ class OFSTestNetwork(object):
         self.number_mpi_hosts = 1
         self.logfile="cloudnodes.lst"
 
-        #self.network_nodes['127.0.0.1']=self.local_master
-   
-
     ##
     # @fn  findNode(self,ip_address="",hostname=""):
     #
@@ -88,7 +85,7 @@ class OFSTestNetwork(object):
     ##
     #  @fn addRemoteNode(self,username,ip_address,key,is_cloud=False,ext_ip_address=None):
     #
-    #    Creates a new OFSTestNode and adds it to the network_nodes list.
+    #    Creates a new OFSTestNode from an existing physical or cloud node and adds it to the network_nodes list.
     #
     # @param self The object pointer
     # @param username User login
@@ -104,7 +101,7 @@ class OFSTestNetwork(object):
     def addRemoteNode(self,username,ip_address,key,is_cloud=False,ext_ip_address=None):
         #This function adds a remote node
         
-        # Is this a remote machine or an existing cloud node?
+        # Is this a remote machine or existing cloud node?
         remote_node = OFSTestRemoteNode.OFSTestRemoteNode(username=username,ip_address=ip_address,key=key,local_node=self.local_master,is_cloud=is_cloud,ext_ip_address=ext_ip_address)
                 
         # Add to the node dictionary
@@ -210,7 +207,7 @@ class OFSTestNetwork(object):
         
 
     ##
-    # @fn createNewCloudNodes(number_nodes,image_name,machine_type,associateip=False,domain=None):
+    # @fn createNewCloudNodes(number_nodes,image_name,machine_type,associateip=False,domain=None,cloud_subnet=None,instance_suffix="",image_id=None,security_group_ids=None,spot_instance_bid=None):
     #
     # Creates new cloud nodes and adds them to network_nodes list.
     #
@@ -222,6 +219,10 @@ class OFSTestNetwork(object):
     #    @param associateip  Associate to external ip?
     #    @param domain Domain to associate with external ip
     #	 @param cloud_subnet cloud subnet id for primary network interface.
+    #    @param instance_suffix
+    #    @param instance_id ID of instance to be launched.
+    #    @param security_group_ids List of security group ids for this instance.
+    #    @param spot_instance_bid Maximum bid for spot instances. Ignored if not applicable.
     #
     #    @returns list of new nodes.
 
@@ -363,6 +364,15 @@ class OFSTestNetwork(object):
  
         return rc
 
+    ##      
+    # @fn terminateAllInstancesFromList(self, logfile)
+    #
+    # Terminate all the instances in a given logfile.
+    #
+    #    @param self The object pointer
+    #    @param logfile Logfile that contains a list of instance IP addresses.
+    
+    
     def terminateAllInstancesFromList(self, logfile=None):
         if logfile is None:
             logfile = self.logfile
@@ -406,13 +416,17 @@ class OFSTestNetwork(object):
         return rc
 
     ##      
-    # @fn updateCloudNodes(self,node_list=None):
+    # @fn updateCloudNodes(self,node_list=None, custom_kernel=False, kernel_git_location=None, kernel_git_branch=None,host_prefix="ofsnode"):
     #
     #    Update only the Cloud Nodes
     # 
     # @param self The object pointer
     # @param node_list List of nodes to update.
-    #
+    # @param custom_kernel Build a custom linux kernel?
+    # @param kernel_git_location url of git repository from which the custom kernel will be built.
+    # @param kernel_git_branch url of git branch from which the custom kernel will be built.
+    # @param host_prefix prefix of the hostname of the created nodes.
+    
 
         
     def updateCloudNodes(self,node_list=None, custom_kernel=False, kernel_git_location=None, kernel_git_branch=None,host_prefix="ofsnode"):
@@ -465,7 +479,7 @@ class OFSTestNetwork(object):
                 if rc != 0:
                     logging.info("Could not ping %s at %s from %s. Manually adding to /etc/hosts" % (n2.hostname,n2.ip_address,node.hostname))
                 node.runSingleCommandAsRoot('bash -c \'echo -e "%s     %s     %s" >> /etc/hosts\'' % (n2.ip_address,n2.hostname,n2.hostname))
-                # also create mpihosts files
+                # also create mpihosts files while we're here.
                 node.runSingleCommand('echo "%s   slots=%d" >> %s' % (n2.hostname,mpi_slots,node.created_openmpihosts))
                 node.runSingleCommand('echo "%s:%d" >> %s' % (n2.hostname,mpi_slots,node.created_mpichhosts))
             
@@ -475,12 +489,16 @@ class OFSTestNetwork(object):
             node.hostname = node.runSingleCommandBacktick("hostname")
 
     ##
-    # @fn updateNodes(self,node_list)
+    # @fn updateNodes(self,node_list, custom_kernel=False, kernel_git_location=None, kernel_git_branch=None,host_prefix="ofsnode")
     #
     # This updates the system software on the list of nodes.
     #
     #    @param self The object pointer
     #    @param node_list List of nodes to update
+    #    @param custom_kernel Build a custom linux kernel?
+    #    @param kernel_git_location url of git repository from which the custom kernel will be built.
+    #    @param kernel_git_branch url of git branch from which the custom kernel will be built.
+    #    @param host_prefix prefix of the hostname of the created nodes.
      
     def updateNodes(self,node_list=None, custom_kernel=False, kernel_git_location=None, kernel_git_branch=None,host_prefix="ofsnode"):
         if node_list is None:
@@ -519,7 +537,7 @@ class OFSTestNetwork(object):
     ##
     # @fn installRequiredSoftware(self,node_list=None):
     #
-    # This installs the required software on all the nodes
+    # This installs the required software on all the nodes simultaneously.
     #
     #    @param self The object pointer
     #    @param node_list List of nodes to update
@@ -548,11 +566,12 @@ class OFSTestNetwork(object):
         self.runSimultaneousCommands(node_list=node_list,node_function=OFSTestNode.OFSTestNode.installDB4)
 
     ##
-    # @fn installHadoop(self,node_list=None):
+    # @fn installHadoop(self,hadoop_version,node_list=None):
     #
     # This installs the required software on all the nodes
     #
     #    @param self The object pointer
+    #    @param hadoop_version Version of hadoop to install
     #    @param node_list List of nodes to update
                     
         
@@ -583,7 +602,11 @@ class OFSTestNetwork(object):
     #         configure_opts="",
     #         make_opts="",
     #         debug=False,
-    #         node_list=None):
+    #         node_list=None,        
+    #         hadoop_version="hadoop-2.6.0",
+    #         ofs_database="lmdb",
+    #         svn_username="",
+    #         svn_password=""):
     #
     #
     # This builds OrangeFS on the build node
@@ -607,6 +630,11 @@ class OFSTestNetwork(object):
     #    @param debug    Enable debugging
     #    @param svn_options    Additional options for SVN
     #    @param node_list List of nodes to update
+    #    @param hadoop_version Version of hadoop use 
+    #    @param ofs_database Database for metadata storage (bdb or lmdb)
+    #    @param svn_username Username to use to log in to svn
+    #    @param svn_password Password to use to log into svn
+    
           
 
     def buildOFSFromSource(self,
@@ -754,7 +782,7 @@ class OFSTestNetwork(object):
 
    
     ##    
-    #    @fn configureOFSServer(self,ofs_fs_name,master_node=None,node_list=None,pvfs2genconfig_opts="",security=None):
+    #    @fn configureOFSServer(self,ofs_fs_name,master_node=None,node_list=None,pvfs2genconfig_opts="",security=None,number_metadata_servers=1,dedicated_client=False,servers_per_node=1,number_data_servers=None):
     #
     #    @param self The object pointer
     #    @param ofs_fs_name    Default name of OrangeFS service: version < 2.9 = "pvfs2-fs"; version >= 2.9 = "orangefs"
@@ -762,6 +790,10 @@ class OFSTestNetwork(object):
     #    @param node_list      List of nodes in OrangeFS cluster
     #    @param pvfs2genconfig_opts = Additional options for pvfs2genconfig utility
     #    @param security        None, "Key", "Cert"
+    #    @param number_metadata_servers Number of metadata servers on the network
+    #    @param dedicated_client Test on a dedicated client
+    #    @param servers_per_node Number of servers per node
+    #    @param number_data_servers Number of data servers on the network.)
 
  
        
@@ -917,12 +949,13 @@ class OFSTestNetwork(object):
 
    
     ##    
-    #    @fn startOFSClientAllNodes(self,security=None,node_list=None):
+    #    @fn startOFSClientAllNodes(self,security=None,disable_acache=False):
     #
     #    Starts the OrangeFS servers on all created nodes
     #    @param self The object pointer
     #    @param security OFS security mode: None,"Key","Cert"
     #    @param node_list List of nodes in network.
+    #    @param disable_acache Disable the acache
      
 
     def startOFSClientAllNodes(self,security=None,node_list=None,disable_acache=False):
@@ -932,7 +965,7 @@ class OFSTestNetwork(object):
             self.startOFSClient(client_node=node,security=security,disable_acache=disable_acache)
    
     ##    
-    #    @fn startOFSClient(self,client_node=None,security=None):
+    #    @fn startOFSClient(self,client_node=None,security=None,disable_acache=False):
     #
     #    Starts the OrangeFS servers on one node
     #
@@ -940,7 +973,7 @@ class OFSTestNetwork(object):
     #    @param client_node Node on which to run OrangeFS client
     #    @param security OFS security mode: None,"Key","Cert"
     #    @param node_list List of nodes in network.
-
+    #    @param disable_acache Disable the acache
             
     def startOFSClient(self,client_node=None,security=None,node_list=None,disable_acache=False):
         if node_list is None:
@@ -975,8 +1008,6 @@ class OFSTestNetwork(object):
         mount_res=client_node.runSingleCommandBacktick("mount | grep -i pvfs")
         print mount_res
         logging.info("Checking Mount: "+mount_res)
-        #client_node.runSingleCommand("touch %s/myfile" % client_node.ofs_mount_point)
-        #client_node.runSingleCommand("ls %s/myfile" % client_node.ofs_mount_point)
 
    
     ##    
@@ -1132,12 +1163,15 @@ class OFSTestNetwork(object):
 
    
     ##    
-    #   @fn generateOFSCertificates(self,node_list=None,head_node=None):
+    #   @fn generateOFSCertificates(self,ldap_server_uri,ldap_admin,ldap_admin_password,ldap_container,node_list=None,security_node=None,):
     #
     #    Generate SSH certificates for OrangeFS cert-based security
     #    @param self The object pointer
+    #    @param ldap_server_uri The uri of the LDAP server
+    #    @param ldap_admin_password The password for the LDAP admin account
+    #    @param ldap_container The LDAP container that contains the users for which the certificates will be generated.
     #    @param node_list List of nodes in network.
-    #    @param head_node Head node of ssh setup
+    #    @param security_node Node where the certificates are created.
 
    
     
@@ -1169,8 +1203,15 @@ class OFSTestNetwork(object):
 
         return rc
 
-        
-        
+    ##
+    #    def createUserCerts(self,user=None,node_list=None,security_node=None): 
+    #    
+    #    Create certificates for a given user
+    #
+    #    @param self The object pointer
+    #    @param user User for which certificates will be generated
+    #    @param security_node Node on which the certificates will be generated.
+    #
     
     def createUserCerts(self,user=None,node_list=None,security_node=None):
         if node_list is None:
@@ -1411,8 +1452,12 @@ class OFSTestNetwork(object):
     #             ofs_fs_name,
     #             ofs_hostname_override,
     #             ofs_mount_point,
-    #             node_list = None
-    #             ):
+    #            ofs_protocol=None,
+    #            ofs_source_location=None,
+    #            openmpi_hosts_file=None,
+    #            number_mpi_slots=1,
+    #            node_list = None
+    #            ):
     #
     #    Manually set OrangeFS settings for each node in the list. Used for retesting.
     #
@@ -1428,6 +1473,10 @@ class OFSTestNetwork(object):
     #    @param ofs_fs_name Name of OrangeFS in filesystem url
     #    @param ofs_hostname_override Change hostname to this. Needed to work around an openstack issue
     #    @param ofs_mount_point Location of OrangeFS mount_point
+    #    @param ofs_protocol Network protocol for OrangeFS (ib or tcp)
+    #    @param ofs_source_location Location where the OrangeFS source is located
+    #    @param openmpi_hosts_file Location of the openmpi machinefile
+    #    @param number_mpi_slots Number of MPI slots per node.
     #    @param node_list List of nodes in network
         
     def networkOFSSettings(self,
@@ -1682,6 +1731,15 @@ class OFSTestNetwork(object):
             
         return rc
     
+    ##
+    # @fn printNetwork(self):
+    #
+    # Prints the python dictionary of all nodes on the network. For debugging.
+    #
+    # @param self the object pointer
+    #
+    #
+    
     def printNetwork(self):
         
         print "==========================================================================="
@@ -1695,6 +1753,15 @@ class OFSTestNetwork(object):
         print "==========================================================================="
         
         return 0
+    
+    ##
+    # @fn checkNetwork(self):
+    #
+    # Checks connectivity between the nodes in the network.
+    #
+    # @param self the object pointer
+    #
+    #
         
     def checkNetwork(self):
         
@@ -1714,12 +1781,31 @@ class OFSTestNetwork(object):
        
         
         return failed
+  
+    ##
+    # @fn checkExternalConnectivity(self):
+    #
+    # Checks connectivity to the nodes in the network from the local machine via ping
+    #
+    # @param self the object pointer
+    #
+    #
     
     def checkExternalConnectivity(self):
         rc = 0
         for node in self.network_nodes:
             rc += self.local_master.runSingleCommandAsRoot("ping -c 1 %s" % node.ext_ip_address )
         return rc
+    
+    ##
+    # @fn getInstanceList()
+    #
+    # Creates node instances from cloud (AWS) instance list
+    #
+    # @param self the object pointer
+    # @param logfile List of AWS instances.
+    #
+    #
     
     def getInstanceList(self,logfile=None):
         
