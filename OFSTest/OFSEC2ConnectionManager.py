@@ -45,6 +45,8 @@ flavors_order = [
 #
 # @brief This class manages the EC2 connection. It has no awareness of OFSTestNodes or the OFSTestNetwork.
 #
+# Implementation of OFSCloudConnectionManager for Amazon EC2.
+#
 class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManager):
   
     ##
@@ -316,7 +318,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
     
     ##
     #
-    # @fn createNewCloudInstances(self,number_nodes,image_name,flavor_name): 
+    # @fn createNewCloudInstances(self,number_nodes,image_name,flavor_name,subnet_id,instance_suffix,image_id,security_group_ids,spot_instance_bid):
     # Creates new EC2 instances and returns list of them.
     #
     # @param self The object pointer
@@ -324,6 +326,9 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
     # @param image_name Image to run. (e.g. "cloud-ubuntu-12.04")
     # @param flavor_name Image "flavor" (e.g. "m1.medium")
 	# @param subnet_id Id of subnet instance should run on 
+    # @param instance_suffix
+    # @param security_group_ids List of security group ids for this instance.
+    # @param spot_instance_bid Maximum bid for spot instances. Ignored if not applicable.
     #
     # @return	A list of new instances.
     #		
@@ -333,6 +338,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
         
         
         # This creates a new instance for the system of a given machine type
+        # If we don't have an image ID, search for the image by name.
         if image_id is None:
             # get the image ID for the operating system
             if self.cloud_image_list is None:
@@ -341,6 +347,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
             # now let's find the os name in the image list
             image = next((i for i in self.cloud_image_list if i.name == image_name), None)
             
+            # Bail if we can't find the image.
             if image is None:
                 logging.exception( "Image %s Not Found!" % image_name)
                 return None
@@ -350,13 +357,13 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
         else:
             image_ids = [ image_id ]
             # get the image ID for the operating system
-
             if self.cloud_image_list is None:
                 self.getAllCloudImages(image_ids)
                 
             # now let's find the image_id name in the image list
             image = next((i for i in self.cloud_image_list if i.id == image_id), None)
 
+            # Bail if we can't find the image.
             if image is None:
                 logging.exception( "Image %s Not Found!" % image_id)
                 return None
@@ -366,8 +373,14 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
         reservation = None
         new_instances = []
         count = 0
+
+        # Fallback to standard pricing if spot instances are not available for this image. Necessary for t* flavors.
         fallback2standard = False
-        
+
+        # Automatic bidding
+        # Bid 2 standard deviations over the mean instance price over the past 14 days. 
+        # This will give us a price that should allow us to run while avoiding paying too much due to a price spike.
+
         if spot_instance_bid.lower() == "auto":
             
             days_back = 14
@@ -381,10 +394,12 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
 
             product_description = "Linux/UNIX (Amazon VPC)"
             
+            # Use SUSE pricing for SUSE instances.
             if "sles" in image_name: 
                 product_description = "SUSE Linux (Amazon VPC)"
                 
             try:    
+            # Get the spot price history for this instance type.
                 while count < 30:
                     history = self.ec2_connection.get_spot_price_history(start_time=start.strftime("%Y-%m-%dT%H:%M:%S.%fZ"), end_time=end.strftime("%Y-%m-%dT%H:%M:%S.%fZ"), instance_type=flavor_name, product_description=product_description,next_token=next_token)
                     prices = prices + [price.price for price in history]
@@ -402,7 +417,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
                 mean = np.mean(prices)
                 max_bid = mean + 2*std_dev
                 
-                # Bid 2 standard deviations over the mean. 
+                
                 calculated_bid = max_bid
                 print "Maximum automatic bid %r is 2 std_dev over mean of %r spot prices over %d days" % (calculated_bid,n,days_back)
                 
@@ -410,11 +425,14 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
                 spot_instance_bid = str(calculated_bid)
                                                             
             except ValueError:
+                # If automatic bidding fails, catch the exception and fallback to standard pricing. 
                 fallback2standard = True
 
         if not fallback2standard:    
-            # If we have a valid bid, use spot instances.
+            # If we have a valid bid, automatic or manually entered, use spot instances.
+            # If we want standard pricing (spot_instance_bid is None), this will fail and send us to the manual fallback.
             try:
+            
                 float(spot_instance_bid)
                 # TODO: Add support for placement groups
                 
@@ -455,6 +473,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
         
         if fallback2standard:
 
+            # If standard instances were selected or spot instance bidding failed, use standard pricing. 
             reservation = self.ec2_connection.run_instances(image_id=image.id,min_count=number_nodes, max_count=number_nodes, key_name=self.cloud_instance_key, user_data=None, instance_type=flavor_name, subnet_id=subnet_id, security_group_ids=security_group_ids)
 
             
@@ -568,7 +587,7 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
         print "This should be implemented, but isn't."
 
     ##
-    # @fn createNewCloudNodes(number_nodes,image_name,machine_type,associateip=False,domain=None):
+    # @fn createNewCloudNodes(number_nodes,image_name,machine_type,associateip=False,domain=None,cloud_subnet=None,instance_suffix="",image_id=None,security_group_ids=None,spot_instance_bid=None):
     #
     # Creates new cloud nodes and adds them to network_nodes list.
     #
@@ -579,7 +598,10 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
     #    @param flavor_name  Cloud "flavor" of virtual node
     #    @param associateip  Associate to external ip?
     #    @param domain Domain to associate with external ip
-    #     @param cloud_subnet cloud subnet id for primary network interface.
+    #    @param cloud_subnet cloud subnet id for primary network interface.
+    #    @param instance_suffix
+    #    @param security_group_ids List of security group ids for this instance.
+    #    @param spot_instance_bid Maximum bid for spot instances. Ignored if not applicable.
     #
     #    @returns list of new nodes.
 
@@ -630,16 +652,13 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
         ts = str(datetime.now()).split('.')[0]
  
         for idx,instance in enumerate(new_instances):
-            # Create the node and get the instance name
+            # Create the node and get the username for login.
+            # There has got to be a better way of doing this, but this works well enough.
             if "buntu" in image_name:
                 name = 'ubuntu'
             elif "ebian" in image_name:
                 name = 'debian'
-
             elif "edora" in image_name:
-                # fedora 18 = cloud-user, fedora 19 = fedora
-                
-                # fedora 18 = cloud-user, fedora 19 = fedora
                 name = 'fedora'
             elif "entos" in image_name or "entOS" in image_name:
                 name = 'centos'
@@ -649,14 +668,15 @@ class OFSEC2ConnectionManager(OFSCloudConnectionManager.OFSCloudConnectionManage
                 name = 'ec2-user'
             
             
-        
+            # Set the instance name so that you can find it in AWS Console.
             instance.add_tag("Name","ofsnode-%03d %s %s" % ((idx+1),ts,image_name))
             
+            # Create the OFSTestRemoteNode (python) instance in the test system based on what you have just created in AWS.
             new_node = OFSTestRemoteNode.OFSTestRemoteNode(username=name,ip_address=instance.private_ip_address,key=self.cloud_instance_key_location,local_node=local_master,is_cloud=True,ext_ip_address=ip_addresses[idx])
 
+            # Add this to the list of OFSTestRemoteNode (python) instances.
             new_ofs_test_nodes.append(new_node)
 
-        # return the list of newly created nodes.
-        
+        # return the list of instances of newly created nodes.
         return new_ofs_test_nodes
 

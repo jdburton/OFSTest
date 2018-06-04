@@ -1,6 +1,0 @@
-[OFSTest]
-name=CentOS-$releasever - local packages for $basearch
-baseurl=http://52.25.196.99/repo
-enabled=1
-gpgcheck=0
-protect=1

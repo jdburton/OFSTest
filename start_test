@@ -52,6 +52,7 @@ mkdir_p(output_dir)
 
 
 #Add logging
+# This will contain a list of all commands run by the testing system. VERY useful for debugging!
 logging.basicConfig(filename=output_dir+"/ofsnode-commands.log",level=logging.INFO)
 
 print "==================================================================="
@@ -59,43 +60,43 @@ print "Welcome to the OrangeFS Setup and Testing System"
 
 
 if config_file != None:
-   #try:
-        #print "Using configuration from "+ config_file
-        test_driver = OFSTestMain.OFSTestMain(OFSTestConfigFile.OFSTestConfigFile())
-        #print "setting config"
-        #ugly python hack
-        test_driver.setConfig(kwargs={"filename":config_file})
+    
+    # Use the test driver with a config file.
+    test_driver = OFSTestMain.OFSTestMain(OFSTestConfigFile.OFSTestConfigFile())
         
-        #test_driver.printConfig()
-        #print "done"
-    #except ValueError:
-     #   print "File %s could not be read or invalid format." % config_file
-        #test_driver = OFSTestMain.OFSTestMain(OFSTestConfigMenu.OFSTestConfigMenu())
-        #test_driver.setConfig()
-      #  exit(-1)
+    #ugly python hack
+    # set the config for the test using the config file.
+    test_driver.setConfig(kwargs={"filename":config_file})
+        
 else:
     test_driver = OFSTestMain.OFSTestMain(OFSTestConfig.OFSTestConfig())
 
-#Add additional configuration options from command line
+#Add additional configuration options to the test driver.
 test_driver.config.addConfig(args)
+
+# Print the configuration. 
 test_driver.printConfig()
 
+# set the instance-suffix to the output directory, if the output directory is set 
+# but not the instance suffix.
 if test_driver.config.instance_suffix == "" and output_dir != ".":
     test_driver.config.instance_suffix = "-"+output_dir
 
+# Run in the output directory
 os.chdir(output_dir)
-#exit()
 
+# If we're running in "cleanup mode", clean up and exit.
 if cleanup is True:
     rc = test_driver.cleanupCloudCluster()
     exit(rc)
 
+# Ok, we're actually testing something. 
 # initialize the network
 rc = test_driver.initNetwork()
-if rc == 0 and test_driver.config.ofs_config_file is not None:
-    # initialize the network
-    rc = test_driver.checkOFS()
 
+# If we have an orangefs.conf file, then check OFS.
+if rc == 0 and test_driver.config.ofs_config_file is not None:
+    rc = test_driver.checkOFS()
 
 # if orangefs is not installed, set it up
 if rc == 0:
@@ -105,6 +106,7 @@ if rc == 0:
 if rc == 0:
     rc = test_driver.runTest()
 
+# Clean up.
 if rc != 0 and test_driver.config.stop_on_failure == False:
     test_driver.doPostTest()
 

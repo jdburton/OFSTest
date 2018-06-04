@@ -1,6 +1,0 @@
-master: TODO
-id: TODO
-state_auto_order: true
-file_roots:
-  base:
-    - /srv/salt

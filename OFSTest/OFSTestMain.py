@@ -9,7 +9,7 @@
 # Members:
 #
 # OFSTestConfig self.config = Testing configuration. 
-# OFSTestNework self.network = Virtual cluster.
+# OFSTestNework self.network = Representation of the cluster
 #
 # Methods:
 #
@@ -62,17 +62,12 @@ class OFSTestMain(object):
         # OFSTestConfig Testing configuration.
         self.config = config 
         
-        # @var self.network 
-        # OFSTestNework Virtual cluster.
+        # @var self.ofs_network 
+        # OFSTestNework representation of the cluster being tested.
 
         self.ofs_network = OFSTestNetwork.OFSTestNetwork()
         
         
-
-        
-        
-
-
     ##
     #
     # @fn setConfig(self,**kwargs):
@@ -81,7 +76,6 @@ class OFSTestMain(object):
     #
     # @param self The object pointer
     # @param kwargs Dictionary with configuration variable,value pairs. See OFSTestConfig for possible values.
-
 
 
     def setConfig(self,**kwargs):
@@ -133,6 +127,7 @@ class OFSTestMain(object):
         rc = 0
         if self.config.number_new_cloud_nodes > 0:
             rc = self.setupNewCloudCluster()
+
         # If config.node_ip_addresses > 0, then we are dealing with existing 
         # nodes. Add them to the virtual cluster.
         elif len(self.config.node_ip_addresses) > 0:
@@ -177,6 +172,9 @@ class OFSTestMain(object):
 
         # OK, now that OrangeFS installation has been found, set the
         # appropriate varaibles in the OFSTestNetwork virtual cluster.
+        #
+        # This is just brute force setting variables in ofs_network based on values in the config file.
+        
         print "Existing OrangeFS installation found. Detecting settings"
         self.ofs_network.networkOFSSettings(
             ofs_installation_location = self.config.install_prefix,
@@ -223,8 +221,6 @@ class OFSTestMain(object):
     #
     # @return 0 network setup
     # @return Not 0 network not setup
-
-
     
     def checkNetwork(self):
     
@@ -252,6 +248,7 @@ class OFSTestMain(object):
     
                 
         # Upload the access key to all the nodes in the cluster.
+        # TODO: Make this more secure.
         print "===========================================================" 
         print "Distributing SSH keys"
         self.ofs_network.uploadKeys()
@@ -289,6 +286,8 @@ class OFSTestMain(object):
  
         return 0
 
+#    Moved to image creation.
+#
 #                 # Install software required to compile and run OFS and all tests.
 #         print ""
 #         print "==================================================================="
@@ -343,6 +342,8 @@ class OFSTestMain(object):
         print ""
         print "==================================================================="
         print "Downloading and building OrangeFS from %s resource %s" % (self.config.ofs_resource_type,self.config.ofs_resource_location)
+ 
+        # Build OrangeFS using the parameters from the config file. Additional build parameters will be added here.
         rc = self.ofs_network.buildOFSFromSource(
         resource_type=self.config.ofs_resource_type,
         resource_location=self.config.ofs_resource_location,
@@ -405,7 +406,8 @@ class OFSTestMain(object):
             return rc
 
 
-
+        # This should be part of the image creation
+        # TODO: Is this function still necessary?
         if self.config.install_MPI == True or self.config.run_mpi_tests == True:
             print ""
             print "==================================================================="
@@ -494,6 +496,8 @@ class OFSTestMain(object):
     # @param self The object pointer
     
     # TODO: Reimpliment this.
+    #
+    # This is ugly code. But it works. 
 
 
     def runTest(self):
@@ -900,12 +904,24 @@ class OFSTestMain(object):
 #            print "Terminating Nodes"
 #            self.ofs_network.terminateAllCloudNodes()
 
+    ##
+    #
+    # @fn terminateAllCloudNodes(self):
+    #
+    # Terminate all the cloud nodes.
+
+
     def terminateAllCloudNodes(self):
             print ""
             print "==================================================================="
             print "Terminating Nodes"
             self.ofs_network.terminateAllCloudNodes()
 
+    ##
+    #
+    # @fn stopAllCloudNodes(self):
+    #
+    # Stop all the cloud nodes.
 
     def stopAllCloudNodes(self):
             print ""
@@ -922,6 +938,9 @@ class OFSTestMain(object):
     #
     # @param self The object pointer
     # @param function_group_name The name of the python namespace that contains the function. This should be the same as the python file that contains the functions without the .py extension.
+
+    # TODO: This was intended to be a part of the reimplementation of runTests()  
+    
 
     def runFunctionGroup(self,function_group_name):
         
@@ -940,12 +959,26 @@ class OFSTestMain(object):
                 pass
 
 
-    def restartOFS(self):
+    ##
+    #
+    # @fn restartOFSClient(self):
+    #
+    # Restart the OrangeFS client on all nodes. Not the server.
+
+    def restartOFSClient(self):
         
         self.ofs_network.unmountOFSFilesystemAllNodes()
         self.ofs_network.stopOFSClientAllNodes()
         self.ofs_network.startOFSClientAllNodes(security=self.config.ofs_security_mode,disable_acache=self.config.ofs_disable_acache)
         self.ofs_network.mountOFSFilesystemAllNodes()
+    
+    
+    ##
+    #
+    # @fn doPostTest(self):
+    #
+    # Cleanup after tests.
+
     
     def doPostTest(self):
     
@@ -958,10 +991,24 @@ class OFSTestMain(object):
         
             if self.config.restart_ofs == True:
                 print "Test complete. Restarting OrangeFS clients and servers"
-                self.restartOFS()
+                self.restartOFSClient()
             else:
                 self.stopAllCloudNodes()
-                
+
+
+    ##
+    #
+    # @fn cleanupCloudCluster(self):
+    #
+    # @brief This function cleans up the instances in a logfile
+    #
+    # @param logfile Logfile that contains a list of instances used for testing.
+    #
+    # This function reads cloud connection information from the cloud_config file.
+    # Then it connects to the cloud, and terminates all the instances for the setup listed in logfile
+    # The purpose of this function is to clean up instance that were left behind if the test script times out
+    # or fails and doPostTest() is not called. 
+    #              
     
     def cleanupCloudCluster(self,logfile=None):
         
