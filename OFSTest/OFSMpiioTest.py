@@ -80,8 +80,14 @@ def romio_testsuite(testing_node,output=[]):
     #/opt/mpi/openmpi-1.6.5/ompi/mca/io/romio/romio/test
     testing_node.changeDirectory("%s/ompi/mca/io/romio/romio/test" % testing_node.openmpi_source_location)
     rc = 0
+
+    force_romio = ""
+    
+    if "openmpi-1" not in testing_node.openmpi_version:
+        force_romio="--mca io romio314"
+        
     print "%s -machinefile=%s -fname=pvfs2:%s/romioruntests" % (testing_node.romio_runtests_pvfs2,testing_node.created_openmpihosts,testing_node.ofs_mount_point)
-    rc = testing_node.runSingleCommand("%s -machinefile=%s -fname=pvfs2:%s/romioruntests" % (testing_node.romio_runtests_pvfs2,testing_node.created_openmpihosts,testing_node.ofs_mount_point),output)
+    rc = testing_node.runSingleCommand("%s -machinefile=%s %s -fname=pvfs2:%s/romioruntests" % (testing_node.romio_runtests_pvfs2,testing_node.created_openmpihosts,force_romio,testing_node.ofs_mount_point),output)
     
     #TODO: Compare actual results with expected.
     time.sleep(30)
@@ -108,8 +114,12 @@ def heidelberg_IO(testing_node,output=[]):
     
     rc = testing_node.changeDirectory("%s" % testing_node.heidelberg_installation_location)
     np = testing_node.number_mpi_slots
+    force_romio = ""
     
-    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --prefix %s --map-by node %s/heidelberg-IO pvfs2:%s/heidelberg-io-test level0 level1 level2 level3" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.openmpi_installation_location,testing_node.heidelberg_installation_location,testing_node.ofs_mount_point),output)
+    if "openmpi-1" not in testing_node.openmpi_version:
+        force_romio="--mca io romio314"
+    
+    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s %s --prefix %s --map-by node %s/heidelberg-IO pvfs2:%s/heidelberg-io-test level0 level1 level2 level3" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,force_romio,testing_node.openmpi_installation_location,testing_node.heidelberg_installation_location,testing_node.ofs_mount_point),output)
 
     print output[1]
     print output[2]
@@ -140,8 +150,12 @@ def mpi_io_test(testing_node,output=[]):
     
     rc = testing_node.changeDirectory("%s" % testing_node.ofs_mount_point)
     np = testing_node.number_mpi_slots
+    force_romio = ""
     
-    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --prefix %s --map-by node %s/test/mpi-io-test -f pvfs2:%s/mpi-io-test -b $((1024*1024*32))" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.openmpi_installation_location,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
+    if "openmpi-1" not in testing_node.openmpi_version:
+        force_romio="--mca io romio314"
+    
+    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s %s --prefix %s --map-by node %s/test/mpi-io-test -f pvfs2:%s/mpi-io-test -b $((1024*1024*32))" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,force_romio,testing_node.openmpi_installation_location,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
     
     time.sleep(30)
     #TODO: Compare actual results with expected.
@@ -171,8 +185,12 @@ def mpi_io_test_collective(testing_node,output=[]):
     
     rc = testing_node.changeDirectory("%s" % testing_node.ofs_mount_point)
     np = testing_node.number_mpi_slots
+    force_romio = ""
     
-    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --prefix %s --map-by node %s/test/mpi-io-test -f pvfs2:%s/mpi-io-test-C -b $((1024*1024*32)) -C" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.openmpi_installation_location,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
+    if "openmpi-1" not in testing_node.openmpi_version:
+        force_romio="--mca io romio314"
+    
+    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s %s --prefix %s --map-by node %s/test/mpi-io-test -f pvfs2:%s/mpi-io-test-C -b $((1024*1024*32)) -C" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,force_romio,testing_node.openmpi_installation_location,testing_node.ofs_installation_location,testing_node.ofs_mount_point),output)
     
     time.sleep(30)
 
@@ -209,7 +227,13 @@ def stadler(testing_node,output=[]):
     rc = testing_node.changeDirectory("%s" % testing_node.stadler_installation_location)
     np = testing_node.number_mpi_slots
     
-    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s --prefix %s --map-by node %s/stadler-file-view-test pvfs2:%s/stadler-file-view-test " % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,testing_node.openmpi_installation_location,testing_node.stadler_installation_location,testing_node.ofs_mount_point),output)
+    force_romio = ""
+    
+    if "openmpi-1" not in testing_node.openmpi_version:
+        force_romio="--mca io romio314"
+
+    
+    rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s %s --prefix %s --map-by node %s/stadler-file-view-test pvfs2:%s/stadler-file-view-test " % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,force_romio,testing_node.openmpi_installation_location,testing_node.stadler_installation_location,testing_node.ofs_mount_point),output)
     
     
     #TODO: Compare actual results with expected.
