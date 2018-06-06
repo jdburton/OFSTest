@@ -84,6 +84,11 @@ def IOR_posix(testing_node,output=[]):
 
     bs = 16384 / int(np)
     
+    force_romio = ""
+    
+    if "openmpi-1" not in testing_node.openmpi_version:
+        force_romio="--mca io romio314"
+    
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s %s --prefix %s --map-by node  %s/src/C/IOR -a POSIX -F -i 1 -N %s -b %dm -k -t 4m -s 1 -o %s/mpivfsfile" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,force_romio,testing_node.openmpi_installation_location,testing_node.ior_installation_location,np,bs,testing_node.ofs_mount_point),output)
     
     #TODO: Compare actual results with expected.
@@ -114,6 +119,11 @@ def IOR_single_posix(testing_node,output=[]):
     np = testing_node.number_mpi_hosts
 
     bs = 16384 / int(np)
+    
+    force_romio = ""
+    
+    if "openmpi-1" not in testing_node.openmpi_version:
+        force_romio="--mca io romio314"
     
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s %s --prefix %s --map-by node  %s/src/C/IOR -a POSIX -F -i 1 -N %s -b %dm -t 4m -s 1 -o %s/mpivfsfile" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,force_romio,testing_node.openmpi_installation_location,testing_node.ior_installation_location,np,bs,testing_node.ofs_mount_point),output)
     
@@ -146,6 +156,11 @@ def IOR_single_mpiio(testing_node,output=[]):
     
     bs = 16384 / int(np)
     
+    force_romio = ""
+    
+    if "openmpi-1" not in testing_node.openmpi_version:
+        force_romio="--mca io romio314"
+    
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s %s --prefix %s --map-by node  %s/src/C/IOR -a MPIIO -C -i 1 -N %s -b %dm -t 4m -s 1 -o pvfs2:%s/mpiiofile" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,force_romio,testing_node.openmpi_installation_location,testing_node.ior_installation_location,np,bs,testing_node.ofs_mount_point),output)
     time.sleep(30)
     print output[1]
@@ -173,6 +188,11 @@ def IOR_mpiio(testing_node,output=[]):
     rc = testing_node.changeDirectory("%s/src/C" % testing_node.ior_installation_location)
     np = testing_node.number_mpi_slots
     bs = 16384 / int(np)
+    
+    force_romio = ""
+    
+    if "openmpi-1" not in testing_node.openmpi_version:
+        force_romio="--mca io romio314"
     
     
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s %s --prefix %s --map-by node  %s/src/C/IOR -a MPIIO -C -i 1 -N %s -b %dm -k -t 4m -s 1 -o pvfs2:%s/mpiiofile" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,force_romio,testing_node.openmpi_installation_location,testing_node.ior_installation_location,np,bs,testing_node.ofs_mount_point),output)
@@ -203,6 +223,11 @@ def mdtest(testing_node,output=[]):
     rc = testing_node.changeDirectory(testing_node.mdtest_installation_location)
     np = testing_node.number_mpi_slots
     
+    force_romio = ""
+    
+    if "openmpi-1" not in testing_node.openmpi_version:
+        force_romio="--mca io romio314"
+    
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s %s --prefix %s --map-by node  %s/mdtest  -n 256 -w 4194304 -i 1 -d %s/mdtest" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,force_romio,testing_node.openmpi_installation_location,testing_node.mdtest_installation_location,testing_node.ofs_mount_point),output)
     
     #TODO: Compare actual results with expected.
@@ -231,6 +256,11 @@ def simul(testing_node,output=[]):
 
     rc = testing_node.changeDirectory(testing_node.mdtest_installation_location)
     np = testing_node.number_mpi_slots
+    
+    force_romio = ""
+    
+    if "openmpi-1" not in testing_node.openmpi_version:
+        force_romio="--mca io romio314"
     
     #skip tests 18,38,39. OrangeFS does not support hard links.
     rc = testing_node.runSingleCommand("mkdir -p %s/simul" % testing_node.ofs_mount_point)
@@ -266,6 +296,11 @@ def multi_md_test(testing_node,output=[]):
     
     np = testing_node.number_mpi_slots
     
+    force_romio = ""
+    
+    if "openmpi-1" not in testing_node.openmpi_version:
+        force_romio="--mca io romio314"
+    
     rc = testing_node.changeDirectory(testing_node.ofs_mount_point)
     testing_node.runSingleCommand("mkdir -p %s/multi_md_test" % testing_node.ofs_mount_point)
     rc = testing_node.runSingleCommand("%s/bin/mpiexec -np %s --machinefile %s %s --prefix %s --map-by node  %s/test/multi-md-test -d %s/multi_md_test -n 100 -s 1024 -a 0 -p 5 -c 1,1,%s" % (testing_node.openmpi_installation_location,np,testing_node.created_openmpihosts,force_romio,testing_node.openmpi_installation_location,testing_node.ofs_installation_location,testing_node.ofs_mount_point,np),output)
@@ -296,6 +331,11 @@ def multi_md_test_size_sweep(testing_node,output=[]):
 
     
     np = testing_node.number_mpi_slots
+    
+    force_romio = ""
+    
+    if "openmpi-1" not in testing_node.openmpi_version:
+        force_romio="--mca io romio314"
     
     rc = testing_node.changeDirectory(testing_node.ofs_mount_point)
     testing_node.runSingleCommand("mkdir -p %s/multi_md_size_sweep" % testing_node.ofs_mount_point)
